@@ -3,14 +3,9 @@
 #
 #	Usage examples:
 #
-#		% make provision tenant=mrrobot env=development|testing|staging|production firstrun=true|false
+#		% make provision tenant=mrrobot env=development|testing|staging|production firstrun=true|false limit=webservers tags=vhosts
 #		% make encrypt tenant=mrrobot env=development|testing|staging|production
 #		% make decrypt tenant=mrrobot env=development|testing|staging|production
-#
-# TODO:
-#
-#		- Add support for ansible limit options.
-#		- Add support for ansible tag options.
 #
 
 
@@ -35,12 +30,13 @@
 #
 include ~/.appflow/config
 
+args ?= ""
 tenant ?= CFG_TENANT_ID
 vault ?= CFG_TENANT_NAME
 env ?= CFG_DEFAULT_ENV
-firstrun ?= ""
-# TODO: limit ?= ""
-# TODO: tags ?= ""
+firstrun ?= false
+limit ?= false
+tags ?= false
 
 ifneq "$(tenant)" "CFG_TENANT_ID"
 vault := tenant
@@ -54,16 +50,24 @@ ifeq "$(firstrun)" "true"
 args := "-k -u vagrant"
 endif
 
+ifneq "$(limit)" "false"
+args += "--limit $(limit)"
+endif
+
+ifneq "$(tags)" "false"
+args += "--tags $(tags)"
+endif
+
 .PHONY: provision encrpy decrypt
 
 #
 # Tasks
 #
-all:
+debug:
 	@echo tenant: $($(tenant))
-	@echo env: $(env)
-	@echo firstrun: $(args)
 	@echo vault: $($(vault))
+	@echo env: $(env)
+	@echo args: $(args)
 
 initialize:
 	# TODO: Initialize AppFlow base configuration.
