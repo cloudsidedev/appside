@@ -1,0 +1,6 @@
+---
+
+# file: playbooks/vars/os/distribution/Ubuntu-precise.yml
+
+var_package_php5_apc: php5-apcu
+var_package_git: git

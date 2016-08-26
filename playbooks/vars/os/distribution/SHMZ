@@ -1,0 +1,26 @@
+---
+
+# playbooks/vars/os/distribution/group_vars/SHMZ
+
+#
+# Base
+#
+conf_root_shell: "/bin/bash"
+conf_etc_path: "/etc"
+conf_local_etc_path: "/etc"
+conf_lib_path: "/usr/lib"
+conf_bin_path: "/usr/bin"
+conf_zsh_path: "/bin/zsh"
+conf_root_group: "root"
+conf_www_group: "www-data"
+conf_sudo_nopasswd_group: "admin"
+conf_php_cli: "/usr/bin/php"
+conf_web_cron: "/etc/cron.d/wp-cron"
+
+#
+# MySQL/Percona
+#
+conf_mysql_conf: "/etc/mysql/my.cnf"
+conf_mysql_basedir: "/usr"
+conf_mysql_datadir: "/var/lib/mysql"
+conf_mysql_lc_messages_dir: "/usr/share/mysql"
