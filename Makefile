@@ -90,7 +90,7 @@ initialize:
 
 provision:
 	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	@ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory generic.yml \
+	@ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 encrypt:

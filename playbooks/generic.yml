@@ -1,0 +1,17 @@
+---
+
+# file: playbooks/generic.yml
+
+- hosts: all
+
+  roles:
+
+    - common
+    # - lbtier
+    # - webtier
+    # - dbtier
+
+  vars_files:
+
+      - "vars/os/distribution/{{ ansible_distribution }}.yml"
+      - "vars/os/distribution_release/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
