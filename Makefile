@@ -3,11 +3,13 @@
 #
 #	Usage examples:
 #
-#		% make provision tenant=mrrobot env=development|testing|staging|production firstrun=true|false limit=webservers tags=vhosts
+#		% make provision tenant=mrrobot env=development|testing|staging|production \
+#		firstrun=true|false limit=webservers tags=vhosts verbose=vvv
+#
 #		% make encrypt tenant=mrrobot env=development|testing|staging|production
+#
 #		% make decrypt tenant=mrrobot env=development|testing|staging|production
 #
-
 
 #
 # Macros
@@ -30,13 +32,14 @@
 #
 include ~/.appflow/config
 
-args ?= ""
+args ?= -b
 tenant ?= CFG_TENANT_ID
 vault ?= CFG_TENANT_NAME
 env ?= CFG_DEFAULT_ENV
 firstrun ?= false
 limit ?= false
 tags ?= false
+verbose ?= false
 
 ifneq "$(tenant)" "CFG_TENANT_ID"
 vault := tenant
@@ -47,15 +50,19 @@ env := $($(env))
 endif
 
 ifeq "$(firstrun)" "true"
-args := "-k -u vagrant"
+args += -k -u vagrant
 endif
 
 ifneq "$(limit)" "false"
-args += "--limit $(limit)"
+args += --limit $(limit)
 endif
 
 ifneq "$(tags)" "false"
-args += "--tags $(tags)"
+args += --tags $(tags)
+endif
+
+ifneq "$(verbose)" "false"
+args += -$(verbose)
 endif
 
 .PHONY: provision encrpy decrypt
@@ -74,15 +81,15 @@ initialize:
 
 provision:
 	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	@echo ansible-playbook $(args) -s -i tenant/$($(tenant))/$(env)/inventory generic.yml \
-	--vault-password-file ~/.appflow/vault/$($(vault))/$(env)
+	ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory generic.yml \
+--vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 encrypt:
 	@echo "[$(.BOLD)$(.CYAN)encrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	@find ~/appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault encrypt {} \
-	--vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault encrypt {} \
+--vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 
 decrypt:
 	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	@find ~/appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
-	--vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
+--vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
