@@ -70,18 +70,27 @@ endif
 #
 # Tasks
 #
+all: help debug
+
 debug:
-	@echo tenant: $($(tenant))
-	@echo vault: $($(vault))
-	@echo env: $(env)
-	@echo args: $(args)
+	@echo "Environment settings"
+	@echo "  tenant: $($(tenant))"
+	@echo "  vault: $($(vault))"
+	@echo "  env: $(env)"
+	@echo "  args: $(args)"
+
+help:
+	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "  provision  to start provisioning"
+	@echo "  encrypt    to encrypt vault data"
+	@echo "  decrypt    to decrypt vault data"
 
 initialize:
 	# TODO: Initialize AppFlow base configuration.
 
 provision:
 	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory generic.yml \
+	@ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory generic.yml \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 encrypt:
