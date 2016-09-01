@@ -1,3 +1,3 @@
 # AppFlow
 
-Multitenancy environment automation.
+Multitenant environment automation.
