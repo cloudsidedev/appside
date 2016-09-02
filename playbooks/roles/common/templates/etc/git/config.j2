@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	# bare = true
+
+[hooks "slack"]
+	webhook-url = {{ conf_etckeeper_webhook_url }}
+	channel = {{ conf_etckeeper_channel }}
+	username = {{ conf_etckeeper_username }}
+	icon-emoji = {{ conf_etckeeper_icon_emoji }}
+	repo-nice-name = {{ conf_etckeeper_repo_nice_name }}

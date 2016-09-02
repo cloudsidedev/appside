@@ -1,0 +1,29 @@
+---
+
+# file: playbooks/roles/common/tasks/timezone.yml
+
+#
+# See: http://stackoverflow.com/questions/11931566/how-to-set-the-time-zone-in-amazon-ec2
+#
+
+- name: /etc/timezone (Debian family)
+  copy: content="{{ conf_timezone }}\n" dest=/etc/timezone owner=root group={{ conf_root_group }} mode=0644
+  notify: handle_update_timezone
+  when: ansible_os_family == "Debian"
+  tags: ntp
+
+- name: install ntp (Debian family)
+  apt: pkg=ntp state=installed
+  when: ansible_os_family == "Debian"
+  tags: [ ntp, update ]
+
+- name: start ntp (Debian family)
+  service: name=ntp enabled=yes state=started
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: ntp
+
+- name: reconfigure /etc/timezone (Debian family)
+  shell: dpkg-reconfigure --frontend noninteractive tzdata
+  when: ansible_os_family == "Debian"
+  tags: ntp

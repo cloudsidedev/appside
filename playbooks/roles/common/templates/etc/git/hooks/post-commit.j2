@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+# Slack (slack.com) notification post-receive hook.
+#
+# Based on: https://github.com/joemiller/git-hooks Campfire notification post-receive hook. Author: Joe Miller
+# (http://joemiller.me)
+#
+# Based on post-receive.irc by Mikael Fridh <frimik@gmail.com> https://gist.github.com/1821358
+#
+# Settings needed:
+#  git config hooks.slack.webhook-url "https://hooks.slack.com/services/..."
+#  git config hooks.slack.channel "general"
+#
+# - The Slack webhook URL can be found in:
+#   https://my.slack.com/services/new/incoming-webhook
+#
+
+export http_proxy="{{ conf_http_proxy }}"
+export https_proxy="{{ conf_http_proxy }}"
+
+# DEBUG=true
+
+hostname=`hostname`
+header=`git log -1 --pretty=format:"%h - %an, %ar : %s"`
+msg=$(echo -e "\"text\":\"*[${hostname}]* ${header}\"")
+
+webhook_url=$(git config --get hooks.slack.webhook-url)
+channel=$(git config --get hooks.slack.channel)
+username=$(git config --get hooks.slack.username)
+iconurl=$(git config --get hooks.slack.icon-url)
+iconemoji=$(git config --get hooks.slack.icon-emoji)
+
+if [ -z "$webhook_url" ] || [ -z "$channel" ]; then
+  echo "ERROR: config settings not found"
+  help
+  exit 1
+fi
+
+payload="{${msg}, \"channel\": \"#$channel\""
+
+if [ -n "$username" ]; then
+  payload="$payload, \"username\": \"$username\""
+fi
+
+if [ -n "$iconurl" ]; then
+  payload="$payload, \"icon_url\": \"$iconurl\""
+elif [ -n "$iconemoji" ]; then
+  payload="$payload, \"icon_emoji\": \"$iconemoji\""
+fi
+
+payload="$payload}"
+
+if [ -n "$DEBUG" ]; then
+  echo "POST $webhook_url"
+  echo "payload=$payload"
+fi
+
+curl -s \
+    -d "payload=$payload" \
+    "$webhook_url" \
+    >/dev/null

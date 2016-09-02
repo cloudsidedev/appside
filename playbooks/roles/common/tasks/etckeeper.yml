@@ -1,0 +1,47 @@
+---
+
+# file: playbooks/roles/common/tasks/etckeeper.yml
+
+#
+# After provisioning:
+#
+#   % cd /etc ; rm -rf .git ; etckeeper init ; git add . ; git commit -m "Initial import."
+#
+# Re-run provisioning, works.
+#
+
+- name: create /etc/etckeeper
+  file: path=/etc/etckeeper state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ etckeeper ]
+
+- name: deploy /etc/etckeeper/etckeeper.conf
+  template: src=etc/etckeeper/etckeeper.conf.j2 dest=/etc/etckeeper/etckeeper.conf owner=root group={{ conf_root_group }} mode=0644
+  tags: [ etckeeper ]
+
+- name: create /etc/.git/hooks
+  file: path=/etc/.git/hooks state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ etckeeper ]
+
+- name: deploy /etc/.git/hooks/post-commit
+  template: src=etc/git/hooks/post-commit.j2 dest=/etc/.git/hooks/post-commit owner=root group={{ conf_root_group }} mode=0755
+  tags: [ etckeeper ]
+
+- name: deploy /etc/.git/config
+  template: src=etc/git/config.j2 dest=/etc/.git/config owner=root group={{ conf_root_group }} mode=0644
+  tags: [ etckeeper ]
+
+- name: be sure etckeeper package is installed (Debian family)
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - curl
+    - etckeeper
+  when: ansible_os_family == "Debian"
+  tags: [ etckeeper ]
+
+- name: be sure etckeeper package is installed (CentOS)
+  yum: name={{ item }} state=installed
+  with_items:
+    - curl
+    - etckeeper
+  when: ansible_distribution == "CentOS"
+  tags: [ etckeeper ]

@@ -1,0 +1,10 @@
+---
+
+# file: playbooks/roles/common/tasks/cloud.yml
+
+- name: be sure cloud agent package is installed (Debian family)
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - '{{ conf_cloud_agent }}'
+  when: ansible_os_family == "Debian" and conf_cloud_agent is defined
+  tags: [ cloud ]

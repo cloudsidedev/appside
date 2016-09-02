@@ -1,0 +1,11 @@
+---
+
+# file: playbooks/roles/common/tasks/rsyslog.yml
+
+- name: config rsyslog
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - rsyslog.d/60-remote.conf
+  when: conf_rsyslog_enable == true and conf_rsyslog_remote is defined
+  notify: handle_restart_rsyslog
+  tags: [ rsyslog ]
