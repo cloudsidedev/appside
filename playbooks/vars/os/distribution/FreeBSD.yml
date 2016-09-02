@@ -1,0 +1,47 @@
+---
+
+# file: playbooks/vars/os/distribution/FreeBSD.yml
+
+#
+# Base
+#
+conf_root_shell:
+conf_etc_path:
+conf_local_etc_path:
+conf_lib_path:
+conf_bin_path:
+conf_zsh_path:
+conf_root_group:
+conf_www_group:
+conf_sudo_nopasswd_group:
+conf_unwanted_packages:
+conf_base_packages:
+    - zsh
+    - vim-lite
+    - uptimed
+    - tmux
+    - mosh
+    - tree
+    - unzip
+    - zip
+    - whois
+    - htop
+    - colorize
+    - git
+    - nmap
+    - wget
+    - curl
+    - links
+    - lynx
+    - linux_base-f10
+    - "{{ var_package_git }}"
+conf_php_cli: "/usr/bin/php"
+conf_web_cron: "/etc/cron.d/wp-cron"
+
+#
+# MySQL/Percona
+#
+conf_mysql_conf: "/etc/mysql/my.cnf"
+conf_mysql_basedir: "/usr"
+conf_mysql_datadir: "/var/lib/mysql"
+conf_mysql_lc_messages_dir: "/usr/share/mysql"
