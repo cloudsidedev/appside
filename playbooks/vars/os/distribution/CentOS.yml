@@ -14,6 +14,28 @@ conf_zsh_path: "/bin/zsh"
 conf_root_group: "root"
 conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
+conf_base_packages:
+    - etckeeper
+    - yum-utils
+    - zsh
+    - vim-minimal
+    - tmux
+    - mosh
+    - finger
+    - tree
+    - telnet
+    - unzip
+    - zip
+    - htop
+    - iftop
+    - lsof
+    - unzip
+    - ccze
+    - wget
+    - curl
+    - links
+    - make
+    - "{{ var_package_git }}"
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
 

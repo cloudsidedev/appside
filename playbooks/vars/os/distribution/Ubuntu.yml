@@ -14,6 +14,72 @@ conf_zsh_path: "/bin/zsh"
 conf_root_group: "root"
 conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
+conf_hold_packages:
+    - mod-pagespeed-stable
+conf_unwanted_packages:
+    - chef
+    - chef-zero
+    - puppet
+    - puppet-common
+    - ntfs-3g
+    - ufw
+    - libpolkit-backend-1-0
+    - libpolkit-agent-1-0
+    - xserver-xorg-core
+    - libdrm-nouveau2
+    - libxcomposite1
+    - erubis
+    - libgl1-mesa-dri
+    - libgl1-mesa-glx
+    - libglapi-mesa
+    - libllvm3.4
+    - libtxc-dxtn-s2tc0
+    - libx11-xcb1
+    - libxcb-dri2-0
+    - libxcb-dri3-0
+    - libxcb-glx0
+    - libxcb-present0
+    - libxcb-sync1
+    - libxdamage1
+    - libxfixes3
+    - libxshmfence1
+    - libxxf86vm1
+    - byobu
+    - nano
+    - screen
+    - manpages-dev
+conf_base_packages:
+    - xfsprogs
+    - deborphan
+    - aptitude
+    - apt-transport-https
+    - apt-dater-host
+    - zsh
+    - bsd-mailx
+    - vim
+    - uptimed
+    - tmux
+    - mosh
+    - finger
+    - tree
+    - telnet
+    - unzip
+    - zip
+    - whois
+    - htop
+    - ccze
+    - subversion
+    - nmap
+    - dnsutils
+    - wget
+    - curl
+    - links
+    - lynx
+    - traceroute
+    - acl
+    - make
+    - "{{ var_package_git }}"
+    - convmv
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
 
