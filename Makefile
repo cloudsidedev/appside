@@ -88,6 +88,10 @@ help:
 initialize:
 	# TODO: Initialize AppFlow base configuration.
 
+tags:
+	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@ansible-playbook --list-tags -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml
+
 provision:
 	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
 	@ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml \
