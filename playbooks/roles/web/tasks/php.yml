@@ -1,0 +1,107 @@
+---
+
+# file: playbooks/roles/web/tasks/php.yml
+
+#
+# PPA migration: https://github.com/oerdnj/deb.sury.org/wiki/PPA-migration-to-ppa:ondrej-php
+#
+
+- name: remove osbolete 5.6 PPA (Ubuntu)
+  file: name=/etc/apt/sources.list.d/{{ item }} state=absent
+  with_items:
+    - "ppa_ondrej_php5_5_6_trusty.list"
+  when: ansible_distribution == "Ubuntu"
+  tags: [ php, update ]
+
+- name: PHP PPA (Ubuntu)
+  apt_repository: repo='ppa:ondrej/php' update_cache=yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version != "12.04"
+  ignore_errors: true
+  tags: [ php, update ]
+
+#
+# TODO: Add Debian PPA, https://packages.sury.org/php/
+#
+
+- name: be sure web packages packages are installed (Debian family)
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+    - apache2
+    - libapache2-mod-php5.6
+    - libapache2-mod-rpaf
+    - apachetop
+    - php5.6
+    - php5.6-cli
+    - php5.6-gd
+    - php5.6-json
+    # - php5.6-memcache
+    - php5.6-mysql
+    - php5.6-tidy
+    - php5.6-curl
+    - php5.6-gd
+    - php5.6-imagick
+    - php5.6-imap
+    - php5.6-intl
+    - php5.6-ldap
+    - php5.6-mcrypt
+    - php5.6-gettext
+    - php5.6-xml
+    - php-db
+    - php-mdb2
+    - php-pear
+    - imagemagick
+    - gifsicle
+    - optipng
+    - libjpeg-progs
+    # - varnish
+    # - memcached
+  when: ansible_os_family == "Debian"
+  ignore_errors: true
+  tags: [ php, apache2 ]
+
+- name: be sure web packages packages are installed (FreeBSD)
+  pkgng: name={{item}} state=present
+  with_items:
+    - php6-5.6.1
+    - php6-json-5.6.1
+    - php6-phar-5.6.1
+    - php6-filter-5.6.1
+    - php6-hash-5.6.1
+    - php6-ctype-5.6.1
+    - php6-openssl-5.6.1
+  when: ansible_distribution == "FreeBSD"
+  tags: [ php ]
+
+- name: deploy php.ini (Debian family)
+  template: src=etc/php/5.6/{{ item }}/php.ini.j2 dest={{ conf_local_etc_path }}/php/5.6/{{ item }}/php.ini owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - apache2
+    - cli
+  when: ansible_os_family == "Debian"
+  notify: handle_restart_apache2
+  tags: [ php, php-conf ]
+
+- name: config PHP date.timezone (Debian family)
+  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=Date option=date.timezone value='"{{ conf_timezone }}"' mode=0644
+  with_items:
+    - "apache2"
+    - "cli"
+  notify: handle_restart_apache2
+  when: ansible_os_family == "Debian"
+  tags: [ php, php-conf ]
+
+- name: config PHP error_log (Debian family)
+  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=PHP option=error_log value='/var/log/apache2/php_error.log' mode=0644
+  with_items:
+    - "apache2"
+  notify: handle_restart_apache2
+  when: ansible_os_family == "Debian"
+  tags: [ php, php-conf ]
+
+- name: config PHP display_errors off  (Debian family, production)
+  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=PHP option=display_errors value=Off mode=0644
+  with_items:
+    - "apache2"
+  notify: handle_restart_apache2
+  when: conf_env == "production" and ansible_os_family == "Debian"
+  tags: [ php, php-conf ]
