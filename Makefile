@@ -106,3 +106,13 @@ decrypt:
 	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
+
+vagrant:
+	mkdir -p ~/Downloads/Software
+	mkdir -p ~/Downloads/Software/Vagrant-Boxes
+	cd ~/Downloads/Software/Vagrant-Boxes && wget -c -q http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box > /dev/null && mv trusty-server-cloudimg-amd64-vagrant-disk1.box trusty64.box && cd ~/Documents/webdev/wpcommon/ansible
+	# pushd ~/Downloads/Software/Vagrant-Boxes && wget -c -q http://files.vagrantup.com/precise64.box > /dev/null && wget -c -q http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box > /dev/null && mv trusty-server-cloudimg-amd64-vagrant-disk1.box trusty64.box && wget -c http://files.wunki.org/freebsd-10.0-amd64-wunki.box > /dev/null && popd
+	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
+	vagrant plugin install vagrant-cachier
+	# https://github.com/mitchellh/vagrant/issues/1673
+	vagrant plugin install vagrant-vbguest
