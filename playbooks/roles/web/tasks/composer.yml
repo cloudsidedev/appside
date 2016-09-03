@@ -1,0 +1,37 @@
+---
+
+# file: playbooks/roles/web/tasks/composer.yml
+
+- name: check if composer is installed
+  stat: "path=/usr/local/bin/composer"
+  register: composer_bin
+  tags: [composer, php, apache2]
+
+- name: download composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-installer.php
+    mode: 0755
+  when: not composer_bin.stat.exists
+  tags: [composer, php, apache2]
+
+- name: run composer installer
+  command: >
+    {{ conf_php_cli }} composer-installer.php
+    chdir=/tmp
+  when: not composer_bin.stat.exists
+  tags: [composer, php, apache2]
+
+- name: move composer into globally-accessible location
+  shell: >
+    mv /tmp/composer.phar /usr/local/bin/composer
+    creates=/usr/local/bin/composer
+  when: not composer_bin.stat.exists
+  tags: [composer, php, apache2]
+
+- name: update composer to latest version (if configured)
+  shell: >
+    {{ conf_php_cli }} /usr/local/bin/composer self-update
+  register: composer_update
+  changed_when: "'Updating to version' in composer_update.stdout"
+  tags: [composer, php, apache2]
