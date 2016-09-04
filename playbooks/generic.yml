@@ -7,9 +7,9 @@
   roles:
 
     - common
-    # - lbtier
-    # - webtier
-    # - dbtier
+    # - lb
+    - web
+    # - db
 
   vars_files:
 
