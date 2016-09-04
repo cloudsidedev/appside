@@ -29,7 +29,7 @@
   when: not composer_bin.stat.exists
   tags: [composer, php, apache2]
 
-- name: update composer to latest version (if configured)
+- name: update composer to latest version
   shell: >
     {{ conf_php_cli }} /usr/local/bin/composer self-update
   register: composer_update
