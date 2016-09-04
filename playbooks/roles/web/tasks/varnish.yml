@@ -1,0 +1,35 @@
+---
+
+# file: playbooks/roles/web/tasks/varnish.yml
+
+- name: be sure varnish package is installed (Debian family)
+  apt: pkg={{ item }} state=present force=yes
+  with_items:
+    - varnish
+  when: ansible_os_family == "Debian"
+  ignore_errors: true
+  tags: [ varnish, varnish-conf, apache2 ]
+
+- name: varnish service state (Debian family)
+  service: name=varnish state=started enabled=yes
+  when: ansible_os_family == "Debian"
+  tags: [ varnish, apache2 ]
+
+- name: deploy varnish conf (Debian family)
+  template: src=default/varnish.j2 dest=/etc/default/varnish owner=root group={{ conf_www_group }} mode=0644
+  notify: handle_reload_varnish
+  when: ansible_os_family == "Debian"
+  tags: [ varnish, varnish-conf, apache2 ]
+
+- name: deploy varnish default.vcl (Debian family)
+  template: src=varnish/default.vcl.j2 dest=/etc/varnish/default.vcl owner=root group={{ conf_www_group }} mode=0644
+  notify: handle_reload_varnish
+  when: ansible_os_family == "Debian"
+  tags: [ varnish, varnish-conf, apache2 ]
+
+- name: perms /etc/varnish/secret (Debian family)
+  file: path=/etc/varnish/secret owner=root group=nagios mode=0640
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ varnish, varnish-conf, apache2 ]
