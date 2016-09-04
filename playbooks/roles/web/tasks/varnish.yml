@@ -16,13 +16,10 @@
   tags: [ varnish, apache2 ]
 
 - name: deploy varnish conf (Debian family)
-  template: src=default/varnish.j2 dest=/etc/default/varnish owner=root group={{ conf_www_group }} mode=0644
-  notify: handle_reload_varnish
-  when: ansible_os_family == "Debian"
-  tags: [ varnish, varnish-conf, apache2 ]
-
-- name: deploy varnish default.vcl (Debian family)
-  template: src=varnish/default.vcl.j2 dest=/etc/varnish/default.vcl owner=root group={{ conf_www_group }} mode=0644
+  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
+  with_items:
+    - default/varnish
+    - varnish/default.vcl
   notify: handle_reload_varnish
   when: ansible_os_family == "Debian"
   tags: [ varnish, varnish-conf, apache2 ]

@@ -1,0 +1,73 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+###########
+# Backend #
+###########
+backend default {
+  {{ conf_varnish_backend_default }}}
+
+#############
+# ACL PURGE #
+#############
+acl purge {
+  {{ conf_varnish_acl_purge }}}
+
+  #
+  # X-Forwarded-For
+  #
+  # See: https://www.varnish-cache.org/docs/2.1/faq/http.html
+  #      % varnishlog | grep X-Forwarded-For
+  #
+  # We can have two scenarios actually:
+  #
+  #   REQUEST -> Varnish -> Apache2               (Varnish inserts X-Forwarded-For)
+  #   REQUEST -> HAPROXY -> Varnish -> Apache2    (HAPROXY inserts X-Forwarded-For)
+  #
+  # In case Varnish is first in the chain, insert own X-Forwarded-For.
+  # Boolean "conf_lbtier_enable", defined per node, tells us if we use HAPROXY.
+  #
+
+################
+# sub vcl_recv #
+################
+sub vcl_recv {
+  {{ conf_varnish_vcl_recv }}}
+
+#################
+# sub vcl_fetch #
+#################
+sub vcl_fetch {
+  #set obj.grace = 5m;
+  set beresp.grace = 2m;
+}
+
+###############
+# sub vcl_hit #
+###############
+sub vcl_hit {
+  if (req.request == "PURGE") {
+    purge;
+    error 200 "Purged.";
+  }
+}
+
+################
+# sub vcl_miss #
+################
+sub vcl_miss {
+  if (req.request == "PURGE") {
+    purge;
+    error 200 "Not in cache.";
+  }
+}
+
+################
+# sub vcl_pass #
+################
+sub vcl_pass {
+    if (req.request == "PURGE") {
+        error 502 "PURGE on a passed object";
+    }
+}
