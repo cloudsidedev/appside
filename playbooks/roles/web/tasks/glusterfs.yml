@@ -2,6 +2,16 @@
 
 # file: playbooks/roles/web/tasks/glusterfs.yml
 
+#
+# Procedure for setting up a three-node cluster:
+#
+#   % make provision env=production limit=webservers tenant=mrrobot tags=glusterfs
+#   % ssh compute-02.webservers "sudo gluster peer probe gluster-node0.local"
+#   % ssh compute-03.webservers "sudo gluster peer probe gluster-node0.local"
+#   % make provision env=production limit=webservers tenant=mrrobot tags=glusterfs
+#
+
+
 - name: remove osbolete glusterfs PPA (staging and production)
   file: name=/etc/apt/sources.list.d/{{ item }} state=absent
   with_items:
