@@ -1,0 +1,39 @@
+---
+
+# file: playbooks/roles/web/tasks/nodejs.yml
+
+- name: node.js PPA  (Ubuntu)
+  apt_repository: repo='ppa:chris-lea/node.js' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes
+  tags: [ nodejs, update ]
+
+- name: be sure nodejs packages packages are installed (Ubuntu)
+  apt: pkg={{ item }} state=installed force=yes
+  with_items:
+    - nodejs
+  when: ansible_distribution == "Ubuntu"
+  tags: [ nodejs, web_packages ]
+
+- name: be sure nodejs packages packages are installed (Debian)
+  apt: pkg={{ item }} state=installed force=yes
+  with_items:
+    - npm
+  when: ansible_distribution == "Debian"
+  tags: [ nodejs, web_packages ]
+
+- name: be sure nodejs packages packages are installed (Debian)
+  apt: pkg={{ item }} state=installed force=yes
+  with_items:
+    - nodejs
+    - nodejs-legacy
+  when: ansible_distribution == "Debian"
+  tags: [ nodejs, web_packages ]
+
+- name: ensure Node packages are present
+  npm: name={{ item }} global=yes state=present
+  with_items:
+    - npm
+    - bower
+    - gulp
+  tags: [ nodejs, web_packages ]
