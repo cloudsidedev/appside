@@ -1,0 +1,15 @@
+---
+
+# playbooks/roles/web/handlers/main.yml
+
+- name: handle_restart_apache2
+  service: name=apache2 state=restarted
+
+- name: handle_reload_apache2
+  service: name=apache2 state=reloaded
+
+- name: handle_restart_varnish
+  service: name=varnish state=restarted
+
+- name: handle_reload_varnish
+  service: name=varnish state=reloaded
