@@ -46,6 +46,7 @@
     - php5.6-mcrypt
     - php5.6-gettext
     - php5.6-xml
+    - php5-common
     - php-db
     - php-mdb2
     - php-pear

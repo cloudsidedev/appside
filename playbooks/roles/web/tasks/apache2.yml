@@ -7,27 +7,27 @@
 #
 # Server MPM:     prefork
 #
+#   12.04
+#   StartServers          {{ conf_apache2_StartServers }}
+#   MinSpareServers       {{ conf_apache2_MinSpareServers }}
+#   MaxSpareServers       {{ conf_apache2_MaxSpareServers }}
+#
+#   MaxClients            {{ conf_apache2_MaxClients }}
+#   MaxRequestsPerChild   {{ conf_apache2_MaxRequestsPerChild }}
+#
+#   14.04
+#   StartServers             5
+#   MinSpareServers          5
+#   MaxSpareServers          10
+#
+#   MaxRequestWorkers        150
+#   MaxConnectionsPerChild   0
+#
 
 - name: create /etc/apache2/conf.d (Debian family)
   file: path=/etc/apache2/conf.d state=directory owner=root group={{ conf_root_group }} mode=0755
   when: ansible_os_family == "Debian"
   tags: [ apache2 ]
-
-    # 12.04
-    # StartServers          {{ conf_apache2_StartServers }}
-    # MinSpareServers       {{ conf_apache2_MinSpareServers }}
-    # MaxSpareServers       {{ conf_apache2_MaxSpareServers }}
-
-    # MaxClients            {{ conf_apache2_MaxClients }}
-    # MaxRequestsPerChild   {{ conf_apache2_MaxRequestsPerChild }}
-
-    # 14.04
-    # StartServers                     5
-    # MinSpareServers           5
-    # MaxSpareServers          10
-
-    # MaxRequestWorkers         150
-    # MaxConnectionsPerChild   0
 
 - name: adapt mpm_prefork /etc/apache2/mods-available/mpm_prefork.conf
   lineinfile:
@@ -62,12 +62,58 @@
   notify: handle_restart_apache2
   tags: [ apache2 ]
 
-#
-# /etc/apache2/mods-enabled/mpm_prefork.conf (14.04)
-# /etc/apache2/apache2.conf (12.04)
-#
-- name: deploy custom-apache2.conf (Debian family)
-  template: src=apache2/custom-apache2-conf.j2 dest=/etc/apache2/conf.d/custom-apache2.conf owner=root group={{ conf_root_group }} mode=0644
+- name: deploy apache2 conf (Debian family)
+  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - apache2/conf.d/custom-apache2-conf
+    - apache2/ports.conf
   notify: handle_restart_apache2
   when: ansible_os_family == "Debian"
-  tags: [ apache2 ]
+  tags: [ apache2, apache2-conf ]
+
+- name: create /var/www/vhosts directory
+  file: path=/var/www/vhosts state=directory owner={{ conf_www_group }} group={{ conf_www_group }} mode=0755
+  tags: [ apache2, apache2-conf ]
+
+- name: create /var/www/vhosts-archived directory
+  file: path=/var/www/vhosts-archived state=directory owner=root group={{ conf_www_group }} mode=0755
+  tags: [ apache2, apache2-conf ]
+
+- name: create /var/www/html directory
+  file: path=/var/www/html state=directory owner=root group={{ conf_www_group }} mode=0755
+  tags: [ apache2, apache2-conf ]
+
+- name: remove default /var/www index.html files
+  file: path=/var/www/{{item}} state=absent
+  with_items:
+    - index.html
+    - html/index.html
+  tags: [ apache2, apache2-conf ]
+
+- name: copy www index.php from template
+  template: src=etc/apache2/index.php.j2 dest=/var/www/html/index.php
+  tags: [ apache2, apache2-conf ]
+
+- name: symlink www index.php
+  file: src=/var/www/html/index.php dest=/var/www/index.php state=link
+  when: ansible_os_family == "Debian"
+  tags: [ apache2, apache2-conf ]
+
+- name: enable apache2 modules
+  apache2_module: state=present name={{item}}
+  with_items:
+    - php5.6
+    - rewrite
+    - rpaf
+    - deflate
+    - expires
+    - headers
+    - status
+  notify: handle_reload_apache2
+  when: ansible_os_family == "Debian"
+  tags: [ apache2, apache2-conf ]
+
+- name: apache2 service state
+  service: name=apache2 state=started enabled=yes
+  when: ansible_os_family == "Debian"
+  tags: [ apache2, apache2-conf ]
