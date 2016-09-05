@@ -1,0 +1,73 @@
+---
+
+# file: playbooks/roles/web/tasks/apache2.yml
+
+#
+# % apache2ctl -V
+#
+# Server MPM:     prefork
+#
+
+- name: create /etc/apache2/conf.d (Debian family)
+  file: path=/etc/apache2/conf.d state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: ansible_os_family == "Debian"
+  tags: [ apache2 ]
+
+    # 12.04
+    # StartServers          {{ conf_apache2_StartServers }}
+    # MinSpareServers       {{ conf_apache2_MinSpareServers }}
+    # MaxSpareServers       {{ conf_apache2_MaxSpareServers }}
+
+    # MaxClients            {{ conf_apache2_MaxClients }}
+    # MaxRequestsPerChild   {{ conf_apache2_MaxRequestsPerChild }}
+
+    # 14.04
+    # StartServers                     5
+    # MinSpareServers           5
+    # MaxSpareServers          10
+
+    # MaxRequestWorkers         150
+    # MaxConnectionsPerChild   0
+
+- name: adapt mpm_prefork /etc/apache2/mods-available/mpm_prefork.conf
+  lineinfile:
+    dest=/etc/apache2/mods-available/mpm_prefork.conf
+    regexp="{{ item.key }}"
+    line="{{ item.value }}"
+  with_items:
+    - { key: 'StartServers', value: 'StartServers {{ conf_apache2_StartServers }}' }
+    - { key: 'MinSpareServers', value: 'MinSpareServers {{ conf_apache2_MinSpareServers }}' }
+    - { key: 'MaxSpareServers', value: 'MaxSpareServers {{ conf_apache2_MaxSpareServers }}' }
+    - { key: 'MaxRequestWorkers', value: 'MaxRequestWorkers {{ conf_apache2_MaxClients }}' }
+    - { key: 'MaxConnectionsPerChild', value: 'MaxConnectionsPerChild {{ conf_apache2_MaxRequestsPerChild }}' }
+  when: ( ansible_distribution == "Ubuntu" and ansible_distribution_version == "14.04" ) or ansible_distribution == "Debian"
+  notify: handle_restart_apache2
+  tags: [ apache2 ]
+
+#
+# Here should adapt: ~/ansible/playbooks/roles/web/templates/apache2/apache2-conf-12.04.j2
+#
+- name: adapt mpm_prefork on /etc/apache2/apache2.conf
+  lineinfile:
+    dest=/etc/apache2/apache2.conf
+    regexp="{{ item.key }}"
+    line="{{ item.value }}"
+  with_items:
+    - { key: 'StartServers', value: 'StartServers {{ conf_apache2_StartServers }}' }
+    - { key: 'MinSpareServers', value: 'MinSpareServers {{ conf_apache2_MinSpareServers }}' }
+    - { key: 'MaxSpareServers', value: 'MaxSpareServers {{ conf_apache2_MaxSpareServers }}' }
+    - { key: 'MaxClients', value: 'MaxClients {{ conf_apache2_MaxClients }}' }
+    - { key: 'MaxRequestsPerChild', value: 'MaxRequestsPerChild {{ conf_apache2_MaxRequestsPerChild }}' }
+  when: ( ansible_distribution == "Ubuntu" and ansible_distribution_version == "14.04" ) or ansible_distribution == "Debian"
+  notify: handle_restart_apache2
+  tags: [ apache2 ]
+
+#
+# /etc/apache2/mods-enabled/mpm_prefork.conf (14.04)
+# /etc/apache2/apache2.conf (12.04)
+#
+- name: deploy custom-apache2.conf (Debian family)
+  template: src=apache2/custom-apache2-conf.j2 dest=/etc/apache2/conf.d/custom-apache2.conf owner=root group={{ conf_root_group }} mode=0644
+  notify: handle_restart_apache2
+  when: ansible_os_family == "Debian"
+  tags: [ apache2 ]
