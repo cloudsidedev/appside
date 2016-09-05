@@ -27,17 +27,17 @@
 
 - name: create glusterfs data folder (/data/glusterfs/gvol0/brick1)
   file: path=/data/glusterfs/gvol0/brick1 state=directory owner=root group={{ conf_root_group }} mode=0755
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: create glusterfs mountpoint (/mnt/glusterfs/gvol0)
   file: path=/mnt/glusterfs/gvol0 state=directory owner=root group={{ conf_root_group }} mode=0755
   when: conf_env != "development"
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: create glusterfs mountpoint (/mnt/glusterfs/gvol0/brick1)
   file: path=/mnt/glusterfs/gvol0/brick1 state=directory owner=root group={{ conf_root_group }} mode=0755
   when: conf_env == "development"
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: check gluster peer status
   # shell: gluster peer probe {{ conf_glusterfs_node1 }} && gluster peer probe {{ conf_glusterfs_node2 }}
@@ -46,7 +46,7 @@
   register: gluster_peer_res
   failed_when: gluster_peer_res.rc != 0
   when: conf_env != "development" and conf_glusterfs_master == true
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 # We need to register the master on the client (TODO)
 - name: check gluster peer status
@@ -55,7 +55,7 @@
   # register: gluster_peer_res
   # failed_when: gluster_peer_res.rc != 0
   when: conf_env != "development" and conf_glusterfs_master == false
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: check gluster gvol0
   shell: gluster volume info gvol0
@@ -63,7 +63,7 @@
   register: gluster_check_res
   failed_when: gluster_check_res.rc != 0
   when: conf_env != "development" and gluster_peer_res != "failed" and conf_glusterfs_master == true
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 # - debug: msg="DEBUG is MASTER {{ conf_glusterfs_master }}"
 #   when: gluster_check_res|failed and conf_glusterfs_master == true
@@ -72,32 +72,24 @@
   # shell: {{gluster volume create gvol0 replica 3 {{ conf_glusterfs_node0 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node1 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node2 }}:/data/glusterfs/gvol0/brick1 force}}
   shell: "{{ conf_glusterfs_gvol0 }}"
   when: conf_env != "development" and gluster_check_res|failed and conf_glusterfs_master == true
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: start gluster gvol0
   shell: gluster volume start gvol0
   when: conf_env != "development" and gluster_check_res|failed and conf_glusterfs_master == true
-  tags: glusterfs
+  tags: [ glusterfs ]
 
 - name: set glusterfs volume options gvol0
   shell: gluster volume set gvol0 nfs.disable on
   # when: conf_env != "development" and gluster_check_res|failed and conf_glusterfs_master == true
   when: conf_env != "development" and conf_glusterfs_master == true
-  tags: glusterfs
+  tags: [ glusterfs ]
 
-- name: autofs GlusterFS auto.master
-  template: src=glusterfs/auto-master.j2 dest=/etc/auto.master owner=root group={{ conf_root_group }} mode=0644
+- name: autofs GlusterFS
+  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - "auto.master"
+      - "auto.glusterfs"
   when: conf_env != "development"
   notify: handle_restart_autofs
-  tags: glusterfs
-
-  # GLUSTER: brick1   -fstype=glusterfs,_netdev,backupvolfile-server=endeavour   localhost:/gvol0
-- name: autofs GlusterFS auto.glusterfs
-  template: src=glusterfs/auto-glusterfs.j2 dest=/etc/auto.glusterfs owner=root group={{ conf_root_group }} mode=0644
-  when: conf_env != "development"
-  notify: handle_restart_autofs
-  tags: glusterfs
-
-  # gluster volume info
-  # https://github.com/jimmynapkins/ansible-gluster/blob/master/playbook.yml
-  # http://www.jamescoyle.net/how-to/439-mount-a-glusterfs-volume
+  tags: [ glusterfs ]
