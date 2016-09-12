@@ -1,0 +1,39 @@
+---
+
+# playbooks/roles/common/handlers/main.yml
+
+- name: handle_restart_rsyslog
+  service: name=rsyslog state=restarted
+
+- name: handle_restart_nullmailer
+  service: name=nullmailer state=restarted
+
+- name: handle_update_timezone
+  command: dpkg-reconfigure --frontend noninteractive tzdata
+
+- name: handle_restart_autofs
+  service: name=autofs state=restarted
+
+- name: handle_restart_tinc
+  service: name=tinc state=restarted
+
+- name: install_zabbix
+  apt: deb=/tmp/{{ conf_zabbix_repo_config_package }}
+
+- name: handle_restart_zabbix_agent
+  service: name=zabbix-agent state=restarted
+
+- name: handle_restart_apache2
+  service: name=apache2 state=restarted
+
+- name: handle_restart_icinga2
+  service: name=icinga2 state=restarted
+
+- name: handle_restart_carbon_cache
+  service: name=carbon-cache state=restarted
+
+- name: handle_restart_grafana
+  service: name=grafana-server state=restarted
+
+- name: handle_restart_ceph
+  service: name=ceph state=restarted
