@@ -7,7 +7,7 @@
   roles:
 
     - common
-    # - lb
+    - lb
     - web
     # - db
 
