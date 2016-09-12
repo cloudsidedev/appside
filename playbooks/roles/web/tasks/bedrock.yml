@@ -1,0 +1,143 @@
+---
+
+# file: playbooks/roles/web/tasks/bedrock.yml
+
+#
+# The shared folder
+#
+- name: create vhost bedrock shared folder (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared state=directory owner=deploy group=deploy mode=0755
+  when: item.value.state == "enabled" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# .env templates (Debian family, staging and production)
+#
+- name: deploy bedrock env template (wp) if enabled (common)
+  template: src={{ item.value.type }}/env.j2 dest=/var/www/vhosts/{{ item.key }}/shared/.env owner=deploy group=deploy mode=0644
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, env ]
+
+#
+# .env templates (development)
+#
+- name: deploy bedrock env template (wp) if enabled (development)
+  template: src={{ item.value.type }}/env.j2 dest=/var/www/vhosts/{{ item.key }}/.env owner=deploy group=deploy mode=0644
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.config_env == true
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, env ]
+
+#
+# WP app folder
+#
+# development: web/app
+# staging and production: shared/web/app
+#
+
+- name: check bedrock app folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web/app state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: check bedrock app folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/web/app state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# WP Uploads folder
+#
+- name: check bedrock upload folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/uploads state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# WP Languages folder
+#
+- name: check bedrock languages folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/languages state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# WP plugins folder
+#
+- name: check bedrock plugins folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/plugins state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# WP ewww folder
+#
+# - name: check bedrock ewww folder if enabled (common)
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/ewww state=directory owner=deploy group={{ conf_www_group }} mode=0775
+#   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock"
+#   with_dict: '{{ conf_vhosts_common }}'
+#   tags: [ vhosts ]
+
+#
+# shared/web/.htaccess (staging and production)
+#
+# NOTE: If we only want that .htaccess is touched, use:
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0664 state=touch
+#
+- name: make sure .htaccess file exists if enabled (Capistrano, Common)
+  template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/shared/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "wp_bedrock" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts, htaccess ]
+
+#
+# web/.htaccess (development)
+#
+- name: make sure .htaccess file exists if enabled (Capistrano, Common, dev)
+  template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "wp_bedrock" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, htaccess ]
+
+#
+# WP-CRON
+#
+#- name: make sure wp-cron exists
+#  template: src=wp_bedrock/wp-cron.j2 dest={{ conf_web_cron }} owner=root group={{ conf_root_group }} mode=0644
+#tags: [ vhosts ]
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+# NOTE: This template is empty, it's populated with entries by bedrock.yml
+#
+
+- name: deploy wp-cron entries if enabled
+  lineinfile: dest={{ conf_web_cron }}
+              regexp='^MAILTO=""'
+              line='MAILTO=""'
+              insertbefore=BOF
+              create=yes
+              owner=root group={{ conf_root_group }} mode=0644
+              state=present
+  tags: [ vhosts ]
+
+- name: deploy wp-cron entries if enabled
+  lineinfile: dest={{ conf_web_cron }}
+              line='*/5 * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl http://{{ item.value.servername }}/wp/wp-cron.php'
+              insertafter=EOF
+              state=present
+  when: item.value.state == "enabled" and item.value.type == "wp_bedrock"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+# - include: w3_total_cache.yml
