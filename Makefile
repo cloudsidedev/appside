@@ -37,6 +37,7 @@ tenant ?= CFG_TENANT_ID
 vault ?= CFG_TENANT_NAME
 env ?= CFG_DEFAULT_ENV
 firstrun ?= false
+local ?= false
 limit ?= false
 tags ?= false
 verbose ?= false
@@ -51,6 +52,10 @@ endif
 
 ifeq "$(firstrun)" "true"
 args += -k -u vagrant
+endif
+
+ifeq "$(local)" "true"
+args += -c local
 endif
 
 ifneq "$(limit)" "false"
