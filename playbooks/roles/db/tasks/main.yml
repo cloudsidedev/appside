@@ -38,6 +38,10 @@
 #   when: ansible_distribution == "Ubuntu"
 #   tags: [ mysql, mysql-conf, percona ]
 
+- name: create /etc/mysql
+  file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ mysql, mysql-conf, percona ]
+
 - name: deploy /etc/mysql/my.cnf (Ubuntu)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
