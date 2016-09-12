@@ -12,7 +12,7 @@
   tags: vhosts
 
 - name: deploy 000-default vhost
-  template: src=apache2/vhost-000-default.conf.j2 dest=/etc/apache2/sites-available/000-default.conf
+  template: src=etc/apache2/vhost-000-default.conf.j2 dest=/etc/apache2/sites-available/000-default.conf
   when: ansible_os_family == "Debian"
   notify:
     - handle_reload_apache2
@@ -47,7 +47,7 @@
 # deploy vhost templates
 #
 - name: deploy vhost templates (wp) if enabled (Common, dev)
-  template: src=apache2/vhost-dev-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-dev-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env == "development" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -56,7 +56,7 @@
   tags: vhosts
 
 - name: deploy vhost templates if enabled (Common, stage)
-  template: src=apache2/vhost-stage-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-stage-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env == "staging" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -65,7 +65,7 @@
   tags: vhosts
 
 - name: deploy vhost templates if enabled (Common, prod)
-  template: src=apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env == "production" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -77,7 +77,7 @@
 # Activate vhosts
 #
 - name: activate vhost if enabled (Common)
-  file: src=/etc/apache2/sites-available/{{ item.key }}.conf dest=/etc/apache2/sites-enabled/{{ item.key }}.conf state=link
+  file: src=etc/apache2/sites-available/{{ item.key }}.conf dest=/etc/apache2/sites-enabled/{{ item.key }}.conf state=link
   when: item.value.state == "enabled" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify: handle_reload_apache2
