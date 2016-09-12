@@ -1,0 +1,15 @@
+---
+
+# file: playbooks/roles/lb/tasks/main.yml
+
+- include: keepalived.yml
+  when: conf_keepalived_enable == true
+  tags: [ haproxy, keepalived, keepalived-conf ]
+
+- include: haproxy.yml
+  when: conf_lbtier_enable == true
+  tags: [ haproxy, haproxy-conf ]
+
+- include: confd.yml
+  when: conf_confd_enable is defined and conf_confd_enable == true
+  tags: [ haproxy, confd, confd-conf ]

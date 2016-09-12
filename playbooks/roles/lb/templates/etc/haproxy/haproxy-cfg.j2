@@ -1,0 +1,188 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+# % haproxy -f /etc/haproxy/haproxy.cfg -c
+#
+
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+    # Default SSL material locations
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+
+    # Default ciphers to use on SSL-enabled listening sockets.
+    # For more information, see ciphers(1SSL). This list is from:
+    #  https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+    ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+    ssl-default-bind-options no-sslv3
+
+    # Setting tune.ssl.default-dh-param to 1024 by default, if your workload permits it you should set it to at least 2048
+    tune.ssl.default-dh-param 2048
+
+defaults
+    log     global
+    mode    http
+    # option  httplog
+    option  dontlognull
+
+    maxconn 10000
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+{% if conf_haproxy_userlist is defined %}
+  # USERSLIT
+  {{ conf_haproxy_userlist }}
+{% endif %}
+
+#######
+# WWW #
+#######
+frontend www-frontend
+    mode http
+    compression algo gzip
+    compression type text/html text/plain text/javascript application/javascript application/xml text/css
+    timeout client 5000
+
+    option httplog
+    option forwardfor
+    option http-server-close
+
+{% if conf_haproxy_www_request is defined %}
+    # request
+    {{ conf_haproxy_www_request }}
+{% endif %}
+
+    # primary cert is /etc/cert/server.pem
+    # /etc/cert/certdir/ contains additional certificates for SNI clients
+    # bind :443 ssl crt /etc/cert/cacert.pem crt /etc/cert/certdir/
+    # bind :443 ssl crt /etc/cert/cacert.pem
+
+    # bind :443 ssl crt /etc/cert/ ca-file /etc/cert/ca/GandiStandardSSLCA2.pem ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
+    # bind :443 ssl crt /etc/cert/ ca-file /etc/cert/ca/ ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
+
+    # bind :443 ssl crt /etc/certs/ ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
+
+{% if conf_haproxy_www_redirect is defined %}
+    # redirect
+    {{ conf_haproxy_www_redirect }}
+{% endif %}
+
+{% if conf_haproxy_www_acl is defined %}
+    # ACL
+    {{ conf_haproxy_www_acl }}
+{% endif %}
+
+    # See: http://comments.gmane.org/gmane.comp.web.haproxy/18273
+    bind :443 ssl crt /etc/certs/ no-sslv3 ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS:!AES256
+    bind :80
+
+    stats enable
+      stats uri /lb
+      stats realm Haproxy\ Statistics
+      stats auth {{ conf_lbtier_stats_auth }}
+
+    default_backend {{ conf_haproxy_www_default_backend }}
+
+backend www-backend
+    mode http
+    balance {{ conf_haproxy_www_backend_balance }}
+    # capture cookie vgnvisitor= len 32
+    # cookie SERVERID insert indirect nocache
+    # option forwardfor
+    option httpchk
+    # option httpclose
+    # rspidel ^Set-cookie:\ IP=
+    {{ conf_haproxy_www_backend }}
+
+{% if conf_haproxy_www_alt_backend_http is defined %}
+################
+# WWW-ALT-HTTP #
+################
+backend www-alt-backend-http
+    mode http
+    balance {{ conf_haproxy_www_alt_backend_http_balance }}
+    # option httpchk
+    {{ conf_haproxy_www_alt_backend_http }}
+{% endif %}
+
+{% if conf_haproxy_www_alt_backend_https is defined %}
+#################
+# WWW-ALT-HTTPS #
+#################
+backend www-alt-backend-https
+    balance {{ conf_haproxy_www_alt_backend_https_balance }}
+    {{ conf_haproxy_www_alt_backend_https }}
+{% endif %}
+
+{% if conf_haproxy_docker_registry_backend is defined %}
+###################
+# DOCKER-REGISTRY #
+###################
+backend docker-registry-backend
+    mode http
+    balance {{ conf_haproxy_docker_registry_backend_balance }}
+    option httpchk
+    {{ conf_haproxy_docker_registry_backend }}
+{% endif %}
+
+{% if conf_haproxy_www_translate_backend is defined %}
+#############
+# TRANSLATE #
+#############
+backend www-translate-backend
+    mode http
+    acl authokay_basic_users http_auth(basic_users)
+    http-request auth if !authokay_basic_users
+    balance {{ conf_haproxy_www_translate_backend_balance }}
+    option httpchk
+    {{ conf_haproxy_www_translate_backend }}
+{% endif %}
+
+{% if conf_haproxy_pxc_backend is defined %}
+#######
+# PXC #
+#######
+frontend pxc-frontend
+    mode tcp
+    bind *:3307
+    default_backend pxc-backend
+
+backend pxc-backend
+    mode tcp
+    balance {{ conf_haproxy_pxc_backend_balance }}
+    option httpchk
+    # stick-table type ip size 2
+    # stick on dst
+    timeout server 90m
+    {{ conf_haproxy_pxc_backend }}
+{% endif %}
+
+{% if conf_haproxy_monitoring_backend is defined %}
+##############
+# monitoring #
+##############
+backend monitoring-backend
+    mode http
+    acl authokay_basic_users http_auth(basic_users)
+    http-request auth if !authokay_basic_users
+    balance {{ conf_haproxy_monitoring_backend_balance }}
+    option httpchk
+    {{ conf_haproxy_monitoring_backend }}
+{% endif %}
