@@ -66,10 +66,10 @@
 #
 # MySQL system config (AFTER PERCONA)
 #
-- name: deploy debian.cnf to /etc/mysql/debian.cnf
-  copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-  when: ansible_distribution == "Ubuntu"
-  tags: [ mysql, mysql-conf, percona ]
+# - name: deploy debian.cnf to /etc/mysql/debian.cnf
+#   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
+#   when: ansible_distribution == "Ubuntu"
+#   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (Ubuntu)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
