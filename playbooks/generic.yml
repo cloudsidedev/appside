@@ -9,7 +9,7 @@
     - common
     - lb
     - web
-    # - db
+    - db
 
   vars_files:
 
