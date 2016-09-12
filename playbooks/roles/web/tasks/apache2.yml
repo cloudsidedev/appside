@@ -84,7 +84,7 @@
   tags: [ apache2, apache2-conf ]
 
 - name: remove default /var/www index.html files
-  file: path=/var/www/{{item}} state=absent
+  file: path=/var/www/{{ item }} state=absent
   with_items:
     - index.html
     - html/index.html
@@ -99,8 +99,16 @@
   when: ansible_os_family == "Debian"
   tags: [ apache2, apache2-conf ]
 
+- name: disable apache2 modules
+  apache2_module: state=absent name={{ item }}
+  with_items:
+    - php5
+  notify: handle_reload_apache2
+  when: ansible_os_family == "Debian"
+  tags: [ apache2, apache2-conf ]
+
 - name: enable apache2 modules
-  apache2_module: state=present name={{item}}
+  apache2_module: state=present name={{ item }}
   with_items:
     - php5.6
     - rewrite
