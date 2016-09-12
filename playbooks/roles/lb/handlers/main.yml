@@ -1,0 +1,24 @@
+---
+
+# file: playbooks/roles/lb/handlers/main.yml
+
+- name: handle_restart_haproxy
+  service: name=haproxy state=restarted
+
+- name: handle_reload_haproxy
+  service: name=haproxy state=reloaded
+
+- name: handle_restart_keepalived
+  service: name=keepalived state=restarted
+
+- name: handle_reload_keepalived
+  service: name=keepalived state=reloaded
+
+- name: handle_restart_confd
+  service: name=confd state=restarted
+
+- name: handle_reload_confd
+  service: name=confd state=reloaded
+
+- name: handle_reload_sysctl
+  shell: "sysctl -p"
