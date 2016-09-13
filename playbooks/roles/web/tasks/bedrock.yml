@@ -100,9 +100,18 @@
 
 #
 # web/.htaccess (development)
+# https://github.com/ansible/ansible/issues/9526#issuecomment-87027194
 #
 - name: make sure .htaccess file exists if enabled (Capistrano, Common, dev)
-  template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  # template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  template: src={{ item.value.type }}/htaccess.j2 dest=/tmp/{{ item.key }}/.htaccess-{{ item.value.type }} owner=deploy group={{ conf_www_group }} mode=0666
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "wp_bedrock" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, htaccess ]
+
+- name: copy .htaccess file exists if enabled (Capistrano, Common, dev)
+  command: cp -a /tmp/{{ item.key }}/.htaccess-{{ item.value.type }} /var/www/vhosts/{{ item.key }}/web/.htaccess
   when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "wp_bedrock" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   ignore_errors: yes
