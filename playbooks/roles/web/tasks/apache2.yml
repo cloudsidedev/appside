@@ -100,11 +100,12 @@
   tags: [ apache2, apache2-conf ]
 
 - name: disable apache2 modules
-  apache2_module: state=absent name={{ item }}
+  apache2_module: state=absent name={{ item }} force=yes
   with_items:
     - php5
   notify: handle_reload_apache2
   when: ansible_os_family == "Debian"
+  ignore_errors: yes
   tags: [ apache2, apache2-conf ]
 
 - name: enable apache2 modules
