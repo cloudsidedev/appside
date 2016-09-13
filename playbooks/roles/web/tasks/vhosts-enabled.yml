@@ -55,9 +55,9 @@
     - handle_reload_varnish
   tags: vhosts
 
-- name: deploy vhost templates if enabled (Common, stage)
+- name: deploy vhost templates if enabled (Common, staging/testing)
   template: src=etc/apache2/vhost-stage-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
-  when: item.value.state == "enabled" and conf_env == "staging" and ansible_os_family == "Debian"
+  when: item.value.state == "enabled" and conf_env != "development" and conf_env != "production" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
     - handle_reload_apache2
