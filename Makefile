@@ -116,6 +116,21 @@ decrypt:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 
+commit:
+	#
+	# we want to git commit files in the tenant's configs only if they have
+	# been really edited:
+	#
+	#	- make decrypt will make git think all files have changed locally.
+	#	- find only really locally modified files, encrypt and commit them.
+	#	- all other files, which have not been edited but just decryped: git checkout.
+	#
+	# decrypt and then encrypt always marks the files as modified, they never
+	# re-encrypt with the same value. We need to decrypt, save MD5s of each unecrpyted
+	# file, check if MD5 of file has been changed directly after encrpyting, if so
+	# encrpyt and commit, all other files git checkout.
+	#
+
 vagrant:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
