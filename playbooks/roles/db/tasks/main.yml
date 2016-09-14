@@ -118,7 +118,7 @@
 - name: deploy my.cnf to enabled mysql admins
   template: src=etc/mysql/my.cnf-users.j2 dest=/home/{{ item.key }}/.my.cnf owner={{ item.key }} group={{ item.key }} mode=0600
   when: item.value.state == "enabled" and item.value.is_mysql_admin == True
-  with_dict: conf_users
+  with_dict: '{{ conf_users }}'
   tags: [ mysql, users, mysql-users ]
 
 - name: remove unused mysql anonymous accesses
