@@ -5,6 +5,6 @@
 - name: deactivate vhost if not enabled (disabled, archived or purged) (Common)
   file: dest=/etc/apache2/sites-enabled/{{ item.key }}.conf state=absent
   when: item.value.state != "enabled"
-  with_dict: conf_vhosts_common
+  with_dict: '{{ conf_vhosts_common }}'
   notify: handle_reload_apache2
   tags: vhosts
