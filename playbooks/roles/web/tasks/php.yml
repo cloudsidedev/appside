@@ -16,7 +16,7 @@
 - name: PHP PPA (Ubuntu)
   apt_repository: repo='ppa:ondrej/php' update_cache=yes
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version != "12.04"
-  ignore_errors: true
+  ignore_errors: yes
   tags: [ php, update ]
 
 #
@@ -57,7 +57,7 @@
     # - varnish
     # - memcached
   when: ansible_os_family == "Debian"
-  ignore_errors: true
+  ignore_errors: yes
   tags: [ php, apache2 ]
 
 - name: be sure web packages packages are installed (FreeBSD)

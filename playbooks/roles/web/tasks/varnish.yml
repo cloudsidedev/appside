@@ -7,7 +7,7 @@
   with_items:
     - varnish
   when: ansible_os_family == "Debian"
-  ignore_errors: true
+  ignore_errors: yes
   tags: [ varnish, varnish-conf, apache2 ]
 
 - name: varnish service state (Debian family)

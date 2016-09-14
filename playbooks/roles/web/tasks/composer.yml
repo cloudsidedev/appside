@@ -34,4 +34,5 @@
     {{ conf_php_cli }} /usr/local/bin/composer self-update
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
+  ignore_errors: yes
   tags: [composer, php, apache2]
