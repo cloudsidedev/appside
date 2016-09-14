@@ -2,9 +2,9 @@
 
 # file: playbooks/roles/db/tasks/percona.yml
 
-# - name: deploy /usr/local/bin/galeranotify.py
-#   template: ssrc=etc/mysql/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
-#   tags: [ mysql, percona ]
+- name: deploy /usr/local/bin/galeranotify.py
+  template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
+  tags: [ mysql, percona ]
 
 - name: apparmor disable mysqld
   file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
@@ -24,18 +24,18 @@
 - debug: var=bootstrap_check.rc
   tags: [ mysql, percona ]
 
-- name: percona apt-key (Ubuntu)
+- name: percona apt-key (Debian family)
   # apt_key: url=http://www.percona.com/redir/downloads/RPM-GPG-KEY-percona state=present
   apt_key: data="{{ lookup('file', 'percona/percona.gpg') }}" state=present
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: percona repo (Ubuntu)
+- name: percona repo (Debian family)
   apt_repository: repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' update_cache=yes
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: remove conflicting MySQL packages (Ubuntu)
+- name: remove conflicting MySQL packages (Debian family)
   apt: pkg={{ item }} state=absent
   with_items:
     - mysql-server-core-5.5
@@ -68,7 +68,7 @@
   when: bootstrap_check.rc == 1 and conf_wsrep_master == true
   tags: [ mysql, percona]
 
-- name: install Percona XtraDB Cluster (Ubuntu)
+- name: install Percona XtraDB Cluster (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
     - percona-xtradb-cluster-server-5.6
@@ -81,7 +81,7 @@
   ignore_errors: yes
   tags: [ mysql, percona ]
 
-- name: install xinetd (Ubuntu)
+- name: install xinetd (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
     - xinetd
@@ -91,12 +91,12 @@
   ignore_errors: yes
   tags: [ mysql, percona, clustercheck ]
 
-- name: update /etc/services (Ubuntu)
+- name: update /etc/services (Debian family)
   lineinfile: "dest=/etc/services line='mysqlchk        9200/tcp                        # mysqlchk' insertafter='^xinetd' state=present"
   when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
   tags: [ mysql, percona, clustercheck ]
 
-- name: update /etc/xinetd.d/mysqlchk (Ubuntu)
+- name: update /etc/xinetd.d/mysqlchk (Debian family)
   lineinfile: "dest=/etc/xinetd.d/mysqlchk line='        server_args = {{ conf_mysql_clustercheck_user }} {{ conf_mysql_clustercheck_password }} {{ conf_mysql_clustercheck_available_when_donor }} /dev/null 0' insertafter='^        # 55-to-56 upgrade' state=present"
   notify: handle_restart_xinetd
   when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true

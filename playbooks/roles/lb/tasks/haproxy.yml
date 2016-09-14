@@ -6,6 +6,16 @@
 # apt_repository: repo='ppa:vbernat/haproxy-1.6'
 #
 
+- name: install xinetd (Debian family)
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+    - xinetd
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
+  ignore_errors: yes
+  tags: [ haproxy, ssl ]
+
 ################
 # HAPROXY BASE #
 ################
