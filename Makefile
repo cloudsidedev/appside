@@ -14,14 +14,15 @@
 #
 # Macros
 #
-.CLEAR=\x1b[0m
-.BOLD=\x1b[01m
-.RED=\x1b[31;01m
-.GREEN=\x1b[32;01m
-.BLUE=\x1b[34;01m
-.YELLOW=\x1b[33;01m
-.WHITE=\x1b[97;01m
-.CYAN=\x1b[36;01m
+.RED=\033[01;31m
+.GREEN=\033[01;32m
+.YELLOW=\033[01;33m
+.BLUE=\033[01;34m
+.PURPLE=\033[01;35m
+.CYAN=\033[01;36m
+.WHITE=\033[01;37m
+.NIL=\033[00m
+.CLEAR=\033[00m
 .development=$(.GREEN)development$(.CLEAR)
 .testing=$(.BLUE)testing$(.CLEAR)
 .staging=$(.YELLOW)staging$(.CLEAR)
@@ -115,6 +116,7 @@ decrypt:
 	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/appflow-md5 \;
 
 commit:
 	#
