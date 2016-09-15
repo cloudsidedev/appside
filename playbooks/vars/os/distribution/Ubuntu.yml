@@ -46,7 +46,6 @@ conf_unwanted_packages:
     - libxxf86vm1
     - byobu
     - nano
-    - screen
     - manpages-dev
 conf_base_packages:
     - xfsprogs
@@ -58,6 +57,7 @@ conf_base_packages:
     - bsd-mailx
     - vim
     - uptimed
+    - screen
     - tmux
     - mosh
     - finger
