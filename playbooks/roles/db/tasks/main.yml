@@ -152,8 +152,6 @@
 
 - name: add mysql.local -> localhost (development/staging only)
   lineinfile: dest=/etc/hosts state=present line="127.0.0.1 mysql.local"
-  when: conf_env != "production"
-  # notify: handle_mysql_import
   tags: mysql
 
 #
