@@ -11,7 +11,7 @@
   when: ansible_distribution == "Ubuntu"
   environment:
     DEBIAN_FRONTEND: noninteractive
-  tags: mysql
+  tags: [ mysql ]
 
 - name: be sure dbtier packages are installed (FreeBSD)
   pkgng: name={{ item }} state=present cached=yes
@@ -20,15 +20,15 @@
     # - mariadb55-client-5.5.39
     - py27-MySQLdb56-1.2.3_4
   when: ansible_distribution == "FreeBSD"
-  tags: mysql
+  tags: [ mysql ]
 
 # - name: copy tuning-primer
 #   copy: src=../files/mysql/tuning-primer dest=/usr/local/bin/tuning-primer owner=root group={{ conf_root_group }} mode=0755
-#   tags: mysql
+#   tags: [ mysql ]
 
 # - name: copy mysqltuner
 #   copy: src=../files/mysql/mysqltuner dest=/usr/local/bin/mysqltuner owner=root group={{ conf_root_group }} mode=0755
-#   tags: mysql
+#   tags: [ mysql ]
 
 #
 # MySQL system config (BEFORE PERCONA)
@@ -97,7 +97,7 @@
   service: name=mysql state=started enabled=yes
   when: ansible_distribution == "Ubuntu"
   ignore_errors: yes
-  tags: mysql
+  tags: [ mysql ]
 
 #
 # 1) Deploy my.cnf
@@ -150,9 +150,9 @@
 #  when: conf_env != "production"
 #  notify: handle_mysql_import
 
-- name: add mysql.local -> localhost (development/staging only)
-  lineinfile: dest=/etc/hosts state=present line="127.0.0.1 mysql.local"
-  tags: mysql
+# - name: add mysql.local -> localhost (development/staging only)
+#   lineinfile: dest=/etc/hosts state=present line="127.0.0.1 mysql.local"
+#   tags: [ mysql ]
 
 #
 # MySQL binary replication (Outdated)
