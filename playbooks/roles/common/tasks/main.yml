@@ -9,8 +9,8 @@
   user: name=root shell={{ conf_root_shell }}
   tags: [ common, users, shell ]
 
-# - include: sudo.yml
-#   tags: [ common, users, sudo ]
+- include: sudo.yml
+  tags: [ common, users, sudo ]
 
 - include: cloud.yml
   when: conf_cloud_env is defined and conf_cloud_enable == true
