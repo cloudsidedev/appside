@@ -49,7 +49,12 @@ Infrastructure:
 
 ## Installation
 
-TODO.
+1. Create new config directory layout - `mkdir -p ~/.appflow/{tenant,vault}`
+2. Copy `config.example` to `~/.appflow/config` and update variables:
+  * `CFG_TENANT_ID` - identity of the own tenant
+  * `CFG_TENANT_NAME` - name of the own tenant
+  * `CFG_TENANT_ENV` - default provisioning environment
+5. TODO
 
 ## Documentation
 
