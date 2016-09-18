@@ -1,0 +1,15 @@
+#
+# ~/.appflow/config
+#
+# AppFlow configuration file.
+#
+
+CFG_TENANT_ID=mrrobot-ttss
+CFG_TENANT_NAME=mrrobot
+CFG_DEFAULT_ENV=development
+
+#
+# Admin knows all tenants
+#
+mrrobot=appflow-mrrobot
+foobar=foobar-mrrobot
