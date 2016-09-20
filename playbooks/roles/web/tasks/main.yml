@@ -37,6 +37,7 @@
 
 - name: wp-cli
   get_url: url=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar dest={{ conf_bin_path }}/wp owner=root {{ conf_root_group }} mode=0755 force=yes
+  ignore_errors: yes
   tags: [ wp-cli, apache2 ]
 
 # - name: memcached service state
@@ -82,8 +83,8 @@
 #
 # Jenkins
 #
-# - include: jenkins.yml
-#   when: conf_jenkins_enable is defined and conf_jenkins_enable == true
+- include: jenkins.yml
+  when: conf_jenkins_enable is defined and conf_jenkins_enable == true
 
 #
 # GeoIP
