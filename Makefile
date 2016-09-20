@@ -71,7 +71,7 @@ ifneq "$(verbose)" "false"
 args += -$(verbose)
 endif
 
-.PHONY: provision encrpy decrypt
+.PHONY: provision encrypt decrypt checkin
 
 #
 # Tasks
