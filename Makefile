@@ -114,9 +114,10 @@ encrypt:
 
 decrypt:
 	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@mkdir -p /tmp/.appflow/$($(tenant))
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/appflow-md5 \;
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5 \;
 
 commit:
 	#
