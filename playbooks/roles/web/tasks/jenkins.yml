@@ -5,22 +5,30 @@
 ################
 # JENKINS BASE #
 ################
-- name: jenkins apt-key (Ubuntu)
+- name: jenkins apt-key (Debian family)
   apt_key: data="{{ lookup('file', 'jenkins/jenkins.gpg') }}" state=present
   when: ansible_os_family == "Debian"
   tags: [ jenkins, ssl ]
 
-- name: disable repo ppa:vbernat/jenkins-1.5 (Ubuntu)
-  apt_repository: repo='deb http://ppa.launchpad.net/vbernat/jenkins-1.5/ubuntu {{ ansible_distribution_release }} main' update_cache=yes state=absent
+# - name: disable repo ppa:vbernat/jenkins-1.5 (Debian family)
+#   apt_repository: repo='deb http://ppa.launchpad.net/vbernat/jenkins-1.5/ubuntu {{ ansible_distribution_release }} main' update_cache=yes state=absent
+#   when: ansible_os_family == "Debian"
+#   tags: [ jenkins, ssl ]
+
+- name: deploy jenkins conf (Debian family)
+  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - default/jenkins
+  # notify: handle_reload_varnish
   when: ansible_os_family == "Debian"
   tags: [ jenkins, ssl ]
 
-- name: enable repo ppa:vbernat/jenkins-1.6 (Ubuntu)
-  apt_repository: repo='deb http://ppa.launchpad.net/vbernat/jenkins-1.6/ubuntu {{ ansible_distribution_release }} main' update_cache=yes
+- name: enable deb http://pkg.jenkins.io/debian-stable binary/ (Debian family)
+  apt_repository: repo='deb http://pkg.jenkins.io/debian-stable binary/' update_cache=yes
   when: ansible_os_family == "Debian"
   tags: [ jenkins, ssl ]
 
-- name: be sure latest jenkins packages are installed (Ubuntu)
+- name: be sure latest jenkins packages are installed (Debian family)
   apt: pkg={{ item }} state=latest
   with_items:
     - jenkins
