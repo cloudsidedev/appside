@@ -121,7 +121,7 @@ decrypt:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5 \;
 
 checkin:
-	#Check if files are already encrypted; if so, exit gracefully because there is nothing to do
+	# Check if files are already encrypted; if so, exit gracefully because there is nothing to do
 	$(eval status = $(shell grep AES256 ~/.appflow/tenant/$($(tenant))/development/inventory > /dev/null; echo $$?))
 	@if [ $(status) -eq 0 ]; \
 		then \
@@ -130,30 +130,13 @@ checkin:
 		exit 1; \
 	fi
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5-new \;
-
 	$(eval .changed_files = $(shell diff /tmp/.appflow/$($(tenant))/appflow-md5 /tmp/.appflow/$($(tenant))/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq))
-
 	$(MAKE) encrypt
-
-	@echo $(.changed_files) | sed 's/ /\n/' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
+	@echo "$(.changed_files)" | sed 's/ /\\n/' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
 	git -C ~/.appflow/tenant/$($(tenant)) commit -m "Auto commit"
 	git -C ~/.appflow/tenant/$($(tenant)) push
 	git -C ~/.appflow/tenant/$($(tenant)) checkout .
-
 	@rm /tmp/.appflow/$($(tenant))/appflow-md5-new
-	#
-	# we want to git commit files in the tenant's configs only if they have
-	# been really edited:
-	#
-	#	- make decrypt will make git think all files have changed locally.
-	#	- find only really locally modified files, encrypt and commit them.
-	#	- all other files, which have not been edited but just decryped: git checkout.
-	#
-	# decrypt and then encrypt always marks the files as modified, they never
-	# re-encrypt with the same value. We need to decrypt, save MD5s of each unecrpyted
-	# file, check if MD5 of file has been changed directly after encrpyting, if so
-	# encrpyt and commit, all other files git checkout.
-	#
 
 vagrant:
 	mkdir -p ~/Downloads/Software
