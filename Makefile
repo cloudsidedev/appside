@@ -130,9 +130,9 @@ checkin:
 		exit 1; \
 	fi
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5-new \;
-	$(eval .changed_files = $(shell diff /tmp/.appflow/$($(tenant))/appflow-md5 /tmp/.appflow/$($(tenant))/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq))
+	$(eval .changed_files = $(shell diff /tmp/.appflow/$($(tenant))/appflow-md5 /tmp/.appflow/$($(tenant))/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq ))
 	$(MAKE) encrypt
-	@echo "$(.changed_files)" | sed 's/ /\\n/' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
+	@echo '$(.changed_files)'  | tr ' ' '\n' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
 	git -C ~/.appflow/tenant/$($(tenant)) commit -m "Auto commit"
 	git -C ~/.appflow/tenant/$($(tenant)) push
 	git -C ~/.appflow/tenant/$($(tenant)) checkout .
