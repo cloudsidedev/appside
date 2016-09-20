@@ -114,7 +114,7 @@ encrypt:
 
 decrypt:
 	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
-	@rm /tmp/.appflow/$($(tenant))/appflow-md5
+	@-rm /tmp/.appflow/$($(tenant))/appflow-md5
 	@mkdir -p /tmp/.appflow/$($(tenant))
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
@@ -129,17 +129,17 @@ checkin:
 		false; \
 		exit 1; \
 	fi
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5-new \;	
-	
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5-new \;
+
 	$(eval .changed_files = $(shell diff /tmp/.appflow/$($(tenant))/appflow-md5 /tmp/.appflow/$($(tenant))/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq))
-	
+
 	$(MAKE) encrypt
-	
+
 	@echo $(.changed_files) | sed 's/ /\n/' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
 	git -C ~/.appflow/tenant/$($(tenant)) commit -m "Auto commit"
-	git -C ~/.appflow/tenant/$($(tenant)) push 
+	git -C ~/.appflow/tenant/$($(tenant)) push
 	git -C ~/.appflow/tenant/$($(tenant)) checkout .
-	
+
 	@rm /tmp/.appflow/$($(tenant))/appflow-md5-new
 	#
 	# we want to git commit files in the tenant's configs only if they have
