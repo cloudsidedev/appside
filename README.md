@@ -57,7 +57,11 @@ Infrastructure:
 5. TODO
 
 ## Documentation
-
+For easy code management, just use:
+	`make checkin`
+this command will automatically check if your files are already encrypted (if so, exits)
+then will check and push only the files you have modified after encrpyting them
+ 
 TODO.
 
 ## Contributing
