@@ -98,7 +98,7 @@
 
 - name: deploy /etc/haproxy/*acl-files*.txt (Debian)
   copy: content="{{ item.value.content }}" dest="/etc/haproxy/{{ item.key }}" owner=root group={{ conf_root_group }} mode=0644
-  with_dict: '{{ onf_haproxy_acl_files }}'
+  with_dict: '{{ conf_haproxy_acl_files }}'
   notify: handle_reload_haproxy
   when:
     - ansible_os_family == "Debian"
