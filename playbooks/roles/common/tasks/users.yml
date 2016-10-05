@@ -25,6 +25,7 @@
   user: name={{ item.key }} group={{ item.key }} groups={{ item.value.groups }} comment="{{ item.value.name }}" home="{{ item.value.home }}" append=yes shell={{ item.value.shell }} state=present
   when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
+  ignore_errors: yes
   tags: [ shell-users, users, shell ]
 
 - name: deploy ssh key if enabled
