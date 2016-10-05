@@ -3,6 +3,23 @@
 # file: playbooks/roles/common/tasks/attic.yml
 
 #
+# IMPORTANT (TOFIX):
+#
+# We need ~/root/.ssh/config in place.
+# During remote repo check we still don't know the remote host.
+#
+# TASK [common : check if remote attic repo exists] ******************************
+#
+# attic list attic@localhost:~/node-compute-XX.attic
+# The authenticity of host 'localhost (127.0.0.1)' can't be established.
+# ECDSA key fingerprint is ...
+# Are you sure you want to continue connecting (yes/no)? yes
+# Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+#
+# attic: Error: Repository attic@localhost:~/node-compute-XX.attic does not exist
+#
+
+#
 # 10.04 (Attic is static)
 #
 #   wget --no-check-certificate https://attic-backup.org/downloads/releases/0.16/Attic-0.16-linux-x86_64.tar.gz
@@ -54,16 +71,16 @@
 #
 # Usage over ssh:
 #
-#   attic init attic@atlantis:~/$(hostname -f).attic
+#   attic init attic@backup:~/$(hostname -f).attic
 #
-#   # attic create attic@atlantis:~/$(hostname -f)::$(hostname -f)-$(date +%Y-%m-%d-%H:%M:%S) ~/
-#   attic create attic@atlantis:~/$(hostname -f).attic::$(date +%Y-%m-%d-%H:%M:%S) ~/tmp
+#   # attic create attic@backup:~/$(hostname -f)::$(hostname -f)-$(date +%Y-%m-%d-%H:%M:%S) ~/
+#   attic create attic@backup:~/$(hostname -f).attic::$(date +%Y-%m-%d-%H:%M:%S) ~/tmp
 #
 #
 #   attic list attic@localhost:~/attic-repo.attic
 #   attic check attic@localhost:~/attic-repo.attic
 #
-#   attic prune attic@atlantis:~/attic-repo.attic --keep-within=1d
+#   attic prune attic@backup:~/attic-repo.attic --keep-within=1d
 
 #
 #   Strategy: One repo per client in order to avoid lock conflicts.
@@ -109,7 +126,6 @@
   tags: [ attic, atticmatic ]
 
 - name: deploy /etc/atticmatic/id_rsa-attic
-  # copy: src=../files/private_keys/attic dest=/etc/atticmatic/id_rsa-attic owner=root group=adm mode=600 backup=no
   copy: content="{{ conf_users.attic.private_key }}" dest=/etc/atticmatic/id_rsa-attic owner=nagios group=adm mode=600 backup=yes
   when: conf_attic_client == true
   tags: [ attic, atticmatic ]
@@ -170,7 +186,7 @@
 
 - name: create mysql backup directory
   file: path=/{{ conf_attic_mysqldump_source }} state=directory owner=root group=adm mode=0750
-  ignore_errors: true
+  ignore_errors: yes
   when: conf_attic_client == true and conf_attic_mysqldump == true and conf_attic_mysqldump_source_create == true
   tags: [ attic, atticmatic ]
 
