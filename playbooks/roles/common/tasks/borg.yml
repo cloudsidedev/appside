@@ -1,0 +1,242 @@
+---
+
+# file: playbooks/roles/common/tasks/borg.yml
+
+#
+# IMPORTANT (TOFIX):
+#
+# We need ~/root/.ssh/config in place.
+# During remote repo check we still don't know the remote host.
+#
+# TASK [common : check if remote borg repo exists] ******************************
+#
+# borg list backup@localhost:~/node-compute-XX.borg
+# The authenticity of host 'localhost (127.0.0.1)' can't be established.
+# ECDSA key fingerprint is ...
+# Are you sure you want to continue connecting (yes/no)? yes
+# Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+#
+# borg: Error: Repository backup@localhost:~/node-compute-XX.borg does not exist
+#
+
+#
+# 10.04 (borg is static)
+#
+#   wget --no-check-certificate https://borg-backup.org/downloads/releases/0.16/borg-0.16-linux-x86_64.tar.gz
+#   tar xfz borg-0.16-linux-x86_64.tar.gz
+#   mv borg-0.16-linux-x86_64 /usr/local/bin/
+#   cd /usr/local/bin
+#   ln -s borg-0.16-linux-x86_64/borg .
+#   aptitude install python-software-properties
+#   sudo add-apt-repository ppa:fkrull/deadsnakes
+#   aptitude update
+#   aptitude install python3.4-minimal
+#   curl -O https://bootstrap.pypa.io/get-pip.py
+#   python3.4 get-pip.py
+#   sudo pip3 install --upgrade borgmatic
+#   aptitude install libaio1
+#   wget -c https://www.percona.com/downloads/XtraBackup/XtraBackup-2.0.0/deb/lucid/x86_64/percona-xtrabackup_2.0.0-417.lucid_amd64.deb
+#   dpkg -i percona-xtrabackup_2.0.0-417.lucid_amd64.deb
+#
+# 14.04 LTS / Debian wheezy
+#
+#   https://voidtech.wordpress.com/2014/11/18/borg-install-using-pip-on-ubuntu-based-systems/
+#
+#   % sudo apt-get install build-essential python3-pip libssl-dev python3-dev libevent-dev uuid-dev libacl1-dev liblzo2-dev
+#   % sudo apt-get install pkg-config
+#   % sudo apt-get install libfuse-dev
+#   % pip-3.2 install llfuse --upgrade  --timeout 300 (Debian family)
+#
+#   # sudo pip3 install borg --upgrade
+#   % sudo pip-3.2 install borg --upgrade
+#
+# 12.04
+#
+#   sudo add-apt-repository ppa:fkrull/deadsnakes
+#   aptitude install python3
+#   wget https://bootstrap.pypa.io/get-pip.py
+#   sudo apt-get install build-essential libssl-dev python3-dev libevent-dev uuid-dev libacl1-dev liblzo2-dev
+#   python3 get-pip.py
+#   pip3 install borg
+#
+# OSX
+#
+#   brew install python3
+#   sudo pip3 install borg --upgrade
+#
+# borgmatic:
+#
+#   % sudo pip3 install --upgrade borgmatic
+#
+#
+# Usage over ssh:
+#
+#   borg init backup@backup:~/$(hostname -f).borg
+#
+#   # borg create backup@backup:~/$(hostname -f)::$(hostname -f)-$(date +%Y-%m-%d-%H:%M:%S) ~/
+#   borg create backup@backup:~/$(hostname -f).borg::$(date +%Y-%m-%d-%H:%M:%S) ~/tmp
+#
+#
+#   borg list backup@localhost:~/borg-repo.borg
+#   borg check backup@localhost:~/borg-repo.borg
+#
+#   borg prune backup@backup:~/borg-repo.borg --keep-within=1d
+
+#
+#   Strategy: One repo per client in order to avoid lock conflicts.
+#
+#   0) borg user gets deployed through users.
+#
+#   1) Install pip packages
+#
+#   2) Check on backup server if repo exists, as borg user, if not initialize it.
+#      On backup_server prepare folder "/var/archives-borg/hostname.borg"
+#
+
+#
+#   VARS
+#
+#     conf_backup_repo
+#     conf_backup_user
+#     conf_backup_host
+
+- name: borg apt-key (Ubuntu)
+  apt_key: data="{{ lookup('file', 'borg/borg.gpg') }}" state=present
+  when: ansible_distribution == "Ubuntu"
+  tags: [ borg ]
+
+- name: enable repo ppa:costamagnagianfranco/borgbackup (Ubuntu)
+  apt_repository: repo='deb http://ppa.launchpad.net/costamagnagianfranco/borgbackup/ubuntu {{ ansible_distribution_release }} main' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  tags: [ borg ]
+
+- name: install borgbackup (Debian family)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - borgbackup
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian"
+  tags: [ borg ]
+
+- name: ensure borgmatic pip package is present
+  pip: name=borgmatic executable=pip3 state=present
+  when: conf_backup_client == true
+  tags: [ borg ]
+
+- name: create /etc/borgmatic
+  file: path=/etc/borgmatic state=directory owner=root group=adm mode=0750
+  when: conf_backup_client == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /etc/borgmatic/id_rsa-backup
+  copy: content="{{ conf_users.backup.private_key }}" dest=/etc/borgmatic/id_rsa-backup owner=nagios group=adm mode=600 backup=yes
+  when: conf_backup_client == true
+  tags: [ borg, borgmatic ]
+
+- name: create /root/.ssh
+  file: path=/root/.ssh state=directory owner=root group={{ conf_root_group }} mode=0700
+  when: conf_backup_client == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /root/.ssh/config
+  template: src=root/.ssh/config.j2 dest=/root/.ssh/config owner=root group={{ conf_root_group }} mode=0600
+  when: conf_backup_client == true and conf_backup_deploy_ssh_config == true
+  tags: [ borg, borgmatic ]
+
+#
+# Check if remote repo exists, if not create
+#
+- name: check if remote borg repo exists
+  shell: "export BORG_PASSPHRASE='{{ conf_backup_passphrase }}' ; borg list {{ conf_backup_user }}@{{ conf_backup_host }}:{{ conf_backup_repo }}"
+  ignore_errors: yes
+  register: borg_repo_check_res
+  failed_when: borg_repo_check_res.rc != 0
+  when: conf_backup_client == true
+  tags: [ borg ]
+
+# sudo su - borg -c "ssh backup@node.foo.org"
+- name: init remote borg repo
+  shell: "export BORG_PASSPHRASE='{{ conf_backup_passphrase }}' ; borg init {{ conf_backup_user }}@{{ conf_backup_host }}:{{ conf_backup_repo }}"
+  when: borg_repo_check_res.rc != 0
+  tags: [ borg ]
+
+#
+# At this point we have a sane borg repo for this host on a remote server
+#
+
+- name: deploy /etc/borgmatic/config
+  template: src=etc/borgmatic/config.j2 dest=/etc/borgmatic/config owner=root group={{ conf_root_group }} mode=0644
+  when: conf_backup_client == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /etc/cron.d/borgmatic
+  template: src=etc/cron.d/borgmatic.j2 dest=/etc/cron.d/borgmatic owner=root group={{ conf_root_group }} mode=0644
+  when: conf_backup_client == true
+  tags: [ borg, borgmatic ]
+
+#
+# innobackupex --compress --galera-info
+# innobackupex --apply-log
+#
+- name: be sure percona-xtrabackup packages is installed (Debian family)
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - percona-xtrabackup
+  when: conf_backup_client == true and conf_backup_mysqldump == true and ansible_os_family == "Debian"
+  tags: [ borg, borgmatic ]
+
+- name: create mysql backup directory
+  file: path=/{{ conf_backup_mysqldump_source }} state=directory owner=root group=adm mode=0750
+  ignore_errors: yes
+  when: conf_backup_client == true and conf_backup_mysqldump == true and conf_backup_mysqldump_source_create == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /usr/local/bin/borgmatic-mysql.sh
+  template: src=usr/local/bin/borgmatic-mysql.sh.j2 dest=/usr/local/bin/borgmatic-mysql.sh owner=root group={{ conf_root_group }} mode=0755
+  when: conf_backup_client == true and conf_backup_mysqldump == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /usr/local/bin/innobackupex-runner.sh
+  template: src=usr/local/bin/innobackupex-runner.sh.j2 dest=/usr/local/bin/innobackupex-runner.sh owner=root group={{ conf_root_group }} mode=0755
+  when: conf_backup_client == true and conf_backup_mysqldump == true
+  tags: [ borg, borgmatic ]
+
+- name: deploy /usr/local/bin/innobackupex-restore.sh
+  template: src=usr/local/bin/innobackupex-restore.sh.j2 dest=/usr/local/bin/innobackupex-restore.sh owner=root group={{ conf_root_group }} mode=0755
+  when: conf_backup_client == true and conf_backup_mysqldump == true
+  tags: [ borg, borgmatic ]
+
+#
+# elasticdump
+#
+- name: be sure nodejs packages packages are installed (Debian family)
+  apt: pkg={{ item }} state=installed force=yes
+  with_items:
+    - npm
+  when: conf_backup_client == true and conf_backup_elasticdump == true and ansible_os_family == "Debian"
+  tags: [ borg, borgmatic ]
+
+- name: be sure nodejs packages packages are installed (Debian family)
+  apt: pkg={{ item }} state=installed force=yes
+  with_items:
+    - nodejs
+    - nodejs-legacy
+  when: conf_backup_client == true and conf_backup_elasticdump == true and ansible_os_family == "Debian"
+  tags: [ borg, borgmatic ]
+
+- name: ensure elasticdump packages are present
+  npm: name={{ item }} global=yes state=present
+  with_items:
+    - elasticdump
+  when: conf_backup_client == true and conf_backup_elasticdump == true and ansible_os_family == "Debian"
+  tags: [ borg, borgmatic ]
+
+- name: deploy /usr/local/bin/borgmatic-elasticsearch.sh
+  template: src=usr/local/bin/borgmatic-elasticsearch.sh.j2 dest=/usr/local/bin/borgmatic-elasticsearch.sh owner=root group={{ conf_root_group }} mode=0755
+  when: conf_backup_client == true and conf_backup_elasticdump == true
+  tags: [ borg, borgmatic ]
+
+# TODO
+#
+#   - /etc/borgmatic/excludes
