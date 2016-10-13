@@ -60,9 +60,11 @@ Infrastructure:
 
 For easy code management, just use:
 
-`% make checkout env=production tenant=mrrobot`
-`% make decrypt env=production tenant=mrrobot`
-`% make checkin env=production tenant=mrrobot`
+```
+% make checkout env=production tenant=mrrobot
+% make decrypt env=production tenant=mrrobot
+% make checkin env=production tenant=mrrobot
+```
 
 Forgot what you've done? go back:
 
