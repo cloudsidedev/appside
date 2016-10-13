@@ -14,7 +14,8 @@ make_tenant=$5
 status=`grep AES256 ~/.appflow/tenant/$tenant/$env/inventory > /dev/null; echo $?`
 if [ $status -eq 0 ]; then 
 	echo "Files are already encrpyted, nothing to do." 
-	git -C ~/.appflow/tenant/$tenant/$env status
+	#git -C ~/.appflow/tenant/$tenant/$env status | grep -v '\.\./'
+	git -C ~/.appflow/tenant/$tenant diff-files --name-only -B -R -M $env
 	exit 0
 fi
 find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow/$tenant/appflow-$env-md5-new \;
