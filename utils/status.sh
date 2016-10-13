@@ -19,6 +19,5 @@ if [ $status -eq 0 ]; then
 fi
 find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow/$tenant/appflow-md5-new \;
 changed_files=`(diff /tmp/.appflow/$tenant/appflow-md5 /tmp/.appflow/$tenant/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
-make encrypt tenant=$make_tenant
 echo $changed_files  | tr ' ' '\n' 
 
