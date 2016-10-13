@@ -5,10 +5,13 @@
 #
 # Procedure for setting up a three-node cluster:
 #
-#   % make provision env=production limit=webservers tenant=mrrobot tags=glusterfs
-#   % ssh compute-02.webservers "sudo gluster peer probe gluster-node0.local"
-#   % ssh compute-03.webservers "sudo gluster peer probe gluster-node0.local"
-#   % make provision env=production limit=webservers tenant=mrrobot tags=glusterfs
+# Peer manually (on all nodes do this:)
+#
+# % gluster peer probe gluster-node0.local
+# % gluster peer probe gluster-node1.local
+# % gluster peer probe gluster-node2.local
+#
+# run AppFlow.
 #
 
 - name: remove osbolete glusterfs PPA (staging and production)
