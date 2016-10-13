@@ -63,6 +63,8 @@ For easy code management, just use:
 ```
 % make checkout env=production tenant=mrrobot
 % make decrypt env=production tenant=mrrobot
+% edit tenant's configs in ~/.appflow/tenant/appflow-mrrobot/production
+% make status env=production tenant=mrrobot
 % make checkin env=production tenant=mrrobot
 ```
 
