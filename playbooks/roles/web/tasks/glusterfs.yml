@@ -49,7 +49,7 @@
   tags: [ glusterfs ]
 
 - name: check gluster peer status
-  # shell: gluster peer probe {{ conf_glusterfs_node1 }} && gluster peer probe {{ conf_glusterfs_node2 }}
+  shell: gluster peer probe {{ conf_glusterfs_node1 }} && gluster peer probe {{ conf_glusterfs_node2 }}
   shell: "{{ conf_glusterfs_peer }}"
   ignore_errors: yes
   register: gluster_peer_res
