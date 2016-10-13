@@ -123,23 +123,8 @@ decrypt:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5 \;
 
 checkin:
-	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
-	# Check if files are already encrypted; if so, exit gracefully because there is nothing to do
-	$(eval status = $(shell grep AES256 ~/.appflow/tenant/$($(tenant))/development/inventory > /dev/null; echo $$?))
-	@if [ $(status) -eq 0 ]; \
-		then \
-		echo "Files are already encrpyted, nothing to do." \
-		false; \
-		exit 1; \
-	fi
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5-new \;
-	$(eval .changed_files = $(shell diff /tmp/.appflow/$($(tenant))/appflow-md5 /tmp/.appflow/$($(tenant))/appflow-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq ))
-	$(MAKE) encrypt
-	@echo '$(.changed_files)'  | tr ' ' '\n' | xargs git -C ~/.appflow/tenant/$($(tenant)) add
-	git -C ~/.appflow/tenant/$($(tenant)) commit -m "Auto commit"
-	git -C ~/.appflow/tenant/$($(tenant)) push
-	git -C ~/.appflow/tenant/$($(tenant)) checkout .
-	@rm /tmp/.appflow/$($(tenant))/appflow-md5-new
+	@printf "[$(.BOLD)$(.CYAN)checkin$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
+	@utils/checkin.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
 vagrant:
 	mkdir -p ~/Downloads/Software
