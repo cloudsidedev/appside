@@ -19,9 +19,9 @@ if [ $status -eq 0 ]; then
 fi
 find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow/$tenant/appflow-$env-md5-new \;
 changed_files=`(diff /tmp/.appflow/$tenant/appflow-$env-md5 /tmp/.appflow/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
-make encrypt tenant=$make_tenant
+make encrypt tenant=$make_tenant env=$env
 echo $changed_files  | tr ' ' '\n' |  xargs git -C ~/.appflow/tenant/$tenant add
 git -C ~/.appflow/tenant/$tenant commit -m "Auto commit"
 git -C ~/.appflow/tenant/$tenant push
-git -C ~/.appflow/tenant/$tenant checkout .
+git -C ~/.appflow/tenant/$tenant/$env checkout .
 rm /tmp/.appflow/$tenant/appflow-$env-md5-new
