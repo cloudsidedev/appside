@@ -95,27 +95,27 @@ initialize:
 	# TODO: Initialize AppFlow base configuration.
 
 syntax-check:
-	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@ansible-playbook --syntax-check -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml\
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 tags:
-	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@ansible-playbook --list-tags -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 provision:
-	@echo "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@ansible-playbook $(args) -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/generic.yml \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 encrypt:
-	@echo "[$(.BOLD)$(.CYAN)encrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@printf "[$(.BOLD)$(.CYAN)encrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault encrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 
 decrypt:
-	@echo "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]"
+	@printf "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@-rm /tmp/.appflow/$($(tenant))/appflow-md5
 	@mkdir -p /tmp/.appflow/$($(tenant))
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
@@ -123,6 +123,7 @@ decrypt:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5 \;
 
 checkin:
+	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	# Check if files are already encrypted; if so, exit gracefully because there is nothing to do
 	$(eval status = $(shell grep AES256 ~/.appflow/tenant/$($(tenant))/development/inventory > /dev/null; echo $$?))
 	@if [ $(status) -eq 0 ]; \
