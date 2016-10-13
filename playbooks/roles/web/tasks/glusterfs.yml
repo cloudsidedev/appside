@@ -11,7 +11,6 @@
 #   % make provision env=production limit=webservers tenant=mrrobot tags=glusterfs
 #
 
-
 - name: remove osbolete glusterfs PPA (staging and production)
   file: name=/etc/apt/sources.list.d/{{ item }} state=absent
   with_items:
@@ -79,7 +78,7 @@
 #   when: gluster_check_res|failed and conf_glusterfs_master == true
 
 - name: create gluster gvol0
-  # shell: {{gluster volume create gvol0 replica 3 {{ conf_glusterfs_node0 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node1 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node2 }}:/data/glusterfs/gvol0/brick1 force}}
+  shell: {{gluster volume create gvol0 replica 3 {{ conf_glusterfs_node0 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node1 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node2 }}:/data/glusterfs/gvol0/brick1 force}}
   shell: "{{ conf_glusterfs_gvol0 }}"
   when: conf_env != "development" and gluster_check_res|failed and conf_glusterfs_master == true
   tags: [ glusterfs ]
