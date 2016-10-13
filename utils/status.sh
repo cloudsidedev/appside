@@ -11,7 +11,7 @@ args=$4
 make_tenant=$5
 
 # Check if files are already encrypted; if so, exit gracefully because there is nothing to do
-status=`grep AES256 ~/.appflow/tenant/$tenant/development/inventory > /dev/null; echo $?`
+status=`grep AES256 ~/.appflow/tenant/$tenant/$env/inventory > /dev/null; echo $?`
 if [ $status -eq 0 ]; then 
 	echo "Files are already encrpyted, nothing to do." 
 	git -C ~/.appflow/tenant/$tenant status
