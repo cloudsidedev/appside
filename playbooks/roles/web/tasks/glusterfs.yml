@@ -48,7 +48,7 @@
   when: conf_env == "development"
   tags: [ glusterfs ]
 
-- name: check gluster peer status
+- name: check gluster peer status (master)
   shell: gluster peer probe {{ conf_glusterfs_node1 }} && gluster peer probe {{ conf_glusterfs_node2 }}
   shell: "{{ conf_glusterfs_peer }}"
   ignore_errors: yes
@@ -57,8 +57,8 @@
   when: conf_env != "development" and conf_glusterfs_master == true
   tags: [ glusterfs ]
 
-# We need to register the master on the client (TODO)
-- name: check gluster peer status
+# We need to register the master on the clients (TODO)
+- name: check gluster peer status (clients)
   shell: gluster peer probe {{ conf_glusterfs_node0 }}
   ignore_errors: yes
   # register: gluster_peer_res
