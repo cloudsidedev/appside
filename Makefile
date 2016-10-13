@@ -116,11 +116,16 @@ encrypt:
 
 decrypt:
 	@printf "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
-	@-rm /tmp/.appflow/$($(tenant))/appflow-md5
+	@-rm -f /tmp/.appflow/$($(tenant))/appflow-md5
 	@mkdir -p /tmp/.appflow/$($(tenant))
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-md5 \;
+
+
+status:
+	@printf "[$(.BOLD)$(.CYAN)status$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
+	@utils/status.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
 checkin:
 	@printf "[$(.BOLD)$(.CYAN)checkin$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
