@@ -122,6 +122,9 @@ decrypt:
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow/$($(tenant))/appflow-$(env)-md5 \;
 
+reset:
+	@printf "[$(.BOLD)$(.CYAN)reset$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
+	@utils/reset.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
 status:
 	@printf "[$(.BOLD)$(.CYAN)status$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
