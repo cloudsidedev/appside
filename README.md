@@ -57,12 +57,25 @@ Infrastructure:
 5. TODO
 
 ## Documentation
+
 For easy code management, just use:
-	`make checkin`
-this command will automatically check if your files are already encrypted (if so, exits)
-then will check and push only the files you have modified after encrpyting them
- 
-TODO.
+
+```
+% make checkout env=production tenant=mrrobot
+% make decrypt env=production tenant=mrrobot
+% edit tenant's configs in ~/.appflow/tenant/appflow-mrrobot/production
+% make status env=production tenant=mrrobot
+% make checkin env=production tenant=mrrobot
+```
+
+Forgot what you've done? go back:
+
+`% make reset env=production tenant=mrrobot`
+
+## Tags
+
+`php-conf`
+`nullmailer`
 
 ## Contributing
 
