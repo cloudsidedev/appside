@@ -257,7 +257,8 @@
 		RewriteRule ^app/uploads/.*\.(?:php[1-6]?|pht|phtml?)$ - [NC,F]
 
 		# Filter Request Methods - Security > Settings > System Tweaks > Request Methods
-		RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK) [NC]
+		# RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK) [NC]
+		RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK) [NC]
 		RewriteRule ^.* - [F]
 	</IfModule>
 
