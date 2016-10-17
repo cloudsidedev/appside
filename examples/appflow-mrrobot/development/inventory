@@ -1,12 +1,12 @@
 
 # file: ~/.appflow/tenant/mrrobot/development/inventory
 
+# For local development, use the Atlantis VM.
+# For staging and production use the remote nodes on which you want to deploy to.
+# Create your node profile in  ~/.appflow/tenant/mrrobot/development/host_vars/<nodename>
+
 [webservers]
 atlantis
 
 [dbservers]
 atlantis
-
-# for local development, use the atlantis vm. 
-# staging and production use the remove machines you want to deply
-# just create your machine profile in  ~/.appflow/tenant/mrrobot/development/host_vars

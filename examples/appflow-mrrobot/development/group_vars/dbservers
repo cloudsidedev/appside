@@ -4,12 +4,12 @@
 
 conf_galera_cluster: false
 
-conf_mysql_root_password: 
-conf_mysql_replication_user: 
-conf_mysql_replication_password: 
-# conf_mysql_clustercheck_user: 
+conf_mysql_root_password:
+conf_mysql_replication_user:
+conf_mysql_replication_password:
+# conf_mysql_clustercheck_user:
 # conf_mysql_clustercheck_password:
-# conf_mysql_clustercheck_available_when_donor: 
+# conf_mysql_clustercheck_available_when_donor:
 
 conf_mysql_tmpdir: /run/mysqld
 

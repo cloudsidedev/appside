@@ -60,8 +60,8 @@ conf_keepalived_virtual_ipaddress:
 #
 # MySQL
 #
-# conf_mysql_replication_master: mysql-repl-master-1.local
-# conf_wsrep_node_address: "172.16.1.2"
+# conf_mysql_replication_master:
+# conf_wsrep_node_address:
 conf_wsrep_node_name: mysql-node0.local
 conf_wsrep_master: false
 

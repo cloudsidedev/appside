@@ -1,3 +1,5 @@
+---
+
 # file: ~/.appflow/tenant/mrrobot/development/group_vars/all
 
 conf_env: development
@@ -25,8 +27,8 @@ conf_hosts_mysql:
 # nullmailer
 #
 conf_nullmailer_enable: true
-conf_nullmailer_adminaddr: root@ttss.ch
-conf_nullmailer_defaultdomain: ttss.ch
+conf_nullmailer_adminaddr: root@mrrobot.com
+conf_nullmailer_defaultdomain: mrrobot.com
 conf_nullmailer_remotes:
 
 #
@@ -60,7 +62,7 @@ conf_haproxy_www_request: |
     rsprep ^Set-Cookie:\ (.*) Set-Cookie:\ \1;\ Secure if { ssl_fc }
 
 conf_haproxy_www_redirect: |
-    redirect scheme https code 301 if { hdr(Host) -i www.dev.ttss.ch } !{ ssl_fc }
+    redirect scheme https code 301 if { hdr(Host) -i www.dev.mrrobot.com } !{ ssl_fc }
 
 conf_haproxy_www_acl:
 
@@ -97,17 +99,17 @@ conf_glusterfs_gvol0: gluster volume create gvol0 replica 2 {{ conf_glusterfs_no
 ###############
 conf_users:
 
-  mrrobot:
+  <YOUR-SHELL-USERNAME>:
     state: enabled
     groups: "{{ conf_sudo_nopasswd_group }},{{ conf_www_group }}"
-    name: "Elliot"
-    home: "/home/mrrobot"
+    name: "<YOUR-REALNAME>"
+    home: "/home/<YOUR-SHELL-USERNAME>"
     shell: "{{ conf_zsh_path }}"
-    public_key: #put here your id_rsa.pub public key
+    public_key: |
+        <PUBLIC-SSH-KEY-FOR-YOUR-USER ~/.ssh/id_rsa.pub)
     private_key:
     is_deployer: yes
     is_mysql_admin: yes
-
 
   deploy:
     state: enabled
@@ -116,10 +118,11 @@ conf_users:
     home: "/home/deploy"
     shell: "{{ conf_zsh_path }}"
     public_key: |
-        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ5jFjeds7iAPVkdkcwm+mYY7eCTWKzepqkefbRQEWcxU8DccweEXqSv351AkkTu/eV7bcyra+6eCxXIvE8v2SYxHcg7BmQpFSfPd9hTlaMLM3P0vc4/f727YVMSNA4ERwmYVVjGsfs8MhrLz235hMvGYA6MxBm9vp/EHL0CaJnkGNbGJuE0TeQhPAXMG336v//ixTcASDRRUhFu0hfeEl6sP2g8Ts4wYU8glO91XO/fHW/y/uAfsV7caXQ10uW6OlkN2Qqxuccg2R7UfdNU2EpT6U1hlV1jCXN491BrpKmCgdI5jJ5cfVDI/bvSeftYDuBWUxAl95xQx+Bv1w6vtF deploy@freedom
+        <PUBLIC-SSH-KEY-FOR-DEPLOY-USER>
     private_key: |
     is_deployer: no
     is_mysql_admin: yes
+
 #################
 # VIRTUAL HOSTS #
 #################
@@ -128,16 +131,16 @@ conf_vhosts_common:
   mrrobot_v:
     state: disabled
     servername:
-    serveralias: 
-    serveradmin: 
-    db_name: 
+    serveralias:
+    serveradmin:
+    db_name:
     db_user:
-    db_password: 
+    db_password:
     db_server: 127.0.0.1
     db_host: '%'
-    db_prefix: 
-    glusterfs_uploads: 
-    type: 
+    db_prefix:
+    glusterfs_uploads:
+    type:
     config_env: true
     env_opt: |
       CFG_URL_DEVELOPMENT=
@@ -168,4 +171,3 @@ conf_vhosts_common:
 conf_icinga_hosts:
   placeholder:
     state: disabled
- 

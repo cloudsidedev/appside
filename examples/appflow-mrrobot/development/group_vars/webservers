@@ -36,7 +36,7 @@ conf_varnish_vcl_recv: |
 # Apache2
 #
 conf_mod_pagespeed: false
-conf_apache_welcome: 'echo "Hello, World! I am a TTSS web server configured using <a href=\"https://github.com/ttssdev/appflow/\">AppFlow</a> running on: "; echo exec("hostname");'
+conf_apache_welcome: 'echo "Hello, World! I am a MRROBOT web server configured using <a href=\"https://github.com/ttssdev/appflow/\">AppFlow</a> running on: "; echo exec("hostname");'
 
 conf_apache2_StartServers: 5
 conf_apache2_MinSpareServers: 5
