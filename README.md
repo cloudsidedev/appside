@@ -54,7 +54,13 @@ Infrastructure:
   * `CFG_TENANT_ID` - identity of the own tenant
   * `CFG_TENANT_NAME` - name of the own tenant
   * `CFG_TENANT_ENV` - default provisioning environment
-5. TODO
+3. Copy the `appflow-mrrobot` folder in `examples` to `~/.appflow/tenant/`
+4. Link the folder: `ln -s ~/.appflow/tenant/appflow-mrrobot ~/.appflow/tenant/mrrobot`
+5. Copy the `vault` folder in `examples` to `~/.appflow/vault`
+
+Now you are ready to deploy!
+In the main appflow folder (where you cloned the repo) you can start provisioning with:
+	`make provision env=development tenant=mrrobot`
 
 ## Documentation
 

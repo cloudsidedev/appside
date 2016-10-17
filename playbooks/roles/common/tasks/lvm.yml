@@ -56,7 +56,7 @@
 #   command: "sudo swapon /dev/mapper/{{ item.vg }}-{{ item.name }}"
 #   with_items:
 #     - "{{ conf_lvm_lvs }}"
-#   ignore_errors: true
+#   ignore_errors: yes
 #   when: conf_lvm_enable == true and item.fstype == "swap"
 #   tags: [ lvm, fstab, swap ]
 
