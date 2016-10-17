@@ -128,7 +128,7 @@ conf_users:
 #################
 conf_vhosts_common:
 
-  mrrobot_v:
+  mrrobot:
     state: disabled
     servername:
     serveralias:
