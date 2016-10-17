@@ -91,6 +91,9 @@ help:
 	@echo "  encrypt    to encrypt vault data"
 	@echo "  decrypt    to decrypt vault data"
 
+update:
+	git pull
+
 initialize:
 	# TODO: Initialize AppFlow base configuration.
 
