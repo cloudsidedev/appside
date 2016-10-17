@@ -78,6 +78,10 @@ Forgot what you've done? go back:
 
 `% make reset env=production tenant=mrrobot`
 
+Want to update everything and provision?
+
+`% make update ; make checkout ; make provision local=true`
+
 ## Tags
 
 `php-conf`
