@@ -1,0 +1,97 @@
+---
+
+# file: ~/.appflow/tenant/mrrobot/development/host_vars/atlantis
+
+#
+# Cloud
+#
+conf_cloud_enable: false
+conf_cloud_env:
+conf_cloud_agent:
+
+#
+# LVM
+#
+conf_lvm_enable: false
+conf_lvm_pvcreate: false
+
+conf_lvm_vgs:
+  - name: placeholder
+    pvs:
+      - placeholder
+
+conf_lvm_lvs:
+  - name: placeholder
+
+conf_hosts_fqdn: 192.168.80.2 atlantis.local atlantis
+
+conf_mailname: atlantis
+
+conf_timezone: "Europe/Zurich"
+
+conf_unattended_upgrades: true
+
+#
+# rsyslog
+#
+conf_rsyslog_enable: false
+conf_rsyslog_remote: "*.* @@localhost:5000"
+
+#
+# nullmailer
+#
+conf_nullmailer_enable: true
+
+#
+# LBTIER
+#
+conf_lbtier_enable: true
+conf_confd_enable: false
+conf_keepalived_enable: false
+conf_keepalived_state:
+conf_keepalived_interface:
+conf_keepalived_virtual_router_id:
+conf_keepalived_priority:
+conf_keepalived_advert_int:
+conf_keepalived_auth_type:
+conf_keepalived_auth_pass:
+conf_keepalived_virtual_ipaddress:
+
+#
+# MySQL
+#
+# conf_mysql_replication_master: mysql-repl-master-1.local
+# conf_wsrep_node_address: "172.16.1.2"
+conf_wsrep_node_name: mysql-node0.local
+conf_wsrep_master: false
+
+#
+# GlusterFS
+#
+conf_glusterfs_enable: false
+conf_glusterfs_master:
+conf_glusterfs_failover:
+
+#
+# DBTIER
+#
+conf_galera_cluster: false
+conf_mysql_report_host: atlantis
+conf_mysql_replication: false
+conf_mysql_replication_settings:
+
+#
+# Backup
+#
+conf_backup_client: false
+conf_backup_master: false
+
+#
+# Icinga
+#
+conf_icinga_master: false
+conf_icinga_satellite: false
+conf_icinga_client: false
+conf_icinga_web_db:
+conf_icinga_web_db_user:
+conf_icinga_web_db_pass:

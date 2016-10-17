@@ -1,0 +1,34 @@
+---
+
+# file: ~/.appflow/tenant/mrrobot/development/group_vars/dbservers
+
+conf_galera_cluster: false
+
+conf_mysql_root_password: 
+conf_mysql_replication_user: 
+conf_mysql_replication_password: 
+# conf_mysql_clustercheck_user: 
+# conf_mysql_clustercheck_password:
+# conf_mysql_clustercheck_available_when_donor: 
+
+conf_mysql_tmpdir: /run/mysqld
+
+conf_mysql_ft_min_word_len: 3
+conf_mysql_lower_case_table_names: 1
+conf_mysql_ft_boolean_syntax: ' |-><()~*:""&^'
+
+conf_mysql_max_connections: 256
+conf_mysql_max_allowed_packet: 256M
+conf_mysql_query_cache_type: 1
+conf_mysql_query_cache_limit: 1M
+conf_mysql_query_cache_size: 8M
+conf_mysql_innodb_log_file_size: 33554432
+conf_mysql_innodb_buffer_pool_size: 64M
+conf_mysql_key_buffer: 32M
+conf_mysql_thread_cache_size: 8
+conf_mysql_table_cache: 32
+conf_mysql_thread_concurrency: 3
+conf_mysql_join_buffer_size: 256K
+# conf_mysql_query_cache_limit: 1M
+# conf_mysql_query_cache_size: 16M
+conf_mysql_wait_timeout: 600

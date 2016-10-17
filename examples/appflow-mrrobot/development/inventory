@@ -1,0 +1,12 @@
+
+# file: ~/.appflow/tenant/mrrobot/development/inventory
+
+[webservers]
+atlantis
+
+[dbservers]
+atlantis
+
+# for local development, use the atlantis vm. 
+# staging and production use the remove machines you want to deply
+# just create your machine profile in  ~/.appflow/tenant/mrrobot/development/host_vars
