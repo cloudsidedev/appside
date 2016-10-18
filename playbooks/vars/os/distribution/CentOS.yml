@@ -39,6 +39,7 @@ conf_base_packages:
     - curl
     - links
     - make
+    - php
     - "{{ var_package_git }}"
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"

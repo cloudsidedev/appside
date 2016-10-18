@@ -6,6 +6,7 @@
 # apt_repository: repo='ppa:vbernat/haproxy-1.6'
 #
 
+# Debian
 - name: install xinetd (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
@@ -16,9 +17,19 @@
   ignore_errors: yes
   tags: [ haproxy, ssl ]
 
+# RedHat
+- name: install xinetd (RedHat family)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - xinetd
+  when: ansible_os_family == "RedHat" and conf_env != "development" and conf_galera_cluster == true
+  ignore_errors: yes
+  tags: [ haproxy, ssl ]
+
 ################
 # HAPROXY BASE #
 ################
+# Ubuntu
 - name: haproxy apt-key (Ubuntu)
   apt_key: data="{{ lookup('file', 'haproxy/haproxy.gpg') }}" state=present
   when: ansible_distribution == "Ubuntu"
@@ -43,26 +54,42 @@
     DEBIAN_FRONTEND: noninteractive
   tags: [ haproxy, ssl ]
 
-- name: enable haproxy
+# RedHat
+- name: be sure latest haproxy packages are installed (CentOS)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - haproxy
+  when: 
+     - ansible_os_family == "RedHat"
+  tags: [ haproxy, ssl ]
+  
+- name: enable haproxy (Ubuntu)
   lineinfile: "dest=/etc/default/haproxy regexp='^ENABLED=0' line='ENABLED=1'"
+  when: ansible_os_family == "Debian"
   tags: [ haproxy, ssl ]
 
+# RedHat/CentOS -> use systemctl to enable haproxy 
+- name: enable haproxy (CentOS)
+  service: name=haproxy state=started enabled=yes
+  when: ansible_os_family == "RedHat"
+  tags: [ haproxy, ssl ]
+  
 ############
 # SSL BASE #
 ############
 - name: ssl-certs group
   group: name=ssl-cert state=present
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   tags: [ haproxy, ssl, ssl-conf ]
 
 - name: Make sure haproxy user is in ssl-cert
   user: name=haproxy groups=haproxy,ssl-cert
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   tags: [ haproxy, ssl, ssl-conf ]
 
 - name: /etc/certs
   file: path=/etc/certs mode=750 state=directory owner=root group=ssl-cert
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat Enterprise'
   tags: [ haproxy, ssl, ssl-conf ]
 
 ###########
@@ -93,6 +120,7 @@
   notify: handle_reload_haproxy
   when:
     - ansible_os_family == "Debian"
+    - ansible_os_family == "RedHat"
     - conf_confd_enable is defined and conf_confd_enable == false
   tags: [ haproxy, haproxy-conf, ssl, haproxy-acl ]
 
@@ -101,6 +129,7 @@
   with_dict: '{{ conf_haproxy_acl_files }}'
   notify: handle_reload_haproxy
   when:
+    - ansible_os_family == "RedHat"
     - ansible_os_family == "Debian"
     - conf_confd_enable is defined and conf_confd_enable == false
     - item.value.state == "present"
