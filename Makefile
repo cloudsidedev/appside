@@ -159,3 +159,13 @@ vagrant:
 	vagrant plugin install vagrant-cachier
 	# https://github.com/mitchellh/vagrant/issues/1673
 	vagrant plugin install vagrant-vbguest
+
+
+vagrant-centos:
+	mkdir -p ~/Downloads/Software
+	mkdir -p ~/Downloads/Software/Vagrant-Boxes
+	cd ~/Downloads/Software/Vagrant-Boxes && wget -c -q http://cloud.centos.org/centos/7/vagrant/x86_64/images/CentOS-7-Vagrant-1509-x86_64-01.box > /dev/null && mv CentOS-7-Vagrant-1509-x86_64-01.box centos64.box && cd ~/Documents/webdev/appflow
+	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
+	vagrant plugin install vagrant-cachier
+	vagrant plugin install vagrant-vbguest
+	
