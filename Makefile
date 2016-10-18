@@ -41,6 +41,7 @@ firstrun ?= false
 local ?= false
 limit ?= false
 tags ?= false
+skip_tags ?= false
 verbose ?= false
 
 ifneq "$(tenant)" "CFG_TENANT_ID"
@@ -65,6 +66,11 @@ endif
 
 ifneq "$(tags)" "false"
 args += --tags $(tags)
+endif
+
+
+ifneq "$(skip_tags)" "false"
+args += --skip-tags $(skip_tags)
 endif
 
 ifneq "$(verbose)" "false"
@@ -140,6 +146,9 @@ checkin:
 checkout:
 	@printf "[$(.BOLD)$(.CYAN)checkout$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@utils/checkout.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
+
+prova:
+	echo $(args)
 
 vagrant:
 	mkdir -p ~/Downloads/Software
