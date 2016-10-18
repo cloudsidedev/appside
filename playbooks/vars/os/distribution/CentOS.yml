@@ -15,9 +15,9 @@ conf_root_group: "root"
 conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
 conf_base_packages:
-    - etckeeper
-    - yum-utils
+    #- etckeeper
     - zsh
+    - yum-utils
     - vim-minimal
     - tmux
     - mosh

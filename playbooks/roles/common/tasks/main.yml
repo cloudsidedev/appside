@@ -75,8 +75,9 @@
   when: ansible_os_family == "Debian"
   tags: [ common, apt, base_packages ]
 
-# - name: debug
-#   debug: var=ansible_lsb.major_release
+#- name: debug
+#  debug: var=ansible_distribution var1=ansible_distribution_version
+#  tags: [ debug ]
 
 - name: python3-pip (Ubuntu >= 14 or Debian >= 7)
   apt: pkg={{ item }} state=installed
