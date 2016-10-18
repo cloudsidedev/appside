@@ -52,7 +52,6 @@
   tags: [ glusterfs ]
 
 - name: check gluster peer status (master)
-  shell: gluster peer probe {{ conf_glusterfs_node1 }} ; gluster peer probe {{ conf_glusterfs_node2 }}
   shell: "{{ conf_glusterfs_peer }}"
   ignore_errors: yes
   register: gluster_peer_res
@@ -81,7 +80,6 @@
 #   when: gluster_check_res|failed and conf_glusterfs_master == true
 
 - name: create gluster gvol0
-  shell: gluster volume create gvol0 replica 3 {{ conf_glusterfs_node0 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node1 }}:/data/glusterfs/gvol0/brick1 {{ conf_glusterfs_node2 }}:/data/glusterfs/gvol0/brick1 force
   shell: "{{ conf_glusterfs_gvol0 }}"
   when: conf_env != "development" and gluster_check_res|failed and conf_glusterfs_master == true
   tags: [ glusterfs ]
