@@ -9,6 +9,10 @@ epel_repo_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ans
 epel_repo_gpg_key_url: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
 epel_repofile_path: "/etc/yum.repos.d/epel.repo"
 
+jenkins_repo_url: http://pkg.jenkins.io/redhat/jenkins.repo
+jenkins_repo_key_url: http://pkg.jenkins.io/redhat/jenkins.io.key
+jenkins_pkg_url: http://pkg.jenkins.io/redhat
+
 conf_root_shell: "/bin/bash"
 conf_etc_path: "/etc"
 conf_local_etc_path: "/etc"

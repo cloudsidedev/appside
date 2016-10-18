@@ -15,6 +15,18 @@
 #   when: ansible_os_family == "Debian"
 #   tags: [ jenkins, ssl ]
 
+- name: install repo (RedHat family)
+  when: ansible_os_family == "RedHat"
+  shell: >
+    wget -O /etc/yum.repos.d/jenkins.repo {{ jenkins_repo_url }}
+  tags: [ jenkins, ssl ]
+
+- name: import keys for repo (RedHat family)
+  when: ansible_os_family == "RedHat"
+  shell: >
+    rpm --import {{ jenkins_repo_key_url }}
+  tags: [ jenkins, ssl ]
+  
 - name: deploy jenkins conf (Debian family)
   template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
   with_items:
@@ -37,6 +49,20 @@
     DEBIAN_FRONTEND: noninteractive
   tags: [ jenkins, ssl ]
 
-- name: enable jenkins
-  lineinfile: "dest=/etc/default/jenkins regexp='^ENABLED=0' line='ENABLED=1'"
+- name: be sure latest jenkins packages are installed (RedHat family)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - jenkins
+  when: ansible_os_family == "RedHat"
   tags: [ jenkins, ssl ]
+
+- name: enable jenkins (Debian)
+  lineinfile: "dest=/etc/default/jenkins regexp='^ENABLED=0' line='ENABLED=1'"
+  when: ansible_os_family == "Debian"
+  tags: [ jenkins, ssl ]
+  
+- name: enable jenkins (RedHat)
+  service: name=jenkins state=started enabled=yes
+  when: ansible_os_family == "RedHat"
+  tags: [ haproxy, ssl ]
+  
