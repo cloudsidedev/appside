@@ -84,8 +84,12 @@ Want to update everything and provision?
 
 ## Tags
 
-`php-conf`
-`nullmailer`
+`% make tags`
+
+```
+play #1 (all): all	TAGS: []
+    TASK TAGS: [apache2, apache2-conf, apt, apt-listchanges, apticron, base_packages, borg, borgmatic, cloud, clustercheck, common, composer, env, etckeeper, fstab, geoip, glusterfs, groups, haproxy, haproxy-acl, haproxy-conf, hosts, htaccess, jenkins, keepalived, keepalived-conf, lvm, motd, mysql, mysql-conf, mysql-users, mysqlpass, nodejs, ntp, nullmailer, percona, php, php-conf, pkg, rsyslog, shell, shell-users, smtpd, ssh, ssl, ssl-conf, sudo, swap, update, users, varnish, varnish-conf, vhosts, web_packages, wp-cli, xfs]
+```
 
 ## Contributing
 
