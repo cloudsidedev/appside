@@ -53,6 +53,7 @@
   yum: pkg={{ item }} state=latest
   with_items:
     - jenkins
+    - java
   when: ansible_os_family == "RedHat"
   tags: [ jenkins, ssl ]
 
