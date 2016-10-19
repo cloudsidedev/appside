@@ -16,6 +16,7 @@
 - name: Check if MySQL repo is already configured.
   stat: path={{ mysql_repofile_path }}
   register: mysql_repofile_result
+  when: ansible_distribution == "CentOS" 
   tags: [ mysql ]
 
 - name: Install MySQL repo (CentOS)
