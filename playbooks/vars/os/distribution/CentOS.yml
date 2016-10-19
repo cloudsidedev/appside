@@ -74,3 +74,9 @@ conf_mysql_conf: "/etc/mysql/my.cnf"
 conf_mysql_basedir: "/usr"
 conf_mysql_datadir: "/var/lib/mysql"
 conf_mysql_lc_messages_dir: "/usr/share/mysql"
+
+#
+# Etckeeper
+#
+conf_etckeeper_lowlevel_package_manager: "rpm"
+conf_etckeeper_highlevel_package_manager: "yum"
