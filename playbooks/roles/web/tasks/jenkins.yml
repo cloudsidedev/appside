@@ -18,6 +18,7 @@
 - name: Check if Jenkins repo is already configured.
   stat: path={{ jenkins_repofile_path }}
   register: jenkins_repofile_result
+  when: ansible_os_family == "RedHat"
   tags: [ jenkins, ssl ]
   
 - name: install repo (RedHat family)
