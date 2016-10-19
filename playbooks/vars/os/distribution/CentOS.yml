@@ -20,6 +20,10 @@ mysql_repofile_path: "/etc/yum.repos.d/mysql-community.repo"
 percona_repo_url: "https://www.percona.com/redir/downloads/percona-release/redhat/percona-release-0.1-4.noarch.rpm"
 percona_repofile_path: "/etc/yum.repos.d/percona-release.repo"
 
+nullmailer_repofile_path: "/etc/yum.repos.d/nullmailer.repo"
+nullmailer_repo_url: "http://download.opensuse.org/repositories/home:/p_conrad/Fedora_22/"
+nullmailer_repo_gpg_key_url: "http://download.opensuse.org/repositories/home:/p_conrad/Fedora_22//repodata/repomd.xml.key"
+
 conf_root_shell: "/bin/bash"
 conf_etc_path: "/etc"
 conf_local_etc_path: "/etc"
@@ -34,6 +38,7 @@ conf_base_packages:
     - zsh
     - yum-utils
     - vim-minimal
+    - vim-enhanced
     - tmux
     - mosh
     - finger
@@ -51,6 +56,13 @@ conf_base_packages:
     - links
     - make
     - php
+    - lynx
+    - nmap 
+    - screen 
+    - subversion
+    - traceroute
+    - whois 
+    - gcc
     - "{{ var_package_git }}"
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
