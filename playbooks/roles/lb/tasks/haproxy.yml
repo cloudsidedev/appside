@@ -55,7 +55,7 @@
   tags: [ haproxy, ssl ]
 
 # RedHat
-- name: be sure latest haproxy packages are installed (CentOS)
+- name: be sure latest haproxy packages are installed (RedHat Family)
   yum: pkg={{ item }} state=latest
   with_items:
     - haproxy
@@ -69,7 +69,7 @@
   tags: [ haproxy, ssl ]
 
 # RedHat/CentOS -> use systemctl to enable haproxy 
-- name: enable haproxy (CentOS)
+- name: enable haproxy (RedHat Family)
   service: name=haproxy state=started enabled=yes
   when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl ]
@@ -79,17 +79,17 @@
 ############
 - name: ssl-certs group
   group: name=ssl-cert state=present
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl, ssl-conf ]
 
 - name: Make sure haproxy user is in ssl-cert
   user: name=haproxy groups=haproxy,ssl-cert
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl, ssl-conf ]
 
 - name: /etc/certs
   file: path=/etc/certs mode=750 state=directory owner=root group=ssl-cert
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat Enterprise'
+  when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl, ssl-conf ]
 
 ###########

@@ -31,12 +31,12 @@
   when: ansible_os_family == "Debian"
   tags: [ etckeeper ]
 
-- name: be sure etckeeper package is installed (CentOS)
+- name: be sure etckeeper package is installed (RedHat Family)
   yum: name={{ item }} state=installed
   with_items:
     - curl
     - etckeeper
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ etckeeper ]
   
 - name: execute etckeeper for the first time

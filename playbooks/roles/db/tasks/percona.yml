@@ -76,7 +76,7 @@
   register: percona_repofile_result
   tags: [ mysql, percona ]
   
-- name: Install Percona repo (CentOS)
+- name: Install Percona repo (RedHat Family)
   yum:
     name: "{{ percona_repo_url }}"
     state: present
@@ -84,7 +84,7 @@
   until: '"failed" not in result'
   retries: 5
   delay: 10
-  when: ansible_distribution == "CentOS" and not percona_repofile_result.stat.exists
+  when: ansible_os_family == "RedHat" and not percona_repofile_result.stat.exists
   tags: [ mysql, percona ]
 
 - name: install Percona XtraDB Cluster (Debian family)
@@ -160,10 +160,10 @@
   tags: [ mysql, percona, clustercheck ]
   
   
-- name: Symlink mysql conf (RedHat)  
+- name: Symlink mysql conf (RedHat Family)  
   shell: >
      ln -s -f /etc/my.cnf /etc/mysql/my.cnf
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
   
 - name: Prepare for bootstrap (gcomm)

@@ -34,18 +34,18 @@
 # RedHat
 ########
 
-- name: be sure nodejs packages packages are installed (CentOS)
+- name: be sure nodejs packages packages are installed (RedHat Family)
   yum: pkg={{ item }} state=installed
   with_items:
     - nodejs
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ nodejs, web_packages ]
 
-- name: be sure nodejs packages packages are installed (CentOS)
+- name: be sure nodejs packages packages are installed (RedHat Family)
   yum: pkg={{ item }} state=installed
   with_items:
     - npm
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ nodejs, web_packages ]
 
 - name: ensure Node packages are present

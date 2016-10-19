@@ -16,10 +16,10 @@
 - name: Check if MySQL repo is already configured.
   stat: path={{ mysql_repofile_path }}
   register: mysql_repofile_result
-  when: ansible_distribution == "CentOS" 
+  when: ansible_os_family == "RedHat"
   tags: [ mysql ]
 
-- name: Install MySQL repo (CentOS)
+- name: Install MySQL repo (RedHat Family)
   yum:
     name: "{{ mysql_repo_url }}"
     state: present
@@ -27,16 +27,16 @@
   until: '"failed" not in result'
   retries: 5
   delay: 10
-  when: ansible_distribution == "CentOS" and not mysql_repofile_result.stat.exists
+  when: ansible_os_family == "RedHat" and not mysql_repofile_result.stat.exists
   tags: [ mysql ]
     
-- name: be sure dbtier packages are installed (CentOS)
+- name: be sure dbtier packages are installed (RedHat Family)
   yum: pkg={{ item }} state=installed
   with_items:
     - mysql-server
     - MySQL-python
     - bc
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ mysql ]
 
 - name: be sure dbtier packages are installed (FreeBSD)
@@ -70,12 +70,12 @@
 
 - name: create /var/log/mysql
   file: path=/var/log/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
   
-- name: deploy /etc/mysql/my.cnf (CentOS)
+- name: deploy /etc/mysql/my.cnf (RedHat Family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (Ubuntu)
