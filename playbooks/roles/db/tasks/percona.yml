@@ -74,6 +74,7 @@
 - name: Check if Percona repo is already configured.
   stat: path={{ percona_repofile_path }}
   register: percona_repofile_result
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
   
 - name: Install Percona repo (RedHat Family)
