@@ -152,9 +152,6 @@ checkout:
 	@printf "[$(.BOLD)$(.CYAN)checkout$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@utils/checkout.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
-prova:
-	echo $(args)
-
 vagrant:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes

@@ -16,6 +16,10 @@
   when: conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
 
+- include: centos-epel.yml
+  when: ansible_os_family == "RedHat"
+  tags: [ common, apt, base_packages ]
+
 - include: etckeeper.yml
   when: conf_etckeeper_webhook_url is defined
   tags: [ common ]
@@ -87,10 +91,6 @@
         (ansible_distribution == "Debian" and ansible_lsb.major_release|int >= 7)
   tags: [ common, apt, base_packages ]
 
-- include: centos-epel.yml
-  when: ansible_os_family == "RedHat"
-  tags: [ common, apt, base_packages ]
-  
 - name: base packages (RedHat/SHMZ family)
   yum: name={{ item }} state=installed
   with_items: '{{ conf_base_packages }}'
