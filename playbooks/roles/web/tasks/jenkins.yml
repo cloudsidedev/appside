@@ -20,17 +20,22 @@
   register: jenkins_repofile_result
   when: ansible_os_family == "RedHat"
   tags: [ jenkins, ssl ]
-  
-- name: install repo (RedHat family)
+
+- name: Install Jenkins repo (RedHat Family)
+  yum_repository:
+    name: "jenkins"
+    description: Jenkins YUM repo
+    baseurl: "{{ jenkins_repo_url }}"
+    gpgkey: "{{  jenkins_repo_key_url }}"
+    gpgcheck: yes
   when: ansible_os_family == "RedHat" and not jenkins_repofile_result.stat.exists
-  shell: >
-    wget -O /etc/yum.repos.d/jenkins.repo {{ jenkins_repo_url }}
   tags: [ jenkins, ssl ]
 
-- name: import keys for repo (RedHat family)
-  when: ansible_os_family == "RedHat"
-  shell: >
-    rpm --import {{ jenkins_repo_key_url }}
+- name: Import keys for repo (RedHat family)
+  rpm_key:
+    key: "{{ jenkins_repo_key_url }}"
+    state: present
+  when: ansible_os_family == "RedHat" and not jenkins_repofile_result.stat.exists
   tags: [ jenkins, ssl ]
   
 - name: deploy jenkins conf (Debian family)
