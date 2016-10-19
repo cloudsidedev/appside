@@ -7,9 +7,17 @@
   when: ansible_distribution_version == "12.04" and ansible_distribution == "Ubuntu"
   tags: [ smtpd, nullmailer ]
 
-- name: install nullmailer
+- name: install nullmailer (Debian family)
   apt: pkg=nullmailer state=latest
   when: ansible_os_family == "Debian"
+  tags: [ smtpd, nullmailer ]
+
+- name: install nullmailer (RedHat family)
+  yum: name={{ item }} state=installed
+  with_items:
+      - nullmailer
+      - mailx
+  when: ansible_os_family == "RedHat"
   tags: [ smtpd, nullmailer ]
 
 # - name: install nullmailer
