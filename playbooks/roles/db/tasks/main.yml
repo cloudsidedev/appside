@@ -13,6 +13,31 @@
     DEBIAN_FRONTEND: noninteractive
   tags: [ mysql ]
 
+- name: Check if MySQL repo is already configured.
+  stat: path={{ mysql_repofile_path }}
+  register: mysql_repofile_result
+  tags: [ mysql ]
+
+- name: Install MySQL repo (CentOS)
+  yum:
+    name: "{{ mysql_repo_url }}"
+    state: present
+  register: result
+  until: '"failed" not in result'
+  retries: 5
+  delay: 10
+  when: ansible_distribution == "CentOS" and not mysql_repofile_result.stat.exists
+  tags: [ mysql ]
+    
+- name: be sure dbtier packages are installed (CentOS)
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - mysql-server
+    - MySQL-python
+    - bc
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql ]
+
 - name: be sure dbtier packages are installed (FreeBSD)
   pkgng: name={{ item }} state=present cached=yes
   with_items:
@@ -40,6 +65,16 @@
 
 - name: create /etc/mysql
   file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ mysql, mysql-conf, percona ]
+
+- name: create /var/log/mysql
+  file: path=/var/log/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, mysql-conf, percona ]
+  
+- name: deploy /etc/mysql/my.cnf (CentOS)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_distribution == "CentOS"
   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (Ubuntu)

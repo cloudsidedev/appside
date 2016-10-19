@@ -10,15 +10,26 @@
   file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
   notify: handle_reload_apparmor_mysql
   ignore_errors: yes
+  when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: check to determine if galera is aready installed
+- name: check to determine if galera is aready installed (Debian)
   # shell: dpkg-query -s percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
   # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
   register: bootstrap_check
   always_run: yes
+  when: ansible_os_family == "Debian"
+  tags: [ mysql, percona ]
+
+
+- name: check to determine if galera is aready installed (RedHat)
+  shell: "rpm -qa | grep Percona-XtraDB-Cluster-galera-3"
+  ignore_errors: yes
+  register: bootstrap_check
+  always_run: yes
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
 - debug: var=bootstrap_check.rc
@@ -48,25 +59,33 @@
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: Prepare for bootstrap (gcomm)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
-  tags: [ mysql, percona]
 
-- name: Prepare for bootstrap (sst)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
-  tags: [ mysql, percona]
+- name: remove conflicting MySQL packages (RedHat family)
+  yum: pkg={{ item }} state=absent
+  with_items:
+    - mysql-community-client
+    - mysql-community-server
+    - mysql-community-common
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, percona ]
 
-- name: Prepare for bootstrap (sst)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
-  tags: [ mysql, percona]
-
-- name: Prepare for bootstrap (mysql dir)
-  file: path=/var/lib/mysql state=directory mode=0750
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
-  tags: [ mysql, percona]
+- name: Check if Percona repo is already configured.
+  stat: path={{ percona_repofile_path }}
+  register: percona_repofile_result
+  tags: [ mysql, percona ]
+  
+- name: Install Percona repo (CentOS)
+  yum:
+    name: "{{ percona_repo_url }}"
+    state: present
+  register: result
+  until: '"failed" not in result'
+  retries: 5
+  delay: 10
+  when: ansible_distribution == "CentOS" and not percona_repofile_result.stat.exists
+  tags: [ mysql, percona ]
 
 - name: install Percona XtraDB Cluster (Debian family)
   apt: pkg={{ item }} state=present force=yes
@@ -102,8 +121,67 @@
   when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
   tags: [ mysql, percona, clustercheck ]
 
+
+- name: install Percona XtraDB Cluster (RedHat family)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - Percona-XtraDB-Cluster-galera-3
+    - Percona-XtraDB-Cluster-client-56
+    - Percona-XtraDB-Cluster-server-56
+    - Percona-XtraDB-Cluster-shared-56
+    - MySQL-python
+  when: ansible_os_family == "RedHat"
+  ignore_errors: yes
+  tags: [ mysql, percona ]
+
+- name: install xinetd (RedHat family)
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - xinetd
+  when: ansible_os_family == "RedHat" and conf_env != "development" and conf_galera_cluster == true
+  ignore_errors: yes
+  tags: [ mysql, percona, clustercheck ]
+
+- name: update /etc/services (RedHat family)
+  lineinfile: "dest=/etc/services line='mysqlchk        9200/tcp                        # mysqlchk' insertafter='^xinetd' state=present"
+  when: ansible_os_family == "RedHat" and conf_env != "development" and conf_galera_cluster == true
+  tags: [ mysql, percona, clustercheck ]
+
+- name: update /etc/xinetd.d/mysqlchk (RedHat family)
+  lineinfile: "dest=/etc/xinetd.d/mysqlchk line='        server_args = {{ conf_mysql_clustercheck_user }} {{ conf_mysql_clustercheck_password }} {{ conf_mysql_clustercheck_available_when_donor }} /dev/null 0' insertafter='^        # 55-to-56 upgrade' state=present"
+  notify: handle_restart_xinetd
+  when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
+  tags: [ mysql, percona, clustercheck ]
+
 - name: create DB clustercheck user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
   when: conf_env != "development" and conf_galera_cluster == true
   ignore_errors: yes
   tags: [ mysql, percona, clustercheck ]
+  
+  
+- name: Symlink mysql conf (RedHat)  
+  shell: >
+     ln -s -f /etc/my.cnf /etc/mysql/my.cnf
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, percona ]
+  
+- name: Prepare for bootstrap (gcomm)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (sst)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (sst)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (mysql dir)
+  file: path=/var/lib/mysql state=directory mode=0750
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
+  tags: [ mysql, percona]

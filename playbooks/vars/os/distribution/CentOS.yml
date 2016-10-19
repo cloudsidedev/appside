@@ -12,6 +12,13 @@ epel_repofile_path: "/etc/yum.repos.d/epel.repo"
 jenkins_repo_url: http://pkg.jenkins.io/redhat/jenkins.repo
 jenkins_repo_key_url: http://pkg.jenkins.io/redhat/jenkins.io.key
 jenkins_pkg_url: http://pkg.jenkins.io/redhat
+jenkins_repofile_path: "/etc/yum.repos.d/jenkins.repo"
+
+mysql_repo_url: "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"
+mysql_repofile_path: "/etc/yum.repos.d/mysql-community.repo"
+
+percona_repo_url: "https://www.percona.com/redir/downloads/percona-release/redhat/percona-release-0.1-4.noarch.rpm"
+percona_repofile_path: "/etc/yum.repos.d/percona-release.repo"
 
 conf_root_shell: "/bin/bash"
 conf_etc_path: "/etc"
