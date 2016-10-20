@@ -78,6 +78,7 @@
 #
 - include: percona.yml
   when: conf_galera_cluster == true
+  tags: [ mysql, mysql-conf, percona ]
 
 - name: create replication user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
