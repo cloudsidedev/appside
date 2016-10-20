@@ -15,7 +15,8 @@
 
 - name: Install nullmailer repo (RedHat Family)
   yum_repository:
-    name: "p_conrad's Home Project (Fedora_22)"
+    name: "nullmailer"
+    description: "p_conrad's Home Project (Fedora_22)"
     baseurl: "{{ nullmailer_repo_url }}"
     gpgkey: "{{  nullmailer_repo_gpg_key_url }}"
     gpgcheck: yes
