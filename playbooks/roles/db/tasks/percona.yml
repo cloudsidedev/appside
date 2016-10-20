@@ -23,8 +23,7 @@
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-
-- name: check to determine if galera is aready installed (RedHat)
+- name: check to determine if galera is aready installed (RedHat Family)
   shell: "rpm -qa | grep Percona-XtraDB-Cluster-galera-3"
   ignore_errors: yes
   register: bootstrap_check_rpm
