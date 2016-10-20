@@ -9,7 +9,7 @@ epel_repo_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ans
 epel_repo_gpg_key_url: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
 epel_repofile_path: "/etc/yum.repos.d/epel.repo"
 
-jenkins_repo_url: http://pkg.jenkins.io/redhat/jenkins.repo
+jenkins_repo_url: http://pkg.jenkins.io/redhat
 jenkins_repo_key_url: http://pkg.jenkins.io/redhat/jenkins.io.key
 jenkins_pkg_url: http://pkg.jenkins.io/redhat
 jenkins_repofile_path: "/etc/yum.repos.d/jenkins.repo"
@@ -19,6 +19,10 @@ mysql_repofile_path: "/etc/yum.repos.d/mysql-community.repo"
 
 percona_repo_url: "https://www.percona.com/redir/downloads/percona-release/redhat/percona-release-0.1-4.noarch.rpm"
 percona_repofile_path: "/etc/yum.repos.d/percona-release.repo"
+
+nullmailer_repofile_path: "/etc/yum.repos.d/nullmailer.repo"
+nullmailer_repo_url: "http://download.opensuse.org/repositories/home:/p_conrad/Fedora_22/"
+nullmailer_repo_gpg_key_url: "http://download.opensuse.org/repositories/home:/p_conrad/Fedora_22//repodata/repomd.xml.key"
 
 conf_root_shell: "/bin/bash"
 conf_etc_path: "/etc"
@@ -34,6 +38,7 @@ conf_base_packages:
     - zsh
     - yum-utils
     - vim-minimal
+    - vim-enhanced
     - tmux
     - mosh
     - finger
@@ -51,6 +56,13 @@ conf_base_packages:
     - links
     - make
     - php
+    - lynx
+    - nmap 
+    - screen 
+    - subversion
+    - traceroute
+    - whois 
+    - gcc
     - "{{ var_package_git }}"
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
@@ -62,3 +74,9 @@ conf_mysql_conf: "/etc/mysql/my.cnf"
 conf_mysql_basedir: "/usr"
 conf_mysql_datadir: "/var/lib/mysql"
 conf_mysql_lc_messages_dir: "/usr/share/mysql"
+
+#
+# Etckeeper
+#
+conf_etckeeper_lowlevel_package_manager: "rpm"
+conf_etckeeper_highlevel_package_manager: "yum"
