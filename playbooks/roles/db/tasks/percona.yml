@@ -36,7 +36,6 @@
 #   when: bootstrap_check_deb is defined
 #   always_run: yes
 #   tags: [ mysql, percona ]
-
   debug: var=bootstrap_check.rc
   tags: [ mysql, percona ]
 
@@ -63,7 +62,6 @@
     DEBIAN_FRONTEND: noninteractive
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
-
 
 - name: remove conflicting MySQL packages (RedHat family)
   yum: pkg={{ item }} state=absent
@@ -127,7 +125,6 @@
   when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
   tags: [ mysql, percona, clustercheck ]
 
-
 - name: install Percona XtraDB Cluster (RedHat family)
   yum: pkg={{ item }} state=latest
   with_items:
@@ -165,10 +162,8 @@
   ignore_errors: yes
   tags: [ mysql, percona, clustercheck ]
 
-
 - name: Symlink mysql conf (RedHat Family)
-  shell: >
-     ln -s -f /etc/my.cnf /etc/mysql/my.cnf
+  shell: ln -s -f /etc/my.cnf /etc/mysql/my.cnf
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
