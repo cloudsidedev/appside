@@ -73,22 +73,6 @@
   when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (RedHat Family)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_os_family == "RedHat"
-  tags: [ mysql, mysql-conf, percona ]
-
-- name: deploy /etc/mysql/my.cnf (Ubuntu)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  # notify: handle_restart_mysql
-  when: ansible_distribution == "Ubuntu"
-  tags: [ mysql, mysql-conf, percona ]
-
-- name: deploy /etc/mysql/my.cnf (FreeBSD)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_distribution == "FreeBSD"
-  tags: [ mysql, mysql-conf, percona ]
-
 #
 # percona
 #
@@ -99,6 +83,12 @@
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
   ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
+
+
+- name: deploy /etc/mysql/my.cnf (RedHat Family)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, mysql-conf, percona ]
 
 #
 # MySQL system config (AFTER PERCONA)
