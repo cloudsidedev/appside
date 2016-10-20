@@ -77,6 +77,7 @@
 # percona
 #
 - include: percona.yml
+  when: conf_galera_cluster == true
   tags: [ mysql, mysql-conf, percona ]
 
 - name: create replication user
