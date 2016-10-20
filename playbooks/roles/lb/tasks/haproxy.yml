@@ -59,21 +59,21 @@
   yum: pkg={{ item }} state=latest
   with_items:
     - haproxy
-  when: 
+  when:
      - ansible_os_family == "RedHat"
   tags: [ haproxy, ssl ]
-  
+
 - name: enable haproxy (Ubuntu)
   lineinfile: "dest=/etc/default/haproxy regexp='^ENABLED=0' line='ENABLED=1'"
   when: ansible_os_family == "Debian"
   tags: [ haproxy, ssl ]
 
-# RedHat/CentOS -> use systemctl to enable haproxy 
+# RedHat/CentOS -> use systemctl to enable haproxy
 - name: enable haproxy (RedHat Family)
   service: name=haproxy state=started enabled=yes
   when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl ]
-  
+
 ############
 # SSL BASE #
 ############
@@ -119,8 +119,7 @@
   template: src=etc/haproxy/haproxy-cfg.j2 dest=/etc/haproxy/haproxy.cfg owner=root group={{ conf_root_group }} mode=0644
   notify: handle_reload_haproxy
   when:
-    - ansible_os_family == "Debian"
-    - ansible_os_family == "RedHat"
+    - ansible_os_family == "Debian" or ansible_os_family == "RedHat"
     - conf_confd_enable is defined and conf_confd_enable == false
   tags: [ haproxy, haproxy-conf, ssl, haproxy-acl ]
 
@@ -129,8 +128,7 @@
   with_dict: '{{ conf_haproxy_acl_files }}'
   notify: handle_reload_haproxy
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_os_family == "Debian"
+    - ansible_os_family == "Debian" or ansible_os_family == "RedHat"
     - conf_confd_enable is defined and conf_confd_enable == false
     - item.value.state == "present"
   tags: [ haproxy, haproxy-conf, haproxy-acl ]
