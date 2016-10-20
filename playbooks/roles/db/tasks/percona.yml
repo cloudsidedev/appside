@@ -18,7 +18,7 @@
   # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
-  register: bootstrap_check_deb
+  register: bootstrap_check
   always_run: yes
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
@@ -32,12 +32,24 @@
   tags: [ mysql, percona ]
 
 # - name: Display all variables/facts known for a host
-#   debug: bootstrap_check_deb=bootstrap_check
-#   when: bootstrap_check_deb is defined
+#   debug: bootstrap_check=bootstrap_check
+#   when: bootstrap_check is defined
 #   always_run: yes
 #   tags: [ mysql, percona ]
 #  debug: var=bootstrap_check.rc
 #  tags: [ mysql, percona ]
+
+# - name: Display all variables/facts known for a host (Debian)
+#   debug: bootstrap_check=bootstrap_check
+#   when: bootstrap_check is defined
+#   always_run: yes
+#   tags: [ mysql, percona ]
+
+# - name: Display all variables/facts known for a host (RedHat)
+#   debug: bootstrap_check_rpm=bootstrap_check
+#   when: bootstrap_check_rpm is defined
+#   always_run: yes
+#   tags: [ mysql, percona ]
 
 - name: percona apt-key (Debian family)
   # apt_key: url=http://www.percona.com/redir/downloads/RPM-GPG-KEY-percona state=present
