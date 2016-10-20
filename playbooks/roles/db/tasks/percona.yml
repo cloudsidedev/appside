@@ -36,8 +36,8 @@
 #   when: bootstrap_check_deb is defined
 #   always_run: yes
 #   tags: [ mysql, percona ]
-  debug: var=bootstrap_check.rc
-  tags: [ mysql, percona ]
+#  debug: var=bootstrap_check.rc
+#  tags: [ mysql, percona ]
 
 - name: percona apt-key (Debian family)
   # apt_key: url=http://www.percona.com/redir/downloads/RPM-GPG-KEY-percona state=present
