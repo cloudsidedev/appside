@@ -26,6 +26,7 @@
 - name: be sure etckeeper package is installed (Debian family)
   apt: pkg={{ item }} state=installed
   with_items:
+    - git 
     - curl
     - etckeeper
   when: ansible_os_family == "Debian"
