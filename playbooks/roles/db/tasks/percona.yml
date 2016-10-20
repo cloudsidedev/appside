@@ -32,11 +32,11 @@
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
-- name: Display all variables/facts known for a host
-  debug: bootstrap_check_deb=bootstrap_check
-  when: bootstrap_check_deb is defined
-  always_run: yes
-  tags: [ mysql, percona ]
+# - name: Display all variables/facts known for a host
+#   debug: bootstrap_check_deb=bootstrap_check
+#   when: bootstrap_check_deb is defined
+#   always_run: yes
+#   tags: [ mysql, percona ]
 
   debug: var=bootstrap_check.rc
   tags: [ mysql, percona ]
@@ -82,7 +82,7 @@
   register: percona_repofile_result
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
-  
+
 - name: Install Percona repo (RedHat Family)
   yum:
     name: "{{ percona_repo_url }}"
@@ -165,14 +165,14 @@
   when: conf_env != "development" and conf_galera_cluster == true
   ignore_errors: yes
   tags: [ mysql, percona, clustercheck ]
-  
-  
-- name: Symlink mysql conf (RedHat Family)  
+
+
+- name: Symlink mysql conf (RedHat Family)
   shell: >
      ln -s -f /etc/my.cnf /etc/mysql/my.cnf
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
-  
+
 - name: Prepare for bootstrap (gcomm)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
   when: bootstrap_check.rc == 1 and conf_wsrep_master == true
