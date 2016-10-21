@@ -89,7 +89,6 @@
 
 - name: /etc/certs
   file: path=/etc/certs mode=750 state=directory owner=root group=ssl-cert
-  when: ansible_os_family == "RedHat"
   tags: [ haproxy, ssl, ssl-conf ]
 
 ###########
