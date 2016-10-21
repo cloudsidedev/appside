@@ -24,7 +24,7 @@
   tags: [ mysql, percona ]
 
 - name: check to determine if galera is aready installed (RedHat Family)
-  shell: "rpm -qa | grep Percona-XtraDB-Cluster-galera-3"
+  shell: "rpm -q Percona-XtraDB-Cluster-galera-3"
   ignore_errors: yes
   register: bootstrap_check_rpm
   always_run: yes
@@ -178,22 +178,10 @@
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
-- name: Prepare for bootstrap (gcomm)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
-  when: bootstrap_check_deb.rc == 1 or bootstrap_check_rpm.rc == 1 and conf_wsrep_master == true
-  tags: [ mysql, percona]
+- include: bootstrap.yml
+  when: bootstrap_check_deb is defined and bootstrap_check_deb.rc == 1
+  tags: [ mysql, percona ]
 
-- name: Prepare for bootstrap (sst)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
-  when: bootstrap_check_deb.rc == 1 or bootstrap_check_rpm.rc == 1 and conf_wsrep_master == false
-  tags: [ mysql, percona]
-
-- name: Prepare for bootstrap (sst)
-  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
-  when: bootstrap_check_deb.rc == 1 or bootstrap_check_rpm.rc == 1 and conf_wsrep_master == false
-  tags: [ mysql, percona]
-
-- name: Prepare for bootstrap (mysql dir)
-  file: path=/var/lib/mysql state=directory mode=0750
-  when: bootstrap_check_deb.rc == 1 or bootstrap_check_rpm.rc == 1 and conf_wsrep_master == true
-  tags: [ mysql, percona]
+- include: bootstrap.yml
+  when: bootstrap_check_rpm is defined and bootstrap_check_rpm.rc == 1
+  tags: [ mysql, percona ]
