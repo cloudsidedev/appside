@@ -122,7 +122,6 @@
 #
 - name: mysql service state
   service: name=mysql state=started enabled=yes
-  when: ansible_distribution == "Ubuntu"
   ignore_errors: yes
   tags: [ mysql ]
 

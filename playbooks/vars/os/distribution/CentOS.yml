@@ -27,7 +27,7 @@ nullmailer_repo_gpg_key_url: "http://download.opensuse.org/repositories/home:/p_
 conf_root_shell: "/bin/bash"
 conf_etc_path: "/etc"
 conf_local_etc_path: "/etc"
-conf_lib_path: "/usr/lib"
+conf_lib_path: "/usr/lib64"
 conf_bin_path: "/usr/bin"
 conf_zsh_path: "/bin/zsh"
 conf_root_group: "root"

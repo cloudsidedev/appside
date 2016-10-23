@@ -178,6 +178,11 @@
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
+- name: Symlink mysql usr folder (RedHat Family)
+  shell: rm -rf /usr/share/mysql; ln -s -f /usr/share/percona-xtradb-cluster/ /usr/share/mysql
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, percona ]
+
 - include: bootstrap.yml
   when: bootstrap_check_deb is defined and bootstrap_check_deb.rc == 1
   tags: [ mysql, percona ]
