@@ -1,7 +1,12 @@
 ---
 
 # OSX:
-#   sudo ifconfig lo0 alias 10.200.10.1/24 ; source ~/.appflow/config ; docker stop jenkins ; docker-compose up
+#
+#   % sudo ifconfig lo0 alias 10.200.10.1/24 ; source ~/.appflow/config ; docker stop jenkins ; docker-compose up
+#
+# Linux:
+#
+#   % source ~/.appflow/config ; docker stop jenkins ; docker-compose up
 #
 
 version: '2'
@@ -16,4 +21,4 @@ services:
       - ~/.appflow/jenkins:/var/jenkins_home
     environment:
       - APPFLOW_DH_USERNAME=$USER
-      - CFG_APPFLOW_DH_HOSTIP
+      - APPFLOW_DH_HOSTIP=$CFG_APPFLOW_DH_HOSTIP
