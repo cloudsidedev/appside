@@ -1,6 +1,8 @@
 ---
 
-# OSX: sudo ifconfig lo0 alias 10.200.10.1/24
+# OSX:
+#   sudo ifconfig lo0 alias 10.200.10.1/24 ; export OSTYPE ; docker stop jenkins ; docker-compose up
+#
 
 version: '2'
 services:
@@ -14,4 +16,4 @@ services:
       - ~/.appflow/jenkins:/var/jenkins_home
     environment:
       - APPFLOW_DH_USERNAME=$USER
-      - APPFLOW_DH_HOSTIP=$(if [[ $OSTYPE == darwin* ]]; then echo 10.200.10.1;fi)
+      - APPFLOW_DH_OSTYPE=$OSTYPE
