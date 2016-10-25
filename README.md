@@ -100,19 +100,23 @@ play #1 (all): all	TAGS: []
 
 ### Troubleshooting
 
-Issue: `The box you attempted to add doesn't match the provider you specified.`
-Solve: `% vagrant up --provider=virtualbox atlantis`
+```
+Issue: The box you attempted to add doesn't match the provider you specified.
+Solve: % vagrant up --provider=virtualbox atlantis
+```
 
+```
 Issue: Lost Vagrant reference to VirtualBox VM
 Solve:
-```
 % VBoxManage list vms
   "vagrant-atlantis" {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx}
 % echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
 ```
 
-Issue: `vagragnt Warning: Authentication failure. Retrying...`
+```
+Issue: vagragnt Warning: Authentication failure. Retrying...
 Solve: http://stackoverflow.com/a/30792296
+```
 
 ## Contributing
 
