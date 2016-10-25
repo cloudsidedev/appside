@@ -91,6 +91,29 @@ play #1 (all): all	TAGS: []
     TASK TAGS: [apache2, apache2-conf, apt, apt-listchanges, apticron, base_packages, borg, borgmatic, cloud, clustercheck, common, composer, env, etckeeper, fstab, geoip, glusterfs, groups, haproxy, haproxy-acl, haproxy-conf, hosts, htaccess, jenkins, keepalived, keepalived-conf, lvm, motd, mysql, mysql-conf, mysql-users, mysqlpass, nodejs, ntp, nullmailer, percona, php, php-conf, pkg, rsyslog, shell, shell-users, smtpd, ssh, ssl, ssl-conf, sudo, swap, update, users, varnish, varnish-conf, vhosts, web_packages, wp-cli, xfs]
 ```
 
+## Vagrant
+
+```
+% vagrant plugin install vagrant-vbguest
+% vagrant vbguest --status
+```
+
+### Troubleshooting
+
+Issue: `The box you attempted to add doesn't match the provider you specified.`
+Solve: `% vagrant up --provider=virtualbox atlantis`
+
+Issue: Lost Vagrant reference to VirtualBox VM
+Solve:
+```
+% VBoxManage list vms
+  "vagrant-atlantis" {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx}
+% echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
+```
+
+Issue: `vagragnt Warning: Authentication failure. Retrying...`
+Solve: http://stackoverflow.com/a/30792296
+
 ## Contributing
 
 Contributions are welcome from everyone. [Join the chat](https://gitter.im/ttssdev/appflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge).
