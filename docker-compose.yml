@@ -1,0 +1,11 @@
+---
+version: '2'
+services:
+  jenkins:
+    image: jenkins
+    container_name: jenkins
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - ~/.appflow/jenkins:/var/jenkins_home
