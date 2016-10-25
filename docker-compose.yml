@@ -9,3 +9,5 @@ services:
       - 8080:8080
     volumes:
       - ~/.appflow/jenkins:/var/jenkins_home
+    environment: 
+      - APPFLOW_DH_USERNAME=$USER

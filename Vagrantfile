@@ -34,18 +34,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 
 
-  config.vm.define "atlantis.centos" do |atlantis|
-    atlantis.vm.box = "atlantis.centos"
-    atlantis.vm.hostname = "atlantis.centos"
-    atlantis.vm.box_url = "Vagrant-Boxes/centos64.box"
-    atlantis.vm.network :private_network, ip: "192.168.80.3"
-    atlantis.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    atlantis.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+  config.vm.define "atlantis.centos" do |atlantiscentos|
+    atlantiscentos.vm.box = "atlantis.centos"
+    atlantiscentos.vm.hostname = "atlantis.centos"
+    atlantiscentos.vm.box_url = "Vagrant-Boxes/centos64.box"
+    atlantiscentos.vm.network :private_network, ip: "192.168.80.3"
+    atlantiscentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantiscentos.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
-    atlantis.vm.provider "virtualbox" do |v|
+    atlantiscentos.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis-centos", "--natdnshostresolver1", "on"]
     end
 
   end
-  
+
 end
