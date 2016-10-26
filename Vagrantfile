@@ -71,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
-  config.vm.define "testing.centos" do |testing.centos|
+  config.vm.define "testing.centos" do |testingcentos|
     testingcentos.vm.box = "testing.centos"
     testingcentos.vm.hostname = "testing.centos"
     testingcentos.vm.box_url = "Vagrant-Boxes/centos64.box"
