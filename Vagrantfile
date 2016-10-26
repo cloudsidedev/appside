@@ -74,6 +74,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "testing.centos" do |testingcentos|
     testingcentos.vm.box = "testing.centos"
     testingcentos.vm.hostname = "testing.centos"
+    # TESTFIX
+    testingcentos.vm.host_name = 'testing.centos'
+    # TESTFIX
     testingcentos.vm.box_url = "Vagrant-Boxes/centos64.box"
     testingcentos.vm.network :private_network, ip: "192.168.90.3"
     # testingcentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
