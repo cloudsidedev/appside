@@ -20,13 +20,13 @@
   when: ansible_os_family == "RedHat"
   tags: [ common, apt, base_packages ]
 
-- include: etckeeper.yml
-  when: conf_etckeeper_webhook_url is defined
-  tags: [ common ]
-
 - name: template /etc/hosts
   template: src=etc/hosts.j2 dest=/etc/hosts owner=root group={{ conf_root_group }} mode=0644 backup=no
   tags: [ common, hosts ]
+
+- include: etckeeper.yml
+  when: conf_etckeeper_webhook_url is defined
+  tags: [ common ]
 
 - include: timezone.yml
   tags: [ common ]
