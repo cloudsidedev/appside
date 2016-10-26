@@ -25,7 +25,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     atlantis.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
     atlantis.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
-
     atlantis.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis", "--natdnshostresolver1", "on"]
     end
@@ -51,11 +50,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     testing.vm.hostname = "testing"
     testing.vm.box_url = "Vagrant-Boxes/trusty64.box"
     testing.vm.network :private_network, ip: "192.168.90.2"
-    #testing.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    #testing.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    # testing.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    # testing.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
     testing.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-testing", "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--cpus", 1, "--memory", 512, "--name", "vagrant-testing", "--natdnshostresolver1", "on"]
+    end
+
+    testing.vm.provision "ansible" do |ansible|
+      ansible.playbook = "playbooks/generic.yml"
+      ansible.inventory_path = "~/.appflow/tenant/appflow-ttss/development/inventory"
+      ansible.vault_password_file = "~/.appflow/vault/ttss/development"
+      ansible.sudo = true
     end
 
   end
