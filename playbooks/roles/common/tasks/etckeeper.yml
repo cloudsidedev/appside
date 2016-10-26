@@ -43,6 +43,7 @@
 
 - name: execute etckeeper for the first time
   shell: cd /etc; etckeeper init ; git add . ; git commit -m 'Initial import'
+  ignore_errors: yes
   when: git_exists.stat.exists == False
   tags: [ etckeeper ]
 
