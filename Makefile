@@ -152,6 +152,9 @@ checkout:
 	@printf "[$(.BOLD)$(.CYAN)checkout$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@utils/checkout.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
+jenkins:
+	@source ~/.appflow/config ; docker stop jenkins ; docker-compose up -d
+
 vagrant:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
@@ -162,7 +165,6 @@ vagrant:
 	# https://github.com/mitchellh/vagrant/issues/1673
 	vagrant plugin install vagrant-vbguest
 
-
 vagrant-centos:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
@@ -170,4 +172,3 @@ vagrant-centos:
 	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
 	vagrant plugin install vagrant-cachier
 	vagrant plugin install vagrant-vbguest
-	
