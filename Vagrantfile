@@ -57,6 +57,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--cpus", 1, "--memory", 512, "--name", "vagrant-testing", "--natdnshostresolver1", "on"]
     end
 
+    testing.vm.provision "fix-no-tty", type: "shell" do |s|
+      s.privileged = false
+      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+    end
+
     testing.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbooks/generic.yml"
       ansible.inventory_path = "~/.appflow/tenant/appflow-ttss/development/inventory"
@@ -65,4 +70,31 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
   end
+
+  config.vm.define "testing.centos" do |testing.centos|
+    testingcentos.vm.box = "testing.centos"
+    testingcentos.vm.hostname = "testing.centos"
+    testingcentos.vm.box_url = "Vagrant-Boxes/centos64.box"
+    testingcentos.vm.network :private_network, ip: "192.168.90.3"
+    # testingcentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    # testingcentos.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+
+    testingcentos.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--cpus", 1, "--memory", 512, "--name", "vagrant-testing-centos", "--natdnshostresolver1", "on"]
+    end
+
+    testingcentos.vm.provision "fix-no-tty", type: "shell" do |s|
+      s.privileged = false
+      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+    end
+
+    testingcentos.vm.provision "ansible" do |ansible|
+      ansible.playbook = "playbooks/generic.yml"
+      ansible.inventory_path = "~/.appflow/tenant/appflow-ttss/development/inventory"
+      ansible.vault_password_file = "~/.appflow/vault/ttss/development"
+      ansible.sudo = true
+    end
+
+  end
+
 end
