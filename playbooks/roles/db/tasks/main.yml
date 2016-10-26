@@ -6,37 +6,11 @@
   apt: pkg={{ item }} state=installed
   with_items:
     # - mysql-server
-    - python-mysqldb
+    # - python-mysqldb
     - bc
   when: ansible_distribution == "Ubuntu"
   environment:
     DEBIAN_FRONTEND: noninteractive
-  tags: [ mysql ]
-
-- name: Check if MySQL repo is already configured.
-  stat: path={{ mysql_repofile_path }}
-  register: mysql_repofile_result
-  when: ansible_os_family == "RedHat"
-  tags: [ mysql ]
-
-- name: Install MySQL repo (RedHat Family)
-  yum:
-    name: "{{ mysql_repo_url }}"
-    state: present
-  register: result
-  until: '"failed" not in result'
-  retries: 5
-  delay: 10
-  when: ansible_os_family == "RedHat" and not mysql_repofile_result.stat.exists
-  tags: [ mysql ]
-
-- name: be sure dbtier packages are installed (RedHat Family)
-  yum: pkg={{ item }} state=installed
-  with_items:
-    - mysql-server
-    - MySQL-python
-    - bc
-  when: ansible_os_family == "RedHat"
   tags: [ mysql ]
 
 - name: be sure dbtier packages are installed (FreeBSD)
@@ -68,27 +42,26 @@
   file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
   tags: [ mysql, mysql-conf, percona ]
 
-- name: create /var/log/mysql
-  file: path=/var/log/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
-  when: ansible_os_family == "RedHat"
+- name: deploy /etc/mysql/my.cnf (Ubuntu)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  # notify: handle_restart_mysql
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, mysql-conf, percona ]
+
+- name: deploy /etc/mysql/my.cnf (FreeBSD)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_distribution == "FreeBSD"
   tags: [ mysql, mysql-conf, percona ]
 
 #
 # percona
 #
 - include: percona.yml
-  when: conf_galera_cluster == true
-  tags: [ mysql, mysql-conf, percona ]
 
 - name: create replication user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
   ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
-
-- name: deploy /etc/mysql/my.cnf (RedHat Family)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_os_family == "RedHat"
-  tags: [ mysql, mysql-conf, percona ]
 
 #
 # MySQL system config (AFTER PERCONA)
@@ -122,6 +95,7 @@
 #
 - name: mysql service state
   service: name=mysql state=started enabled=yes
+  when: ansible_distribution == "Ubuntu"
   ignore_errors: yes
   tags: [ mysql ]
 
