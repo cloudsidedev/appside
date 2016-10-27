@@ -7,6 +7,8 @@
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
+ANSIBLE_TAGS=ENV['ANSIBLE_TAGS']
+
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -67,6 +69,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.inventory_path = "~/.appflow/tenant/appflow-ttss/development/inventory"
       ansible.vault_password_file = "~/.appflow/vault/ttss/development"
       ansible.sudo = true
+      ansible.tags = ANSIBLE_TAGS
     end
 
   end
@@ -97,6 +100,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.inventory_path = "~/.appflow/tenant/appflow-ttss/development/inventory"
       ansible.vault_password_file = "~/.appflow/vault/ttss/development"
       ansible.sudo = true
+      ansible.tags = ANSIBLE_TAGS
     end
 
   end
