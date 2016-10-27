@@ -79,6 +79,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # TESTFIX
     testingcentos.vm.box_url = "Vagrant-Boxes/centos64.box"
     testingcentos.vm.network :private_network, ip: "192.168.90.3"
+    config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
     # testingcentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
     # testingcentos.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
@@ -86,10 +87,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--cpus", 1, "--memory", 512, "--name", "vagrant-testing-centos", "--natdnshostresolver1", "on"]
     end
 
-    testingcentos.vm.provision "fix-no-tty", type: "shell" do |s|
-      s.privileged = false
-      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
-    end
+#    testingcentos.vm.provision "fix-no-tty", type: "shell" do |s|
+#      s.privileged = false
+#      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+#    end
 
     testingcentos.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbooks/generic.yml"
