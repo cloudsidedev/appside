@@ -74,7 +74,7 @@
 #   tags: [ common, apt, base_packages ]
 
 - name: base packages (Debian family)
-  apt: pkg={{ item }} state=installed
+  apt: pkg={{ item }} state=latest
   with_items: '{{ conf_base_packages }}'
   when: ansible_os_family == "Debian"
   tags: [ common, apt, base_packages ]
@@ -92,13 +92,13 @@
   tags: [ common, apt, base_packages ]
 
 - name: base packages (RedHat/SHMZ family)
-  yum: name={{ item }} state=installed
+  yum: name={{ item }} state=latest
   with_items: '{{ conf_base_packages }}'
   when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
   tags: [ common, apt, base_packages ]
 
 - name: base packages (FreeBSD)
-  pkgng: name={{ item }} state=present cached=yes
+  pkgng: name={{ item }} state=latest cached=yes
   with_items: '{{ conf_base_packages }}'
   when: ansible_distribution == "FreeBSD"
   tags: [ common, pkg, base_packages ]
