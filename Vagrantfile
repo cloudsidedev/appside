@@ -48,7 +48,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "testing" do |testing|
     testing.vm.box = "testing"
     testing.vm.hostname = "testing"
-    testing.vm.box_url = "Vagrant-Boxes/trusty64.box"
+    testing.vm.box_url = "Vagrant-Boxes/ubuntu-ttss.box"
     testing.vm.network :private_network, ip: "192.168.90.2"
     # testing.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
     # testing.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
@@ -77,7 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # TESTFIX
     testingcentos.vm.host_name = 'testing.centos'
     # TESTFIX
-    testingcentos.vm.box_url = "Vagrant-Boxes/centos64.box"
+    testingcentos.vm.box_url = "Vagrant-Boxes/centos-ttss.box"
     testingcentos.vm.network :private_network, ip: "192.168.90.3"
     config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
     # testingcentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
