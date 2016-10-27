@@ -12,6 +12,13 @@
 - include: sudo.yml
   tags: [ common, users, sudo ]
 
+
+- name: apt update (Debian family)
+  shell: "apt update"
+  when: ansible_os_family == "Debian"
+  tags: [ common, apt, base_packages ]
+
+
 - include: cloud.yml
   when: conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
