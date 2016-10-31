@@ -2,6 +2,18 @@
 
 # file: playbooks/roles/common/tasks/users.yml
 
+- name: zsh (Debian family)
+  apt: pkg={{ item }} state=latest
+  with_items: zsh
+  when: ansible_os_family == "Debian"
+  tags: [ shell-users, users, shell, groups ]
+
+- name: zsh (RedHat/SHMZ family)
+  yum: name={{ item }} state=latest
+  with_items: zsh
+  when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
+  tags: [ shell-users, users, shell, groups ]
+
 - name: groups
   action: group name={{ item }} state=present
   with_items:
