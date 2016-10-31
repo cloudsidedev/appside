@@ -3,7 +3,7 @@
 # file: playbooks/roles/common/tasks/users.yml
 
 - name: zsh (Debian family)
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} update_cache=yes state=latest
   with_items: zsh
   when: ansible_os_family == "Debian"
   tags: [ shell-users, users, shell, groups ]
