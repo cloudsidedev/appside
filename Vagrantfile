@@ -8,6 +8,7 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 ANSIBLE_TAGS=ENV['ANSIBLE_TAGS']
+ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -101,6 +102,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.vault_password_file = "~/.appflow/vault/ttss/development"
       ansible.sudo = true
       ansible.tags = ANSIBLE_TAGS
+      ansible.skip_tags = ANSIBLE_TAGS_SKIP
     end
 
   end
