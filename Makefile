@@ -80,6 +80,10 @@ ifeq "$(check)" "true"
 args += --check
 endif
 
+ifeq "$(ask-sudo-pass)" "true"
+args +=  --ask-sudo-pass
+endif
+
 .PHONY: provision encrypt decrypt checkin
 
 #
