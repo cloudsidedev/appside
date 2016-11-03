@@ -2,11 +2,14 @@
 
 # file: playbooks/roles/db/tasks/main.yml
 
+- include: main-centos.yml
+  when: ansible_os_family == "RedHat"
+
 - name: be sure dbtier packages are installed (Ubuntu)
   apt: pkg={{ item }} state=installed
   with_items:
     # - mysql-server
-    # - python-mysqldb
+    - python-mysqldb
     - bc
   when: ansible_distribution == "Ubuntu"
   environment:
@@ -57,6 +60,7 @@
 # percona
 #
 - include: percona.yml
+  when: ansible_os_family == "Debian"
 
 - name: create replication user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present

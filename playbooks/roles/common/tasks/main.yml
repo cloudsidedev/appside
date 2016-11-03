@@ -7,6 +7,7 @@
 
 - name: set root shell
   user: name=root shell={{ conf_root_shell }}
+  when: conf_env != "local"
   tags: [ common, users, shell ]
 
 - include: sudo.yml
@@ -22,6 +23,7 @@
 
 - name: template /etc/hosts
   template: src=etc/hosts.j2 dest=/etc/hosts owner=root group={{ conf_root_group }} mode=0644 backup=no
+  when: conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
 - include: etckeeper.yml
@@ -32,7 +34,7 @@
   tags: [ common ]
 
 - include: rsyslog.yml
-  when: conf_rsyslog_enable == true
+  when: conf_rsyslog_enable is defined and conf_rsyslog_enable == true
   tags: [ common, rsyslog ]
 
 - include: lvm.yml

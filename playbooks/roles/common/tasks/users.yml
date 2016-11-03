@@ -19,6 +19,7 @@
   with_items:
     - "{{ conf_www_group }}"
     - "{{ conf_sudo_nopasswd_group }}"
+  when: conf_env != "local"
   tags: [ shell-users, users, groups ]
 
 - name: deploy shell user groups if enabled

@@ -18,7 +18,7 @@
   with_subelements:
     - "{{ conf_lvm_vgs }}"
     - pvs
-  when: conf_lvm_enable == true and conf_lvm_pvcreate == true
+  when: conf_lvm_enable is defined and conf_lvm_enable == true and conf_lvm_pvcreate == true
   tags: [ lvm ]
 
 #
@@ -28,28 +28,28 @@
   lvol: vg={{ item.vg }} lv={{ item.name }} size={{ item.size }} state={{ item.state }} force=yes
   with_items:
     - "{{ conf_lvm_lvs }}"
-  when: conf_lvm_enable == true and conf_lvm_pvcreate == true
+  when: conf_lvm_enable is defined and conf_lvm_enable == true and conf_lvm_pvcreate == true
   tags: [ lvm ]
 
 - name: create filesystems
   filesystem: fstype={{ item.fstype }} dev=/dev/{{ item.vg }}/{{ item.name }} resizefs=no
   with_items:
     - "{{ conf_lvm_lvs }}"
-  when: conf_lvm_enable == true and conf_lvm_pvcreate == true
+  when: conf_lvm_enable is defined and conf_lvm_enable == true and conf_lvm_pvcreate == true
   tags: [ lvm, xfs, swap ]
 
 - name: edit fstab
   mount: name={{ item.mountpoint }} src=/dev/mapper/{{ item.vg }}-{{ item.name }} fstype={{ item.fstype }} dump={{ item.dump }} passno={{ item.passno }} state={{ item.state }}
   with_items:
     - "{{ conf_lvm_lvs }}"
-  when: conf_lvm_enable == true
+  when: conf_lvm_enable is defined and conf_lvm_enable == true
   tags: [ lvm, fstab, swap ]
 
 - name: mount filesystems (not swap)
   mount: name={{ item.mountpoint }} src=/dev/mapper/{{ item.vg }}-{{ item.name }} fstype={{ item.fstype }} dump={{ item.dump }} passno={{ item.passno }} state=mounted
   with_items:
     - "{{ conf_lvm_lvs }}"
-  when: conf_lvm_enable == true and item.fstype != "swap"
+  when: conf_lvm_enable is defined and conf_lvm_enable == true and item.fstype != "swap"
   tags: [ lvm, fstab ]
 
 # - name: swapon
@@ -57,7 +57,7 @@
 #   with_items:
 #     - "{{ conf_lvm_lvs }}"
 #   ignore_errors: yes
-#   when: conf_lvm_enable == true and item.fstype == "swap"
+#   when: conf_lvm_enable is defined and conf_lvm_enable == true and item.fstype == "swap"
 #   tags: [ lvm, fstab, swap ]
 
 #
@@ -67,5 +67,5 @@
   filesystem: fstype={{ item.fstype }} dev=/dev/{{ item.vg }}/{{ item.name }} resizefs=yes
   with_items:
     - "{{ conf_lvm_lvs }}"
-  when: conf_lvm_enable == true and item.fstype != "swap"
+  when: conf_lvm_enable is defined and conf_lvm_enable == true and item.fstype != "swap"
   tags: [ lvm, xfs ]

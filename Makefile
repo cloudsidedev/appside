@@ -155,9 +155,12 @@ checkout:
 jenkins:
 	@source ~/.appflow/config ; docker stop jenkins ; docker-compose up -d
 
+local:
+        @printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)appflow-mrrobot$(.CLEAR)][$(.BOLD)local$(.CLEAR)]\n"
+        @ansible-playbook $(args) --check -i examples/appflow-mrrobot/local/inventory playbooks/local.yml
+
 ssh:
 	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
-	
 	
 vagrant:
 	mkdir -p ~/Downloads/Software
