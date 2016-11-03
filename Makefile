@@ -155,6 +155,10 @@ checkout:
 jenkins:
 	@source ~/.appflow/config ; docker stop jenkins ; docker-compose up -d
 
+ssh:
+	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
+	
+	
 vagrant:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
