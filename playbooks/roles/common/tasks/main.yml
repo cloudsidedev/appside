@@ -48,67 +48,8 @@
   when: ansible_os_family == "Debian"
   tags: [ common ]
 
-- name: apt-mark hold (Debian family)
-  shell: "apt-mark hold {{ item }}"
-  with_items: '{{ conf_hold_packages }}'
-  when: ansible_os_family == "Debian"
-  ignore_errors: yes
+- include: base_packages.yml
   tags: [ common, apt, base_packages ]
-
-- name: purge unwanted packages (Debian family)
-  apt: pkg={{ item }} state=absent purge=yes
-  with_items: '{{ conf_unwanted_packages }}'
-  when: ansible_os_family == "Debian"
-  tags: [ common, apt, base_packages ]
-
-# - name: be sure base packages are installed (Ubuntu, 12.04)
-#   apt: pkg={{ item }} state=installed
-#   with_items:
-#     - linux-image-server
-#   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "12.04"
-#   tags: [ common, apt, base_packages ]
-
-# - name: be sure base packages are installed (Ubuntu, 14.04)
-#   apt: pkg={{ item }} state=installed
-#   with_items:
-#     - linux-image-virtual
-#   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "14.04"
-#   tags: [ common, apt, base_packages ]
-
-- name: base packages (Debian family)
-  apt: pkg={{ item }} update_cache=yes state=latest
-  with_items: '{{ conf_base_packages }}'
-  when: ansible_os_family == "Debian"
-  tags: [ common, apt, base_packages ]
-
-#- name: debug
-#  debug: var=ansible_distribution var1=ansible_distribution_version
-#  tags: [ debug ]
-
-- name: python3-pip (Ubuntu >= 14 or Debian >= 7)
-  apt: pkg={{ item }} state=installed
-  with_items:
-    - python3-pip
-  when: (ansible_distribution == "Ubuntu" and ansible_lsb.major_release|int >= 14) or
-        (ansible_distribution == "Debian" and ansible_lsb.major_release|int >= 7)
-  tags: [ common, apt, base_packages ]
-
-- name: base packages (RedHat/SHMZ family)
-  yum: name={{ item }} state=latest
-  with_items: '{{ conf_base_packages }}'
-  when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
-  tags: [ common, apt, base_packages ]
-
-- name: base packages (FreeBSD)
-  pkgng: name={{ item }} state=latest cached=yes
-  with_items: '{{ conf_base_packages }}'
-  when: ansible_distribution == "FreeBSD"
-  tags: [ common, pkg, base_packages ]
-
-- name: symlink ccze
-  file: src=/usr/local/bin/colorize dest=/usr/local/bin/ccze state=link
-  when: ansible_distribution == "FreeBSD"
-  tags: [ common, pkg, base_packages ]
 
 - include: nullmailer.yml
   when: conf_nullmailer_enable == true

@@ -68,13 +68,16 @@ ifneq "$(tags)" "false"
 args += --tags $(tags)
 endif
 
-
 ifneq "$(skip_tags)" "false"
 args += --skip-tags $(skip_tags)
 endif
 
 ifneq "$(verbose)" "false"
 args += -$(verbose)
+endif
+
+ifeq "$(check)" "true"
+args += --check
 endif
 
 .PHONY: provision encrypt decrypt checkin
@@ -156,12 +159,12 @@ jenkins:
 	@source ~/.appflow/config ; docker stop jenkins ; docker-compose up -d
 
 local:
-        @printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)appflow-mrrobot$(.CLEAR)][$(.BOLD)local$(.CLEAR)]\n"
-        @ansible-playbook $(args) --check -i examples/appflow-mrrobot/local/inventory playbooks/local.yml
+	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)appflow-mrrobot$(.CLEAR)][$(.BOLD)local$(.CLEAR)]\n"
+	@ansible-playbook $(args) -i examples/appflow-mrrobot/local/inventory playbooks/local.yml
 
 ssh:
 	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
-	
+
 vagrant:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
