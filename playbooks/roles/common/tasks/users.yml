@@ -9,7 +9,7 @@
   tags: [ shell-users, users, shell, groups ]
 
 - name: zsh (RedHat/SHMZ family)
-  yum: name={{ item }} state=latest
+  package: name={{ item }} state=latest
   with_items: zsh
   when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
   tags: [ shell-users, users, shell, groups ]

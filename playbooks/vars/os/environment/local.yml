@@ -10,10 +10,11 @@ conf_hold_packages:
 conf_unwanted_packages:
     # - chef
 conf_base_packages:
-    - assh
+    #- assh
     - zsh
     - vim
-    - screen
+    # - screen
+    - go
     - tmux
     - tmate
     - mosh
@@ -28,22 +29,8 @@ conf_base_packages:
     - curl
     - links
     - lynx
+    - traceroute
     - make
     # - "{{ var_package_git }}"
     - convmv
-conf_php_cli: "/usr/bin/php"
-conf_web_cron: "/etc/cron.d/wp-cron"
 
-#
-# MySQL/Percona
-#
-conf_mysql_conf: "/etc/mysql/my.cnf"
-conf_mysql_basedir: "/usr"
-conf_mysql_datadir: "/var/lib/mysql"
-conf_mysql_lc_messages_dir: "/usr/share/mysql"
-
-#
-# Etckeeper
-#
-conf_etckeeper_lowlevel_package_manager: "dpkg"
-conf_etckeeper_highlevel_package_manager: "apt"

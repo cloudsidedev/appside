@@ -33,7 +33,7 @@
   tags: [ etckeeper ]
 
 - name: be sure etckeeper package is installed (RedHat Family)
-  yum: name={{ item }} state=installed
+  package: name={{ item }} state=installed
   with_items:
     - "{{ var_package_git }}"
     - curl

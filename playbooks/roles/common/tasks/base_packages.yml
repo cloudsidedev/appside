@@ -44,7 +44,7 @@
         (ansible_distribution == "Debian" and ansible_lsb.major_release|int >= 7)
 
 - name: base packages (RedHat/SHMZ family)
-  yum: name={{ item }} state=latest
+  package: name={{ item }} state=latest
   with_items: '{{ conf_base_packages }}'
   when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
 
@@ -61,6 +61,21 @@
 
 - name: base packages (Darwin)
   package: name={{ item }} state=latest
-  with_items: '{{ conf_base_packages }}'
+  with_items: 
+      - '{{ conf_base_packages }}'
+      - assh
   become: false
   when: ansible_os_family == "Darwin"
+  
+- name: prepare install assh (Linux)
+  lineinfile: dest=/etc/profile line="{{ item }}" state=present insertafter='EOF'
+  with_items: 
+      - "export GOPATH=/usr/local/go"
+      - "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin"
+      - "alias ssh='assh wrapper ssh'"
+  when: ansible_os_family != "Darwin"
+  
+- name: install assh (Linux)
+  shell: "source /etc/profile; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
+  when: ansible_os_family != "Darwin"  
+  

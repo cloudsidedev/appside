@@ -18,7 +18,7 @@
   tags: [ common ]
 
 - include: centos-epel.yml
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and conf_env != "local"
   tags: [ common, apt, base_packages ]
 
 - name: template /etc/hosts
