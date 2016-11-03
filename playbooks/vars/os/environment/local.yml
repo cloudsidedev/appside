@@ -29,8 +29,7 @@ conf_base_packages:
     - curl
     - links
     - lynx
-    - traceroute
+    # - traceroute
     - make
     # - "{{ var_package_git }}"
     - convmv
-
