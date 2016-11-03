@@ -1,0 +1,146 @@
+---
+
+# file: playbooks/roles/db/tasks/percona-centos.yml
+
+#- name: deploy /usr/local/bin/galeranotify.py
+#  template: src=mysql/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
+#  tags: [ mysql, percona ]
+
+- name: apparmor disable mysqld
+  file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
+  notify: handle_reload_apparmor_mysql
+  ignore_errors: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona ]
+
+######################################################################
+# ATTENTION: Here we have a problem, the first bootstrap_check which #
+# will be run is overwritten by the second, this has to be fixed!    #
+######################################################################
+
+- name: check to determine if galera is already installed (Ubuntu)
+  # shell: dpkg-query -s percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
+  # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
+  shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
+  register: bootstrap_check
+  always_run: yes
+  ignore_errors: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona ]
+
+- name: check to determine if galera is already installed (CentOS)
+  shell: "yum -q list installed Percona-XtraDB-Cluster-56 > /dev/null"
+  register: bootstrap_check
+  always_run: yes
+  ignore_errors: yes
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, percona ]
+
+- debug: var=bootstrap_check.rc
+  tags: [ mysql, percona ]
+
+- name: percona repo (CentOS)
+  yum: name=http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm state=present
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, percona ]
+
+- name: percona apt-key (Ubuntu)
+  # apt_key: url=http://www.percona.com/redir/downloads/RPM-GPG-KEY-percona state=present
+  apt_key: data="{{ lookup('file', 'percona/percona.gpg') }}" state=present
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona ]
+
+- name: percona repo (Ubuntu)
+  apt_repository: repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona ]
+
+- name: remove conflicting MySQL packages (CentOS)
+  yum: pkg={{item}} state=absent
+  with_items:
+    - mysql55w-server
+    - mysql55w
+    - mysql55w-libs.x86_64
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, percona ]
+
+- name: remove conflicting MySQL packages (Ubuntu)
+  apt: pkg={{item}} state=absent
+  with_items:
+    - mysql-server-core-5.5
+    - mysql-client-core-5.5
+    - mysql-client-5.5
+    # - mysql-common
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona ]
+
+- name: Prepare for bootstrap (gcomm)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
+  ignore_errors: yes
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (sst)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
+  ignore_errors: yes
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (sst)
+  lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == false
+  ignore_errors: yes
+  tags: [ mysql, percona]
+
+- name: Prepare for bootstrap (mysql dir)
+  file: path=/var/lib/mysql state=directory mode=0750
+  when: bootstrap_check.rc == 1 and conf_wsrep_master == true
+  tags: [ mysql, percona]
+
+- name: install Percona XtraDB Cluster (CentOS)
+  yum: pkg={{item}} state=latest
+  with_items:
+     - Percona-XtraDB-Cluster-56.x86_64
+  when: ansible_distribution == "CentOS"
+  tags: [ mysql, percona ]
+
+- name: install Percona XtraDB Cluster (Ubuntu)
+  apt: pkg={{item}} state=latest force=yes
+  with_items:
+    - percona-xtradb-cluster-server-5.6
+    - percona-xtradb-cluster-client-5.6
+    - percona-xtradb-cluster-galera-3.x
+    - python-mysqldb
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes
+  tags: [ mysql, percona ]
+
+- name: install xinetd (Ubuntu)
+  apt: pkg={{item}} state=latest force=yes
+  with_items:
+    - xinetd
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes
+  tags: [ mysql, percona, clustercheck ]
+
+- name: update /etc/services (Ubuntu)
+  lineinfile: "dest=/etc/services line='mysqlchk        9200/tcp                        # mysqlchk' insertafter='^xinetd' state=present"
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona, clustercheck ]
+
+- name: update /etc/xinetd.d/mysqlchk (Ubuntu)
+  lineinfile: "dest=/etc/xinetd.d/mysqlchk line='        server_args = {{ conf_mysql_clustercheck_user }} {{ conf_mysql_clustercheck_password }} {{ conf_mysql_clustercheck_available_when_donor }} /dev/null 0' insertafter='^        # 55-to-56 upgrade' state=present"
+  notify: handle_restart_xinetd
+  when: ansible_distribution == "Ubuntu"
+  tags: [ mysql, percona, clustercheck ]
+
+- name: create DB clustercheck user
+  mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv=*.*:"PROCESS" state=present
+  ignore_errors: yes
+  tags: [ mysql, percona, clustercheck ]
