@@ -7,14 +7,14 @@ args=$4
 make_tenant=$5
 
 status=`grep AES256 ~/.appflow/tenant/$tenant/$env/inventory > /dev/null; echo $?`
-if [ $status -eq 0 ]; then 
-	echo "Files are encrpyted, first run \"make decrypt\"." 
-	false; 
-	exit 1; 
+if [ $status -eq 0 ]; then
+	echo "Files are encrpyted, first run \"make decrypt\"."
+	false;
+	exit 1;
 fi
 
 if [ "$(uname)" == "Darwin" ]; then
-	which -s assh	
+	which -s assh
 	if [[ $? != 0 ]] ; then
 	  brew install assh
 	fi
@@ -36,8 +36,9 @@ if [[ ! -d $HOME"/.ssh/assh.d" ]]; then
 	cp ~/.ssh/config ~/.ssh/config_personal
 fi
 
-mkdir -p ~/.ssh/assh.d
-#cp -f ~/.appflow/tenant/$tenant/$env/assh.d/* ~/.ssh/assh.d/
+mkdir -p ~/.ssh/assh.d/$vault
+cp -f ~/.appflow/tenant/$vault/$env/assh.yml ~/.ssh/assh.d/$vault/$env.yml
 assh config build > ~/.ssh/config
 # Restore original config hosts
 cat ~/.ssh/config_personal >> ~/.ssh/config
+assh info | grep $vault
