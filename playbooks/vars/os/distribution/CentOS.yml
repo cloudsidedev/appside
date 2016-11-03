@@ -68,6 +68,7 @@ conf_base_packages:
     - kernel-headers
     - kernel-devel
     - "@Development Tools"
+    - go
     - "{{ var_package_git }}"
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"

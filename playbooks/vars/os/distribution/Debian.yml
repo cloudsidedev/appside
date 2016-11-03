@@ -78,6 +78,7 @@ conf_base_packages:
     - traceroute
     - acl
     - make
+    - golang
     - "{{ var_package_git }}"
     - convmv
 conf_php_cli: "/usr/bin/php"

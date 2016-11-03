@@ -13,6 +13,10 @@
   with_items: '{{ conf_unwanted_packages }}'
   when: ansible_os_family == "Debian"
 
+- name: install golang ppa (Debian Family)
+  apt_repository: repo='ppa:ubuntu-lxc/lxd-stable' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+
 # - name: be sure base packages are installed (Ubuntu, 12.04)
 #   apt: pkg={{ item }} state=installed
 #   with_items:
@@ -67,6 +71,7 @@
   become: false
   when: ansible_os_family == "Darwin"
   
+  
 - name: prepare install assh (Linux)
   lineinfile: dest=/etc/profile line="{{ item }}" state=present insertafter='EOF'
   with_items: 
@@ -75,7 +80,15 @@
       - "alias ssh='assh wrapper ssh'"
   when: ansible_os_family != "Darwin"
   
+- name: prepare install assh for users (Linux)
+  lineinfile: dest=/home/{{ item[0] }}/.zshrc line="{{ item[1] }}" state=present insertafter='EOF'
+  with_nested:
+      - '{{ conf_users }}'
+      - ["export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'"]
+  when: ansible_os_family != "Darwin" and conf_env != "local"
+  ignore_errors: yes
+  
 - name: install assh (Linux)
-  shell: "source /etc/profile; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
+  shell: "export GOPATH=/usr/local/go; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
   when: ansible_os_family != "Darwin"  
   
