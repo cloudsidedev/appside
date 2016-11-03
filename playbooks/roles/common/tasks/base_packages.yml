@@ -88,6 +88,15 @@
   when: ansible_os_family != "Darwin" and conf_env != "local"
   ignore_errors: yes
   
+- name: prepare install assh for users (Linux)
+  lineinfile: dest=~/.bashrc line="{{ item }}" state=present insertafter='EOF'
+  with_items: 
+      - "export GOPATH=/usr/local/go"
+      - "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin"
+      - "alias ssh='assh wrapper ssh'"
+  become: false
+  ignore_errors: yes  
+  
 - name: install assh (Linux)
   shell: "export GOPATH=/usr/local/go; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
   when: ansible_os_family != "Darwin"  
