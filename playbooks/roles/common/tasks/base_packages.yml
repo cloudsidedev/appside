@@ -89,8 +89,8 @@
   ignore_errors: yes
   
 - name: prepare install assh for users (Generic)
-  lineinfile: dest=~/"{{ item[0] }}" line="{{ item[1] }}" state=present insertafter='EOF'
-  with_items: 
+  lineinfile: dest=~/{{ item[0] }} line="{{ item[1] }}" state=present insertafter='EOF'
+  with_nested: 
       - [".bashrc" , ".zshrc" ]
       - ["export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'"]
   become: false
