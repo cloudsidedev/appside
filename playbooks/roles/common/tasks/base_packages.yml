@@ -88,12 +88,11 @@
   when: ansible_os_family != "Darwin" and conf_env != "local"
   ignore_errors: yes
   
-- name: prepare install assh for users (Linux)
-  lineinfile: dest=~/.bashrc line="{{ item }}" state=present insertafter='EOF'
+- name: prepare install assh for users (Generic)
+  lineinfile: dest=~/"{{ item[0] }}" line="{{ item[1] }}" state=present insertafter='EOF'
   with_items: 
-      - "export GOPATH=/usr/local/go"
-      - "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin"
-      - "alias ssh='assh wrapper ssh'"
+      - [".bashrc" , ".zshrc" ]
+      - ["export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'"]
   become: false
   ignore_errors: yes  
   
