@@ -12,6 +12,7 @@ conf_unwanted_packages:
 conf_base_packages:
     #- assh
     - zsh
+    - zsh-completions
     - vim
     # - screen
     - go
