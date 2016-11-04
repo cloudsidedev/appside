@@ -39,4 +39,4 @@
   service: name=ceph state=restarted
 
 - name: handle_assh_configbuild
-  shell: bash -c "assh config build > ~/.ssh/config"
+  shell: /usr/local/go/bin/assh config build > ~/.ssh/config
