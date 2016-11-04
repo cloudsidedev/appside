@@ -42,6 +42,10 @@
   when: ansible_os_family != "Darwin"
   tags: [ assh ]
 
+- name: create ControlPath directories (Unix, root)
+  file: path=~/tmp/.ssh/cm state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ assh, assh-conf ]
+
 - name: provision ~/.ssh/assh.yml (root)
   template: src=home/{{ item }}.j2 dest=~/{{ item }} mode=0644
   with_items:

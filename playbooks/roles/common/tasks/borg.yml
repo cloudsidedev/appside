@@ -139,8 +139,13 @@
   when: conf_backup_client == true
   tags: [ borg, borgmatic ]
 
-- name: deploy /root/.ssh/config
-  template: src=root/.ssh/config.j2 dest=/root/.ssh/config owner=root group={{ conf_root_group }} mode=0600
+# - name: deploy /root/.ssh/config
+#   template: src=root/.ssh/config.j2 dest=/root/.ssh/config owner=root group={{ conf_root_group }} mode=0600
+#   when: conf_backup_client == true and conf_backup_deploy_ssh_config == true
+#   tags: [ borg, borgmatic ]
+
+- name: deploy /root/.ssh/assh_personal.yml
+  template: src=root/.ssh/assh_personal.yml.j2 dest=/root/.ssh/assh_personal.yml owner=root group={{ conf_root_group }} mode=0600
   when: conf_backup_client == true and conf_backup_deploy_ssh_config == true
   tags: [ borg, borgmatic ]
 
