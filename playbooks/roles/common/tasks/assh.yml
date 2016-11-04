@@ -40,7 +40,7 @@
 - name: install assh (Unix)
   shell: "export GOPATH=/usr/local/go; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
   when: ansible_os_family != "Darwin"
-  tags: [ assh ]
+  tags: [ assh, assh-conf ]
 
 - name: create ControlPath directories (Unix, root)
   file: path=~/tmp/.ssh/cm state=directory owner=root group={{ conf_root_group }} mode=0755
