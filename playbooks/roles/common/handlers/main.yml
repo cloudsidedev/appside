@@ -37,3 +37,6 @@
 
 - name: handle_restart_ceph
   service: name=ceph state=restarted
+
+- name: handle_assh_configbuild
+  shell: bash -c "assh config build > ~/.ssh/config"

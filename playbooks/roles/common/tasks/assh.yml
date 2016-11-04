@@ -2,7 +2,7 @@
 
 # file: playbooks/roles/common/tasks/assh.yml
 
-- name: prepare install assh (Linux)
+- name: prepare install assh (Unix)
   lineinfile: dest=/etc/profile line="{{ item }}" state=present insertafter='EOF'
   with_items:
       - "export GOPATH=/usr/local/go"
@@ -17,7 +17,7 @@
       - [ ".bashrc", ".zshrc" ]
       - [ "export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'" ]
   ignore_errors: yes
-  tags: [ assh ]
+  tags: [ assh, assh-conf ]
 
 - name: set assh exports (zsh/bash) (Unix, users)
   lineinfile: dest=/home/{{ item[0] }}/.zshrc line="{{ item[1] }}" state=present insertafter='EOF'
@@ -44,6 +44,10 @@
 
 - name: create ControlPath directories (Unix, root)
   file: path=~/tmp/.ssh/cm state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ assh, assh-conf ]
+
+- name: create ~/.ssh/ (root)
+  file: path=~/.ssh state=directory owner=root group={{ conf_root_group }} mode=0755
   tags: [ assh, assh-conf ]
 
 - name: provision ~/.ssh/assh.yml (root)

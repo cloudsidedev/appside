@@ -3,6 +3,10 @@
 # file: playbooks/roles/common/tasks/borg.yml
 
 #
+# Run with assh:
+#
+#   % make provision tenant=mrrobot env=production limit=compute-01.mrrobot tags=base_packages,assh-conf,borg
+#
 # IMPORTANT (TOFIX):
 #
 # We need ~/root/.ssh/config in place.
@@ -147,7 +151,10 @@
 - name: deploy /root/.ssh/assh_personal.yml
   template: src=root/.ssh/assh_personal.yml.j2 dest=/root/.ssh/assh_personal.yml owner=root group={{ conf_root_group }} mode=0600
   when: conf_backup_client == true and conf_backup_deploy_ssh_config == true
+  notify: handle_assh_configbuild
   tags: [ borg, borgmatic ]
+
+- meta: flush_handlers
 
 #
 # Check if remote repo exists, if not create
