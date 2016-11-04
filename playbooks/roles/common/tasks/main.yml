@@ -51,6 +51,9 @@
 - include: base_packages.yml
   tags: [ common, apt, base_packages ]
 
+- include: assh.yml
+  # tags: [ common, assh, assh-conf, base_packages ]
+
 - include: nullmailer.yml
   when: conf_nullmailer_enable == true
   tags: [ common ]

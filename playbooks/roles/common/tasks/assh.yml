@@ -1,0 +1,56 @@
+---
+
+# file: playbooks/roles/common/tasks/assh.yml
+
+- name: prepare install assh (Linux)
+  lineinfile: dest=/etc/profile line="{{ item }}" state=present insertafter='EOF'
+  with_items:
+      - "export GOPATH=/usr/local/go"
+      - "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin"
+      - "alias ssh='assh wrapper ssh'"
+  when: ansible_os_family != "Darwin"
+  tags: [ assh ]
+
+- name: set assh exports (zsh/bash) (Unix, root)
+  lineinfile: dest=/root/{{ item[0] }} line="{{ item[1] }}" state=present insertafter='EOF'
+  with_nested:
+      - [ ".bashrc", ".zshrc" ]
+      - [ "export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'" ]
+  ignore_errors: yes
+  tags: [ assh ]
+
+- name: set assh exports (zsh/bash) (Unix, users)
+  lineinfile: dest=/home/{{ item[0] }}/.zshrc line="{{ item[1] }}" state=present insertafter='EOF'
+  with_nested:
+      - '{{ conf_users }}'
+      - ["export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'"]
+  when: ansible_os_family != "Darwin" and conf_env != "local"
+  ignore_errors: yes
+  tags: [ assh ]
+
+- name: set assh exports (zsh/bash) (Generic, personal)
+  lineinfile: dest=~/{{ item[0] }} line="{{ item[1] }}" state=present insertafter='EOF'
+  with_nested:
+      - [ ".bashrc", ".zshrc" ]
+      - [ "export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'" ]
+  become: false
+  ignore_errors: yes
+  tags: [ assh ]
+
+- name: install assh (Unix)
+  shell: "export GOPATH=/usr/local/go; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
+  when: ansible_os_family != "Darwin"
+  tags: [ assh ]
+
+- name: provision ~/.ssh/assh.yml (root)
+  template: src=home/{{ item }}.j2 dest=~/{{ item }} mode=0644
+  with_items:
+    - .ssh/assh.yml
+  tags: [ assh, assh-conf ]
+
+- name: provision ~/.ssh/assh.yml (home)
+  template: src=home/{{ item }}.j2 dest=~/{{ item }} mode=0644
+  with_items:
+    - .ssh/assh.yml
+  become: false
+  tags: [ assh, assh-conf ]
