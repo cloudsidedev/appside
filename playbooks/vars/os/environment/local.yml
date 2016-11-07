@@ -21,7 +21,7 @@ conf_base_packages:
     - mosh
     - tree
     # - unzip
-    - whois
+    # - whois
     - htop
     - ccze
     - subversion
