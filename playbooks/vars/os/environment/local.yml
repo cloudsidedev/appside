@@ -20,7 +20,7 @@ conf_base_packages:
     - tmate
     - mosh
     - tree
-    - unzip
+    # - unzip
     - whois
     - htop
     - ccze
