@@ -11,10 +11,11 @@
   tags: [ common, users, shell ]
 
 - include: sudo.yml
+  when: conf_env != "local"
   tags: [ common, users, sudo ]
 
 - include: cloud.yml
-  when: conf_cloud_env is defined and conf_cloud_enable == true
+  when: conf_env != "local" and conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
 
 - include: centos-epel.yml
@@ -23,7 +24,7 @@
 
 - name: template /etc/hosts
   template: src=etc/hosts.j2 dest=/etc/hosts owner=root group={{ conf_root_group }} mode=0644 backup=no
-  when: conf_hosts_fqdn is defined
+  when: conf_env != "local" and conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
 - include: etckeeper.yml
@@ -38,9 +39,11 @@
   tags: [ common, rsyslog ]
 
 - include: lvm.yml
+  when: conf_env != "local"
   tags: [ common ]
 
 - include: users.yml
+  when: conf_env != "local"
   tags: [ common ]
 
 - name: remove deb-src (Debian family)
@@ -55,7 +58,7 @@
   # tags: [ common, assh, assh-conf, base_packages ]
 
 - include: nullmailer.yml
-  when: conf_nullmailer_enable == true
+  when: conf_env != "local" and conf_nullmailer_enable == true
   tags: [ common ]
 
 # Bash prompt
@@ -64,6 +67,7 @@
 #  tags: [ common, prompt ]
 
 - include: motd.yml
+  when: conf_env != "local"
   tags: [ common, motd ]
 
 - include: apticron.yml
@@ -79,5 +83,5 @@
 #   tags: [ common ]
 
 - include: borg.yml
-  when: conf_backup_client == true
+  when: conf_env != "local" and conf_backup_client == true
   tags: [ common ]
