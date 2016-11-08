@@ -10,7 +10,7 @@ conf_hold_packages:
 conf_unwanted_packages:
     # - chef
 conf_base_packages:
-    #- assh
+    - md5sha1sum
     - zsh
     - zsh-completions
     - vim
