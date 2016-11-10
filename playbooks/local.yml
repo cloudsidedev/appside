@@ -4,12 +4,12 @@
 
 - hosts: all
 
+
   roles:
-
     - common
-
+    
   vars_files:
 
       - "vars/os/distribution/{{ ansible_distribution }}.yml"
-      - "vars/os/environment/{{ conf_env }}.yml"
+      - "vars/os/environment/{{ ansible_system }}-{{ conf_env }}.yml"
       # - "vars/os/distribution_release/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
