@@ -24,9 +24,9 @@
   when: ansible_os_family == "Debian"
   tags: [ varnish, varnish-conf, apache2 ]
 
-- name: perms /etc/varnish/secret (Debian family)
-  file: path=/etc/varnish/secret owner=root group=nagios mode=0640
-  when:
-      - ansible_os_family == "Debian"
-      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
-  tags: [ varnish, varnish-conf, apache2 ]
+# - name: perms /etc/varnish/secret (Debian family)
+#   file: path=/etc/varnish/secret owner=root group=nagios mode=0640
+#   when:
+#       - ansible_os_family == "Debian"
+#       - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+#   tags: [ varnish, varnish-conf, apache2 ]
