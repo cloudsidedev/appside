@@ -46,6 +46,7 @@
     - php5.6-gettext
     - php5.6-xml
     - php5.6-mbstring
+    - php5.6-soap
     - php5-common
     - php-memcache
     - php-db
