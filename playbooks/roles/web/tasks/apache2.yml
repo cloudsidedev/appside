@@ -120,6 +120,7 @@
     - status
   notify: handle_reload_apache2
   when: ansible_os_family == "Debian"
+  ignore_errors: yes
   tags: [ apache2, apache2-conf ]
 
 - name: apache2 service state
