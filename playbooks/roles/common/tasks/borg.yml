@@ -134,7 +134,7 @@
   tags: [ borg, borgmatic ]
 
 - name: deploy /etc/borgmatic/id_rsa-backup
-  copy: content="{{ conf_users.backup.private_key }}" dest=/etc/borgmatic/id_rsa-backup owner=nagios group=adm mode=600 backup=yes
+  copy: content="{{ conf_users.backup.private_key }}" dest=/etc/borgmatic/id_rsa-backup owner=root group=adm mode=600 backup=yes
   when: conf_backup_client == true
   tags: [ borg, borgmatic ]
 
