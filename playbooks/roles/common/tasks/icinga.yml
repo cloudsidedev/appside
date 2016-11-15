@@ -165,6 +165,7 @@
     - icinga2
     - icinga2-ido-mysql
     - icingaweb2
+    - libapache2-mod-wsgi
   when:
       - ansible_os_family == "Debian"
       - conf_icinga_master == true or conf_icinga_satellite == true
@@ -214,6 +215,7 @@
     - auth_digest
   when: conf_icinga_master == true or conf_icinga_satellite == true
   notify: handle_restart_apache2
+  ignore_errors: yes
   tags: [ icinga, icinga-conf ]
 
 - name: deploy vhost
