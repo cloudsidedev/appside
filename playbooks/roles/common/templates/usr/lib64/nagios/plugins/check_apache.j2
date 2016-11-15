@@ -1,0 +1,124 @@
+#!/usr/bin/perl
+
+# Copyright (c) 2012 Jason Hancock <jsnbyh@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is furnished
+# to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# This file is part of the nagios-puppet bundle that can be found
+# at https://github.com/jasonhancock/nagios-apache
+
+use strict;
+use warnings;
+
+use LWP;
+use Nagios::Plugin;
+
+my $np = Nagios::Plugin->new(
+    usage     => 'Usage: %s -H|--host=<host> [ -p|--port=<port> ] [-u|--uri=<uri>]',
+    shortname => 'Apache Stats',
+);
+
+$np->add_arg(
+    spec     => 'host|H=s',
+    help     => '-H, --host=Hostname or IP address',
+    required => 1,
+);
+
+$np->add_arg(
+    spec    => 'port|p=s',
+    help    => '-p, --port=port',
+    default => 80,
+);
+
+$np->add_arg(
+    spec    => 'uri|u=s',
+    help    => '-u, --uri=uri',
+    default => '/server-status',
+);
+
+$np->getopts;
+
+my %counts;
+my @scoreboard=('_','S','R','W','K','D','C','L','G','I','.');
+
+my %factors = (
+    'P' => 1024 * 1024 * 1024 * 1024 * 1024,
+    'T' => 1024 * 1024 * 1024 * 1024,
+    'G' => 1024 * 1024 * 1024,
+    'M' => 1024 * 1024,
+    'k' => 1024
+);
+
+my $url = sprintf('http://%s:%d%s',
+    $np->opts->host,
+    $np->opts->port,
+    $np->opts->uri
+);
+
+my $ua = new LWP::UserAgent;
+my $response = $ua->get($url);
+
+if (!$response->is_success) {
+    # We failed
+    $np->nagios_exit('UNKNOWN', $response->code . ": " . $response->status_line);
+}
+
+my @lines = split(/\n/, $response->decoded_content);
+
+for(my $i=0; $i<@lines; $i++) {
+
+    if($lines[$i]=~m/(\d+) requests currently being processed, (\d+) idle workers/) {
+        $counts{'busy'} = $1;
+        $counts{'idle'} = $2;
+    }
+
+    if($lines[$i]=~m/Total accesses: (\d+) - Total Traffic: ([0-9\.]+) (\w)B/) {
+        $counts{'hits'} = $1;
+        $counts{'bytes'} = int($2 * $factors{$3});
+    }
+
+    # This block handles the scorecard stuff
+    if($lines[$i]=~m/^<\/dl><pre>/) {
+        $lines[$i]=substr($lines[$i], 10);
+        while($i<@lines && !($lines[$i]=~m/^<\/pre>/)) {
+            my @chars = split(//, $lines[$i]);
+            foreach my $char(@chars) {
+                $counts{$char}++;
+            }
+            $i++;
+        }
+    }
+}
+
+$np->add_perfdata(label => 'hits', value => $counts{'hits'});
+$np->add_perfdata(label => 'bytes', value => $counts{'bytes'});
+$np->add_perfdata(label => 'busy', value => $counts{'busy'});
+$np->add_perfdata(label => 'idle', value => $counts{'idle'});
+
+for(my $i=0; $i<@scoreboard; $i++) {
+    $np->add_perfdata(
+        label => "s$i",
+        value => defined($counts{$scoreboard[$i]}) ? $counts{$scoreboard[$i]} : 0,
+    );
+}
+
+$np->nagios_exit(
+    return_code => 'OK',
+    message     => 'yup',
+);
