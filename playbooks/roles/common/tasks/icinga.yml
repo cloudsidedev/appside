@@ -21,6 +21,7 @@
 #   Adding system-group for icingaweb2
 #   Adding user `www-data' to group `icingaweb2' ...
 #   Adding user www-data to group icingaweb2
+#   IMPORTANT: chmod g+w /etc/icingaweb2/enabledModules
 #
 # icinga2-common:
 #
@@ -70,6 +71,7 @@
 - name: deploy nagios shell user if enabled
   user: name=nagios group=nagios comment="{{ conf_users.nagios.name }}" home="{{ conf_users.nagios.home }}" append=yes shell={{ conf_users.nagios.shell }} state=present
   when: conf_icinga_client == true and conf_users.nagios.state == "enabled"
+  ignore_errors: yes
   tags: [ icinga ]
 
 - name: deploy ssh key to nagios shell user if enabled
