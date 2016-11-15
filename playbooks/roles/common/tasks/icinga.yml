@@ -1,0 +1,542 @@
+---
+
+# file: playbooks/roles/common/tasks/icinga.yml
+
+#
+# Porting of: https://github.com/Icinga/icinga2-ansible
+# HOWTO: http://www.credativ.nl/credativ-blog/howto-icinga2-graphite-and-grafana-debian
+#
+# Start over:
+#
+#   % aptitude purge icinga2 icingaweb2 ; aptitude purge "~c"
+#
+# The steps defined here should configure three types of hosts:
+#
+#   - conf_icinga_master: true
+#   - conf_icinga_satellite: true
+#   - conf_icinga_client: true
+#
+# icingaweb2:
+#
+#   Adding system-group for icingaweb2
+#   Adding user `www-data' to group `icingaweb2' ...
+#   Adding user www-data to group icingaweb2
+#
+# icinga2-common:
+#
+#   Adding system-user for nagios
+#
+# check_by_ssh, on client:
+#
+#   nagios-plugins-basic (/usr/lib/nagios/plugins/check_by_ssh)
+#
+#   check from server:
+#   % /usr/lib/nagios/plugins/check_by_ssh -H foo.bar.org -l nagios -i /var/lib/nagios/.ssh/id_rsa -C "/usr/lib/nagios/plugins/check_users -w 0 -c 2"
+#
+#
+# SSH on monitoring server
+#
+#   rm /var/lib/nagios/.ssh/known_hosts
+#   as root: % ssh -o UserKnownHostsFile=/var/lib/nagios/.ssh/known_hosts -i id_rsa -l nagios xxx.xxx.xxx.xxx
+#   IMPORTANT: home of user nagios on server MUST BE /var/lib/nagios
+#
+# CentOS
+#
+#   - wget http://epel.mirror.net.in/epel/6/i386/epel-release-6-8.noarch.rpm
+#
+
+###############
+# ICINGA BASE #
+###############
+
+#
+# Common
+#
+- name: icinga PPA
+  apt_repository: repo='ppa:formorer/icinga' update_cache=yes
+  when:
+      - ansible_distribution == "Ubuntu"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+#
+# CLIENT
+#
+- name: deploy nagios shell user group if enabled
+  group: name=nagios state=present
+  when: conf_icinga_client == true and conf_users.nagios.state == "enabled"
+  tags: [ icinga ]
+
+- name: deploy nagios shell user if enabled
+  user: name=nagios group=nagios comment="{{ conf_users.nagios.name }}" home="{{ conf_users.nagios.home }}" append=yes shell={{ conf_users.nagios.shell }} state=present
+  when: conf_icinga_client == true and conf_users.nagios.state == "enabled"
+  tags: [ icinga ]
+
+- name: deploy ssh key to nagios shell user if enabled
+  authorized_key: user=nagios key="{{ conf_users.nagios.public_key }}" state=present
+  when: conf_icinga_client == true and conf_users.nagios.state == "enabled"
+  tags: [ icinga ]
+
+- name: be sure latest icinga client packages are installed (Debian)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    # - nagios-plugins-basic
+    - nagios-plugins
+  when: ansible_os_family == "Debian" and conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: enable EPEL repo (RedHat/SHMZ)
+  yum: pkg=https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm state=present
+  when:
+    - ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
+    - conf_icinga_client == true
+  tags: [ icinga ]
+
+- name: import EPEL GPG (RedHat/SHMZ)
+  rpm_key: key=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }} state=present
+  when:
+    - ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
+    - conf_icinga_client == true
+  ignore_errors: yes
+  tags: [ icinga ]
+
+- name: be sure latest icinga client packages are installed (RedHat/SHMZ)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - nagios-plugins-all
+  when:
+    - ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
+    - conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: link /usr/lib64
+  file: src=/usr/lib dest=/usr/lib64 state=link
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+#
+# SERVER / SATELLITE
+#
+- name: deploy nagios shell user if enabled
+  user: name=nagios group=nagios comment="{{ conf_users.nagios.name }}" home="/var/lib/nagios" append=yes shell={{ conf_users.nagios.shell }} state=present
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: create /var/lib/nagios/.ssh directory
+  file: path=/var/lib/nagios/.ssh state=directory owner=nagios group=nagios mode=0700
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy private key for nagios user
+  copy: content="{{ conf_users.nagios.private_key }}" dest=/var/lib/nagios/.ssh/id_rsa owner=nagios group=nagios mode=600 backup=no
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+#- name: tell the host about our servers it might want to ssh to
+#  known_hosts: path='/var/lib/nagios/.ssh/known_hosts'
+#               name='foo.com.invalid'
+#               key="{{ lookup('file', 'pubkeys/foo.com.invalid') }}"
+
+- name: Dynamically build the known_hosts file on icinga server
+  shell: ssh-keyscan -t dsa,rsa {{ item.value.address }} >> /var/lib/nagios/.ssh/known_hosts
+  with_dict: '{{ conf_icinga_hosts }}'
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_icinga2
+  tags: [ icinga, icinga-ssh ]
+
+- name: Change file permissions for /var/lib/nagios/.ssh/known_hosts
+  file: path=/var/lib/nagios/.ssh/known_hosts owner=nagios group=nagios mode=600
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+- name: be sure latest icinga server packages are installed (Debian)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - apache2-utils
+    - nagios-plugins
+    - nagios-plugins-contrib
+    - libsys-statistics-linux-perl
+    - icinga2
+    - icinga2-ido-mysql
+    - icingaweb2
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga ]
+
+- name: create /etc/icinga2/conf.d/hosts directory
+  file: path=/etc/icinga2/conf.d/hosts state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+- name: create /etc/icinga2/scripts directory
+  file: path=/etc/icinga2/scripts state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=nagios group=nagios mode=0600
+  with_items:
+      - icinga2/icinga2.conf
+      - icinga2/constants.conf
+      - icinga2/features-available/ido-mysql.conf
+      - icinga2/features-available/graphite.conf
+      - icinga2/conf.d/commands.conf
+      - icinga2/conf.d/users.conf
+      - icinga2/conf.d/services.conf
+      - icinga2/conf.d/hosts.conf
+      - icinga2/conf.d/templates.conf
+      - icinga2/conf.d/notifications.conf
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_icinga2
+  tags: [ icinga, icinga-conf, icinga-conf-etc ]
+
+- name: deploy scripts
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+      - icinga2/scripts/slack-service-notification.sh
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_icinga2
+  tags: [ icinga, icinga-conf ]
+
+- name: enable Apache2 modules
+  apache2_module: state=present name={{ item }}
+  with_items:
+    - proxy
+    - auth_digest
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_apache2
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy vhost
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - apache2/sites-available/monitoring.conf
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_apache2
+  tags: [ icinga, icinga-conf ]
+
+- name: enable vhost
+  file: src=/etc/apache2/sites-available/monitoring.conf dest=/etc/apache2/sites-enabled/monitoring.conf state=link
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_apache2
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy icinga2/conf.d/hosts/
+  template: src=etc/icinga2/conf.d/hosts/host.conf.j2 dest=/{{ conf_local_etc_path }}/icinga2/conf.d/hosts/{{ item.key }}.conf
+  when: item.value.state == "enabled" and conf_icinga_master == true or conf_icinga_satellite == true
+  with_dict: '{{ conf_icinga_hosts }}'
+  notify: handle_restart_icinga2
+  tags: [ icinga, icinga-conf, icinga-conf-hosts ]
+
+- name: enable Icinga2 features
+  command: "icinga2 feature enable {{ item }}"
+  with_items:
+      - command
+      - ido-mysql
+      - graphite
+  register: features_result
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  changed_when: "'for these changes to take effect' in features_result.stdout"
+  notify: handle_restart_icinga2
+  tags: [ icinga, icinga-conf ]
+
+- name: create /usr/local/nagios directory
+  file: path=/usr/local/nagios state=directory owner=root group=nagios mode=0770
+  when: conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+- name: create /usr/local/nagios/md5s file
+  file: path=/usr/local/nagios/md5s state=touch owner=root group=nagios mode=0664
+  when: conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+- name: download third party nagios plugin dependencies to cache (Debian)
+  get_url: url={{ item }} dest=/var/cache/apt/archives
+  with_items:
+    - http://de.archive.ubuntu.com/ubuntu/pool/universe/libm/libmonitoring-plugin-perl/libmonitoring-plugin-perl_0.39-1_all.deb
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: install third party nagios plugin dependencies from cache (Debian)
+  apt: deb=/var/cache/apt/archives/{{ item }} state=present
+  with_items:
+    - libmonitoring-plugin-perl_0.39-1_all.deb
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  ignore_errors: yes
+  tags: [ icinga, icinga-conf ]
+
+- name: install third party nagios plugin dependencies (Debian)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - libwww-perl
+    - libnagios-plugin-perl
+    - libdata-validate-domain-perl
+    - libdata-validate-ip-perl
+    - libsys-statistics-linux-perl
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: install third party nagios plugin dependencies (RedHat/SHMZ)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - perl-libwww-perl
+    - perl-Nagios-Plugin
+    - perl-Data-Validate-Domain
+    - perl-Data-Validate-IP
+    - perl-Sys-Statistics-Linux
+  when:
+      - ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: install third party nagios plugin python dependencies (Debian)
+  pip: name={{ item }} executable=pip3 state=present
+  with_items:
+    - docker-py
+    - nagiosplugin
+  when:
+    - ansible_os_family == "Debian"
+    - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy third party nagios plugins
+  template: src=usr/lib64/nagios/plugins/{{ item }}.j2 dest=/usr/lib64/nagios/plugins/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+    - check_yum
+    - check_file_md5.sh
+    - check_apache
+    - check_linux_stats.pl
+    - check_keepalived_state.sh
+    - check_varnish_health.sh
+    - check_rbl
+    - check_docker
+  when: conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+- name: remove third party nagios plugins
+  file: path=/usr/lib64/nagios/plugins/{{ item }} state=absent
+  with_items:
+      - check_apache2.sh
+  when: conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+- name: copy third party nagios plugins
+  copy: src=../templates/usr/lib64/nagios/plugins/{{ item }}.j2 dest=/usr/lib64/nagios/plugins/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+      - check_raid
+  when: conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ icinga, icinga-conf ]
+
+############
+# Graphite #
+############
+- name: be sure latest graphite packages are installed (Debian)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - graphite-web
+    - graphite-carbon
+    - libapache2-mod-wsgi
+    - python-mysqldb
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga ]
+
+- name: clone icingaweb2-module-graphite.git
+  git: repo=https://github.com/findmypast/icingaweb2-module-graphite.git dest=/usr/share/icingaweb2/modules/graphite clone=yes update=yes
+  ignore_errors: yes
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Create a Database for graphite
+  mysql_db: name={{ conf_icinga_graphite_db_name }}
+            state=present
+  register: icinga_graphite_db
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Create graphite Database User and configure Grants
+  mysql_user: name={{ conf_icinga_graphite_db_name }}
+              password={{ conf_icinga_graphite_db_pass }}
+              state=present
+              priv="{{ conf_icinga_graphite_db_user }}.*:GRANT,INSERT,SELECT,UPDATE,DELETE,DROP,CREATE,ALTER,CREATE VIEW,INDEX,EXECUTE"
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: create /etc/icingaweb2/modules/graphite directory
+  file: path=/etc/icingaweb2/modules/graphite state=directory owner=root group=icingaweb2 mode=0755
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, icinga-conf ]
+
+- name: deploy graphite configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=_graphite group=www-data mode=0640
+  with_items:
+      - default/graphite-carbon
+      - graphite/local_settings.py
+      - icingaweb2/modules/graphite/config.ini
+      - icingaweb2/authentication.ini
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_carbon_cache
+  tags: [ icinga, icinga-conf ]
+
+#########
+# MySQL #
+#########
+- name: Create a Database for Icinga2
+  mysql_db: name={{ conf_icinga_ido_db_name }}
+            state=present
+  register: icinga_ido_db
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Create Icinga Database User and configure Grants
+  mysql_user: name={{ conf_icinga_ido_db_name }}
+              password={{ conf_icinga_ido_db_pass }}
+              state=present
+              priv="{{ conf_icinga_ido_db_user }}.*:GRANT,INSERT,SELECT,UPDATE,DELETE,DROP,CREATE VIEW,INDEX,EXECUTE"
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Create a Database for Icinga2 web
+  mysql_db: name={{ conf_icinga_web_db_name }}
+            state=present
+  register: icinga_web_db
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Create Icinga web Database User and configure Grants
+  mysql_user: name={{ conf_icinga_web_db_name }}
+              password={{ conf_icinga_web_db_pass }}
+              state=present
+              # priv="{{ conf_icinga_web_db_user }}.*:GRANT,INSERT,SELECT,UPDATE,DELETE,DROP,CREATE VIEW,INDEX,EXECUTE"
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+#
+# head -c 12 /dev/urandom | base64 | tee /etc/icingaweb2/setup.token
+# chmod 0660 /etc/icingaweb2/setup.token;
+#
+
+#
+# MySQL schema: find /usr/share/ -name "*.sql" | grep icinga | grep mysql
+#
+- name: Import the IDO Schema on Icinga Database (only once)
+  mysql_db: name={{ conf_icinga_ido_db_name }}
+            state=import
+            target={{ item }}
+  with_items:
+      - /usr/share/icinga2-ido-mysql/schema/mysql.sql
+      # - /usr/share/icinga2-ido-mysql/schema/upgrade/2.0.2.sql
+      # - /usr/share/icinga2-ido-mysql/schema/upgrade/2.1.0.sql
+      # - /usr/share/icinga2-ido-mysql/schema/upgrade/2.2.0.sql
+      # - /usr/share/icinga2-ido-mysql/schema/upgrade/2.3.0.sql
+      # - /usr/share/icinga2-ido-mysql/schema/upgrade/2.4.0.sql
+  when:
+      - icinga_ido_db.changed == true
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Import the IDO Schema on Icinga Web Database (only once)
+  mysql_db: name={{ conf_icinga_web_db_name }}
+            state=import
+            target={{ item }}
+  with_items:
+      - /usr/share/icingaweb2/etc/schema/mysql.schema.sql
+  when:
+      - icinga_ido_db.changed == true
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: Icinga Web2 Installation finished
+  debug: msg="Now generate a token with 'icingacli module enable setup' and 'icingacli setup token create' and 'graphite-manage syncdb' and 'chmod -R g+w /etc/icingaweb2/' and '<URL>/icingaweb2/setup'"
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+- name: add www-data to groups icingaweb2 and nagios
+  user: name=www-data groups={{ item }} state=present
+  with_items:
+      - nagios,icingaweb2
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga ]
+
+###########
+# Grafana #
+###########
+- name: grafana repo
+  apt_repository: repo='deb https://packagecloud.io/grafana/stable/debian/ wheezy main' state=present
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, grafana ]
+
+- name: import grafana repo key
+  apt_key: url=https://packagecloud.io/gpg.key state=present
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  tags: [ icinga, grafana ]
+
+- name: be sure latest grafana packages are installed (Debian)
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - grafana
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  tags: [ icinga, grafana ]
+
+- name: deploy grafana configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group=grafana mode=0640
+  with_items:
+      - grafana/grafana.ini
+  when: conf_icinga_master == true or conf_icinga_satellite == true
+  notify: handle_restart_grafana
+  tags: [ icinga, grafana ]
+
+########
+# TODO #
+########
+# sudo chmod g+rw /var/run/icinga2/cmd
+# adduser www-data nagios
+
+#- name: deploy ssh key to deploy user if enabled
+#  # authorized_key: user=deploy key="{{ lookup('file', "../files/public_key/" + item.key + ".pub") }}" state=present
+#  authorized_key: user=deploy key="{{ item.value.public_key }}" state=present
+#  when: item.value.state == "enabled" and item.value.is_deployer == True
+#  with_dict: conf_users
+#  tags: [ users, ssh ]
+
+#- name: deploy private key for deploy user (development)
+#  # copy: src=../files/private_keys/deploy dest=/home/deploy/.ssh/id_rsa owner=deploy group=deploy mode=600 backup=no
+#  copy: content="{{ conf_users.deploy.private_key }}" dest=/home/deploy/.ssh/id_rsa owner=deploy group=deploy mode=600 backup=no
+#  when: conf_env == "development"
+#  tags: [ users, ssh ]

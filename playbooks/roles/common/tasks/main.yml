@@ -78,9 +78,9 @@
 #   when: conf_vpn_netname is defined
 #   tags: [ common ]
 
-# - include: icinga.yml
-#   when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
-#   tags: [ common ]
+- include: icinga.yml
+  when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
+  tags: [ common ]
 
 - include: borg.yml
   when: conf_env != "local" and conf_backup_client == true
