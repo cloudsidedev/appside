@@ -58,6 +58,12 @@
   file: path=~/tmp/.ssh/cm state=directory owner=root group={{ conf_root_group }} mode=0755
   tags: [ assh, assh-conf ]
 
+- name: create ControlPath directories (Unix, users)
+  file: path={{ item.value.home }}/.ssh/cm state=directory owner={{ item.key }} group={{ item.key }} mode=0755
+  with_dict: '{{ conf_users }}'
+  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  tags: [ assh, assh-conf ]
+
 - name: create ~/.ssh/ (root)
   file: path=~/.ssh state=directory owner=root group={{ conf_root_group }} mode=0755
   tags: [ assh, assh-conf ]
@@ -73,4 +79,10 @@
   with_items:
     - .ssh/assh.yml
   become: false
+  tags: [ assh, assh-conf ]
+
+- name: provision ~/.ssh/assh.yml (Unix, users)
+  template: src=home/.ssh/assh.yml.j2 dest={{ item.value.home }}/.ssh/assh.yml mode=0644
+  with_dict: '{{ conf_users }}'
+  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
   tags: [ assh, assh-conf ]
