@@ -20,11 +20,23 @@
   tags: [ assh, assh-conf ]
 
 - name: set assh exports (zsh/bash) (Unix, users)
-  lineinfile: dest=/home/{{ item[0] }}/.zshrc line="{{ item[1] }}" state=present insertafter='EOF'
-  with_nested:
-      - '{{ conf_users }}'
-      - ["export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'"]
-  when: ansible_os_family != "Darwin" and conf_env != "local"
+  lineinfile: dest={{ item.value.home }}/.zshrc line="export GOPATH=/usr/local/go" state=present insertafter='EOF'
+  with_dict: '{{ conf_users }}'
+  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  ignore_errors: yes
+  tags: [ assh ]
+
+- name: set assh exports (zsh/bash) (Unix, users)
+  lineinfile: dest={{ item.value.home }}/.zshrc line="export PATH=$PATH:$GOROOT/bin:$GOPATH/bin" state=present insertafter='EOF'
+  with_dict: '{{ conf_users }}'
+  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  ignore_errors: yes
+  tags: [ assh ]
+
+- name: set assh exports (zsh/bash) (Unix, users)
+  lineinfile: dest={{ item.value.home }}/.zshrc line="alias ssh='assh wrapper ssh'" state=present insertafter='EOF'
+  with_dict: '{{ conf_users }}'
+  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
   ignore_errors: yes
   tags: [ assh ]
 
