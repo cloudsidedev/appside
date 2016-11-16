@@ -22,7 +22,7 @@
   when: conf_env != "local"
   tags: [ shell-users, users, groups ]
 
-- name: deploy shell user groups if enabled
+- name: provision shell user groups if enabled
   group: name={{ item.key }} state=present
   when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
@@ -34,26 +34,26 @@
   with_dict: '{{ conf_users }}'
   tags: [ shell-users, users, shell ]
 
-- name: deploy shell users if enabled
+- name: provision shell users if enabled
   user: name={{ item.key }} group={{ item.key }} groups={{ item.value.groups }} comment="{{ item.value.name }}" home="{{ item.value.home }}" append=yes shell={{ item.value.shell }} state=present
   when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
   ignore_errors: yes
   tags: [ shell-users, users, shell ]
 
-- name: deploy ssh key if enabled
+- name: provision ssh key if enabled
   authorized_key: user={{ item.key }} key="{{ item.value.public_key }}" state=present
   when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
-  tags: [ shell-users, users, ssh, shell ]
+  tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
-- name: deploy ssh key to deploy user if enabled
+- name: provision ssh key to deploy user if enabled
   authorized_key: user=deploy key="{{ item.value.public_key }}" state=present
   when: item.value.state == "enabled" and item.value.is_deployer == True
   with_dict: '{{ conf_users }}'
-  tags: [ shell-users, users, ssh, shell ]
+  tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
-- name: deploy private key for deploy user (development)
+- name: provision private key for deploy user (development)
   copy: content="{{ conf_users.deploy.private_key }}" dest=/home/deploy/.ssh/id_rsa owner=deploy group=deploy mode=600 backup=no
   when: conf_env == "development"
-  tags: [ shell-users, users, ssh, shell ]
+  tags: [ shell-users, users, ssh, shell, ssh-keys ]
