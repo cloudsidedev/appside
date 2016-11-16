@@ -205,6 +205,7 @@
 - name: deploy scripts
   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0755
   with_items:
+      - init.d/icinga2
       - icinga2/scripts/slack-service-notification.sh
   when: conf_icinga_master == true or conf_icinga_satellite == true
   notify: handle_restart_icinga2
