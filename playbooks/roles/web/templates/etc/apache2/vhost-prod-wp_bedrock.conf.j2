@@ -6,8 +6,8 @@
 
         ServerName {{ item.value.servername }}
         {% if item.value.serveralias.0 is defined %}
-        {% for item in item.value.serveralias %} 
-        ServerAlias {{ item }} 
+        {% for item in item.value.serveralias %}
+        ServerAlias {{ item }}
         {% endfor %}
         {% endif %}
 
@@ -16,7 +16,7 @@
         DocumentRoot /var/www/vhosts/{{ item.key }}/current/web
 
         <Directory /var/www/vhosts/{{ item.key }}/>
-                Options Indexes FollowSymLinks
+                Options FollowSymLinks
                 AllowOverride All
                 # Apache 2.4 only syntax, see: http://httpd.apache.org/docs/2.4/upgrading.html
                 # Require all granted
