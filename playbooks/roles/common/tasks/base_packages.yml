@@ -14,7 +14,7 @@
   when: ansible_os_family == "Debian"
 
 - name: install golang ppa (Debian Family)
-  apt_repository: repo='ppa:ubuntu-lxc/lxd-stable' update_cache=yes
+  apt_repository: repo='ppa:ubuntu-lxc/lxd-stable' update_cache=yes validate_certs=False
   when: ansible_distribution == "Ubuntu"
 
 - name: base packages (Debian family)
