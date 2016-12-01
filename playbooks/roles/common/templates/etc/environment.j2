@@ -1,0 +1,9 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+export http_proxy={{ conf_http_proxy }}
+export https_proxy={{ conf_http_proxy }}
+export ftp_proxy={{ conf_http_proxy }}
+export rsync_proxy={{ conf_http_proxy }}
+export no_proxy="{{ conf_http_no_proxy }}"

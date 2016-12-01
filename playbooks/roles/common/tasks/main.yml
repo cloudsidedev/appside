@@ -18,6 +18,16 @@
   when: conf_env != "local" and conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
 
+# - name: define proxy settings
+#   lineinfile: "dest=/etc/environment state=present line=http_proxy={{ conf_http_proxy }}"
+#   when: set_http_proxy == true
+#   tags: proxy
+
+- name: deploy /etc/environment
+  template: src=etc/environment.j2 dest=/etc/environment owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu"
+  tags: [ base_packages, yum_proxy, environment ]
+
 - include: centos-epel.yml
   when: ansible_os_family == "RedHat" and conf_env != "local"
   tags: [ common, apt, base_packages ]
