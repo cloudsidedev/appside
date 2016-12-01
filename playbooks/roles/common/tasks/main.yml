@@ -25,7 +25,9 @@
 
 - name: deploy /etc/environment
   template: src=etc/environment.j2 dest=/etc/environment owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu"
+  when:
+    - ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu"
+    - conf_http_proxy is defined
   tags: [ base_packages, yum_proxy, environment ]
 
 - include: centos-epel.yml
