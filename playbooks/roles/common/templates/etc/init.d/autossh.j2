@@ -1,0 +1,185 @@
+#!/bin/bash
+{% raw %}
+### BEGIN INIT INFO
+# Provides:          autossh
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: autossh initscript
+# Description:       Starts autossh tunnels.
+### END INIT INFO
+
+# --                                                            # {{{1
+#
+# File        : autossh.init
+# Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+# Date        : 2013-04-09
+#
+# Copyright   : Copyright (C) 2013  Felix C. Stegerman
+# Licence     : GPLv2
+#
+# --                                                            # }}}1
+
+# Do NOT "set -e"
+# PATH should only include /usr/* if it runs after the mountnfs.sh
+# script
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+DAEMON=/usr/bin/autossh
+RUNNING=/usr/lib/autossh/autossh
+
+DESC='autossh tunnels'
+NAME=autossh
+
+SCRIPT=/etc/init.d/$NAME
+RUN=/var/run/$NAME
+
+# --
+
+AUTOSSH_OPTS=''
+AUTOSSH_TUNNELS=()
+
+function autossh_opts () { AUTOSSH_OPTS="$@"; }
+function tunnel () { local x="$@"; AUTOSSH_TUNNELS+=( "$x" ); }
+
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# --
+
+[ ! -e "$RUN" ] && { mkdir "$RUN"; chown "$AUTOSSH_USER": "$RUN"; }
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+[ -n "$AUTOSSH_INIT_VERBOSE" ] && VERBOSE="$AUTOSSH_INIT_VERBOSE"
+
+# --
+
+function do_start()                                             # {{{1
+{
+  # Return:
+  #   0 if daemon has been started
+  #   1 if daemon was already running
+  #   2 if daemon could not be started
+
+  local tunnel n=0 pidfile args already=0 failed=0
+  for tunnel in "${AUTOSSH_TUNNELS[@]}"; do
+    pidfile="$RUN/$NAME.$n.pid"; (( ++n ))
+    args=( $AUTOSSH_OPTS $tunnel )
+    echo -n "[autossh tunnel start] CMD=$DAEMON ${args[@]} ... "
+    touch "$pidfile"; chown "$AUTOSSH_USER": "$pidfile"
+    export AUTOSSH_PIDFILE="$pidfile"
+    start-stop-daemon -c "$AUTOSSH_USER" --start --quiet \
+      --pidfile "$pidfile" --exec "$RUNNING" --test > /dev/null \
+      || { (( ++already )); echo 'already running'; continue; }
+    start-stop-daemon -c "$AUTOSSH_USER" --start --quiet \
+      --pidfile "$pidfile" --exec "$DAEMON" -- "${args[@]}" \
+      || (( ++failed; echo failed; continue ))
+    echo OK
+  done
+  [ "$failed"  -gt 0 ] && return 2
+  [ "$already" -gt 0 ] && return 1
+  return 0
+}                                                               # }}}1
+
+function do_stop()                                              # {{{1
+{
+  # Return:
+  #   0 if daemon has been stopped
+  #   1 if daemon was already stopped
+  #   2 if daemon could not be stopped
+  #   other if a failure occurred
+
+  local pidfile p c r already=0 failed=0 retval=0
+  for pidfile in $( ls -d "$RUN"/*.pid 2>/dev/null ); do
+    p="$( cat "$pidfile" )"; c="$( ps -p "$p" -o command= )"
+    echo -n "[autossh tunnel stop] PID=$p CMD=$c ... "
+    start-stop-daemon -c "$AUTOSSH_USER" --stop --quiet \
+      --retry=TERM/30/KILL/5 --pidfile "$pidfile" --name "$NAME"
+    r="$?"
+    case "$r" in
+      0) rm -f "$pidfile"; echo OK ;;
+      1) (( ++already )); echo 'already running' ;;
+      2) (( ++failed )); echo failed ;;
+      *) retval="$r"; rm -f "$pidfile"; echo "failed ($r)" ;;
+    esac
+  done
+  [ "$retval"  -gt 2 ] && return "$retval"
+  [ "$failed"  -gt 0 ] && return 2
+  [ "$already" -gt 0 ] && return 1
+  return 0
+}                                                               # }}}1
+
+function do_status ()                                           # {{{1
+{
+  # Return: 0 if all alive; 1 if some dead.
+  local pidfile p c alive=0 dead=0 n=0 m info
+  for pidfile in $( ls -d "$RUN"/*.pid 2>/dev/null ); do
+    p="$( cat "$pidfile" )"; c="$( ps -p "$p" -o command= )"
+    if [ -n "$c" ]; then
+      echo "[autossh tunnel alive] PID=$p CMD=$c"; (( ++alive ))
+    else
+      echo "[autossh tunnel dead] PID=$p"; (( ++dead ))
+    fi
+    (( ++n ))
+  done
+  m="${#AUTOSSH_TUNNELS[@]}"
+  info="alive=$alive dead=$dead total=$n config=$m"
+  echo "[autossh tunnel status] $info"
+  if [ "$dead" -eq 0 ]; then return 0; else return 1; fi
+}                                                               # }}}1
+
+# --
+
+case "$1" in                                                    # {{{1
+  start)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    do_start
+    case "$?" in
+      0|1)  [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      *)    [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
+  stop)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1)  [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      *)    [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+  ;;
+  status)
+    do_status
+  ;;
+  restart|force-reload)                                         # {{{2
+    log_daemon_msg "Restarting $DESC" "$NAME"
+    do_stop
+    case "$?" in
+      0|1)
+        do_start
+        case "$?" in
+          0) log_end_msg 0 ;;
+          1) log_end_msg 1 ;; # Old process is still running
+          *) log_end_msg 1 ;; # Failed to start
+        esac
+      ;;
+      *) log_end_msg 1 ;; # Failed to stop
+    esac
+  ;;                                                            # }}}2
+  *)
+    echo "Usage: $SCRIPT {start|stop|status|restart|force-reload}" >&2
+    exit 3
+  ;;
+esac                                                            # }}}1
+
+:
+
+# vim: set tw=70 sw=2 sts=2 et fdm=marker :
+{% endraw %}

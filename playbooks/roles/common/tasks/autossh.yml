@@ -1,0 +1,51 @@
+---
+
+# file: playbooks/roles/common/tasks/autossh.yml
+
+#
+# http://logan.tw/posts/2014/12/15/autossh-and-ubuntu-upstart-daemon/
+#
+# conf_autossh_client: true/false
+# conf_autossh_server: true/false
+#
+
+- name: autossh packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - autossh
+  when:
+    - conf_autossh_client is defined and conf_autossh_client == true
+    - ansible_os_family == "Debian"
+  tags: [ autossh ]
+
+- name: provision autossh private key
+  copy: content="{{ conf_users.autossh.private_key }}" dest="{{ conf_users.autossh.home }}/.ssh/id_rsa" owner=autossh group=autossh mode=600
+  when: conf_autossh_client is defined and conf_autossh_client == true
+  tags: [ autossh, autossh-conf ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - default/autossh
+  when:
+    - conf_autossh_client is defined and conf_autossh_client == true
+    - ansible_os_family == "Debian"
+  notify: handle_restart_autossh
+  tags: [ autossh, autossh-conf ]
+
+- name: provision init script
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+      - init.d/autossh
+  when:
+    - conf_autossh_client is defined and conf_autossh_client == true
+    - ansible_os_family == "Debian"
+  notify: handle_restart_autossh
+  tags: [ autossh, autossh-conf ]
+
+- name: enable autossh service
+  service: name=autossh state=started enabled=yes
+  when:
+    - conf_autossh_client is defined and conf_autossh_client == true
+    - ansible_os_family == "Debian"
+  tags: [ autossh, autossh-conf ]

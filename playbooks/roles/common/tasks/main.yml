@@ -69,6 +69,8 @@
 - include: assh.yml
   # tags: [ common, assh, assh-conf, base_packages ]
 
+- include: autossh.yml
+
 - include: nullmailer.yml
   when: conf_env != "local" and conf_nullmailer_enable == true
   tags: [ common ]

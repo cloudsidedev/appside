@@ -35,6 +35,9 @@
 - name: handle_restart_grafana
   service: name=grafana-server state=restarted
 
+- name: handle_restart_autossh
+  service: name=autossh state=restarted
+
 - name: handle_restart_ceph
   service: name=ceph state=restarted
 
