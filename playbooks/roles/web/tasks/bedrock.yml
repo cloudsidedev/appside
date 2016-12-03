@@ -149,7 +149,7 @@
 
 - name: deploy wp-cron entries if enabled
   lineinfile: dest={{ conf_web_cron }}
-              line='*/5 * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl http://{{ item.value.servername }}/wp/wp-cron.php'
+              line='*/5 * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl https://{{ item.value.servername }}/wp/wp-cron.php'
               insertafter=EOF
               state=present
   when: item.value.state == "enabled" and item.value.type == "wp_bedrock"
