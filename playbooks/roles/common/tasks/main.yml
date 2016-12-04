@@ -66,6 +66,9 @@
 - include: base_packages.yml
   tags: [ common, apt, base_packages ]
 
+- include: ansible.yml
+  when: conf_env != "local"
+
 - include: assh.yml
   # tags: [ common, assh, assh-conf, base_packages ]
 

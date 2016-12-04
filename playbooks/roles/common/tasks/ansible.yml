@@ -1,0 +1,22 @@
+---
+
+# file: playbooks/roles/common/tasks/ansible.yml
+
+- name: ansible apt-key (Ubuntu)
+  apt_key: data="{{ lookup('file', 'ansible/ansible.gpg') }}" state=present
+  when: ansible_distribution == "Ubuntu"
+  tags: [ ansible ]
+
+- name: enable repo ppa:ansible/ansible-2.1 (Ubuntu)
+  apt_repository: repo='deb http://ppa.launchpad.net/ansible/ansible-2.1/ubuntu {{ ansible_distribution_release }} main' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  tags: [ ansible ]
+
+- name: install ansible (Debian family)
+  apt: pkg={{ item }} state=present force=yes
+  with_items:
+    - ansible=2.1.3.0-1ppa~trusty
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian"
+  tags: [ ansible ]
