@@ -116,6 +116,9 @@ Solve:
 Issue: `vagragnt Warning: Authentication failure. Retrying...`
 Solve: http://stackoverflow.com/a/30792296
 
+Issue: `An error occurred while downloading the remote file. The error message, if any, is reproduced below. Please fix this error and try again.`
+Solve: `sudo mv /opt/vagrant/embedded/bin/curl /tmp` https://github.com/mitchellh/vagrant/issues/7997
+
 ### Developers
 
 `ansible all -m setup --tree /tmp/facts -i examples/appflow-mrrobot/local/inventory -a "filter=ansible_distribution*"`
