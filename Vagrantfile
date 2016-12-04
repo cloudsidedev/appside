@@ -53,6 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     testing.vm.hostname = "testing"
     testing.vm.box_url = "Vagrant-Boxes/ubuntu-ttss.box"
     testing.vm.network :private_network, ip: "192.168.90.2"
+    testing.vm.boot_timeout = 400 # defaults 300
     # testing.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
     # testing.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
