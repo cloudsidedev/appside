@@ -7,6 +7,7 @@
   with_items: '{{ conf_hold_packages }}'
   when: ansible_os_family == "Debian"
   ignore_errors: yes
+  tags: [ hold ]
 
 - name: purge unwanted packages (Debian family)
   apt: pkg={{ item }} state=absent purge=yes

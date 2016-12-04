@@ -16,6 +16,7 @@ conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
 conf_hold_packages:
     - mod-pagespeed-stable
+    - ansible
 conf_unwanted_packages:
     - chef
     - chef-zero
