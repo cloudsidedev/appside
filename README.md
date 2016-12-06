@@ -98,6 +98,11 @@ play #1 (all): all	TAGS: []
 % vagrant vbguest --status
 ```
 
+Before you can `vagrant up atlantis`. This will download the needed trusty64 box.
+```
+% make vagrant
+```
+
 ### Troubleshooting
 
 ```
