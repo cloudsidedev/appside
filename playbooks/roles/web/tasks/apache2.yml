@@ -67,6 +67,7 @@
   with_items:
     - apache2/conf.d/custom-apache2-conf
     - apache2/ports.conf
+    - apache2/conf-available/security.conf
   notify: handle_restart_apache2
   when: ansible_os_family == "Debian"
   tags: [ apache2, apache2-conf ]
