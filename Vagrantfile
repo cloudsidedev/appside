@@ -13,7 +13,7 @@ ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 
 # Synced folders, can be overriden via Vagrantfile.local.yml
 atlantis_synced_folder_appflow = "~/Documents/webdev/appflow"
-atlantis_syned_folder_webdev = "~/Documents/webdev/development"
+atlantis_synced_folder_webdev = "~/Documents/webdev/development"
 
 custom_settings = YAML.load_file 'Vagrantfile.local.yml'
 if custom_settings['synced_folder']['appflow_folder']
