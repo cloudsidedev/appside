@@ -13,10 +13,10 @@ fi
 echo "#############################";
 echo "Configuring default Hosts..."
 echo "#############################";
-echo '192.168.80.2 atlantis
-192.168.80.3 atlantis.centos
-192.168.90.2 testing
-192.168.90.3 testing.centos' | sudo tee -a /etc/hosts
+grep -q -F '192.168.80.2 atlantis' /etc/hosts || sudo tee -a /etc/hosts<<<'192.168.80.2 atlantis'
+grep -q -F '192.168.80.3 atlantis.centos' /etc/hosts || sudo tee -a /etc/hosts<<<'192.168.80.3 atlantis.centos'
+grep -q -F '192.168.90.2 testing' /etc/hosts || sudo tee -a /etc/hosts<<<'192.168.90.2 testing'
+grep -q -F '192.168.90.3 testing.centos' /etc/hosts || sudo tee -a /etc/hosts<<<'192.168.90.3 testing.centos'
 
 echo "#############################";
 echo "Configuring default Dirs..."
