@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
 
 #
 # Issues with MS, see: https://github.com/Varying-Vagrant-Vagrants/VVV/issues/354#issuecomment-181513066
@@ -10,6 +11,17 @@ VAGRANTFILE_API_VERSION = "2"
 ANSIBLE_TAGS=ENV['ANSIBLE_TAGS']
 ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 
+# Synced folders, can be overriden via Vagrantfile.local.yml
+atlantis_synced_folder_appflow = "~/Documents/webdev/appflow"
+atlantis_synced_folder_webdev = "~/Documents/webdev/development"
+
+custom_settings = YAML.load_file 'Vagrantfile.local.yml'
+if custom_settings['synced_folder']['appflow_folder']
+  atlantis_synced_folder_appflow = custom_settings['synced_folder']['appflow_folder']
+end
+if custom_settings['synced_folder']['webdev_folder']
+  atlantis_synced_folder_webdev = custom_settings['synced_folder']['webdev_folder']
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -25,8 +37,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     atlantis.vm.hostname = "atlantis"
     atlantis.vm.box_url = "Vagrant-Boxes/trusty64.box"
     atlantis.vm.network :private_network, ip: "192.168.80.2"
-    atlantis.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    atlantis.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantis.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantis.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
     atlantis.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis", "--natdnshostresolver1", "on"]
@@ -39,8 +51,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     atlantiscentos.vm.hostname = "atlantis.centos"
     atlantiscentos.vm.box_url = "Vagrant-Boxes/centos64.box"
     atlantiscentos.vm.network :private_network, ip: "192.168.80.3"
-    atlantiscentos.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    atlantiscentos.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantiscentos.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantiscentos.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
 
     atlantiscentos.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis-centos", "--natdnshostresolver1", "on"]
