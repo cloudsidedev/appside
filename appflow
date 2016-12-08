@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pushd ~/appflow/ > /dev/null
+make $@
+popd > /dev/null

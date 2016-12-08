@@ -29,6 +29,8 @@ echo "Cloning AppFlow..."
 echo "#############################";
 git clone git@github.com:ttssdev/appflow.git;
 ln -s ~/Documents/webdev/appflow ~/appflow;
+sudo cp ~/appflow/appflow /usr/local/bin/appflow
+sudo chmod +x /usr/local/bin/appflow
 
 echo "#############################";
 echo "Preparing the environment..."
