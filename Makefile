@@ -43,6 +43,7 @@ limit ?= false
 tags ?= false
 skip_tags ?= false
 verbose ?= false
+url := $(url)
 
 ifneq "$(tenant)" "CFG_TENANT_ID"
 vault := tenant
@@ -107,8 +108,9 @@ help:
 update:
 	git pull
 
-initialize:
+init:
 	# TODO: Initialize AppFlow base configuration.
+	@utils/initialize.sh $(url) $(tenant) $(env)
 
 syntax-check:
 	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
