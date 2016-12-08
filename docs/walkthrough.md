@@ -14,7 +14,7 @@ Be sure to have installed this components:
 
 ```
 % bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
-``
+```
 
 Install and run AppFlow locally to provision all the required packages.
 AppFlow installs different packages depending on the local development environment:
