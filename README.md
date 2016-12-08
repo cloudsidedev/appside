@@ -64,6 +64,8 @@ In the main appflow folder (where you cloned the repo) you can start provisionin
 
 ## Documentation
 
+Take a look at the [walkthrough](https://github.com/ttssdev/appflow/wiki/Walkthrough) for initial setup.
+
 For easy code management, just use:
 
 ```
