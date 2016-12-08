@@ -1,0 +1,33 @@
+#!/bin/bash
+
+###
+# Initializing the session
+if [[ ! -f /tmp/currip ]]; then
+	# initialize the file with current ip
+	ip route get 1 | awk '{print $NF;exit}' > /tmp/currip
+fi
+
+/usr/bin/tmate -S /tmp/tmate.sock new-session -d
+/usr/bin/tmate -S /tmp/tmate.sock wait tmate-ready
+SESSION=`/usr/bin/tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'`
+###
+
+###
+# Daemon
+while [ true ]; do
+	
+	IP=`ip route get 1 | awk '{print $NF;exit}'`
+	OLDIP=`cat /tmp/currip`
+
+	# check the current IP, if it's changed then reinitialize tmate session
+	if [ $IP != $OLDIP ]; then 
+		killall tmate
+		ip route get 1 | awk '{print $NF;exit}' > /tmp/currip
+		/usr/bin/tmate -S /tmp/tmate.sock new-session -d
+		/usr/bin/tmate -S /tmp/tmate.sock wait tmate-ready
+		SESSION=`/usr/bin/tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'`
+	fi
+	sleep 10s
+done
+
+### NEEDS TO REGISTER TO compute-50
