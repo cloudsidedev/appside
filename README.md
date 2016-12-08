@@ -128,9 +128,3 @@ Solve: `sudo mv /opt/vagrant/embedded/bin/curl /tmp` https://github.com/mitchell
 ## Contributing
 
 Contributions are welcome from everyone. [Join the chat](https://gitter.im/ttssdev/appflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge).
-
-## Community
-
-Keep track of development and community news.
-
-TODO.
