@@ -13,17 +13,17 @@ fi
 echo "#############################";
 echo "Configuring default Dirs..."
 echo "#############################";
-mkdir -p ~/Documents2/webdev;
-cd ~/Documents2/webdev;
+mkdir -p ~/Documents/webdev;
+cd ~/Documents/webdev;
 echo "#############################";
 echo "Cloning AppFlow..."
 echo "#############################";
 git clone git@github.com:ttssdev/appflow.git;
-ln -s ~/Documents2/webdev/appflow ~/test;
+ln -s ~/Documents/webdev/appflow ~/appflow;
 echo "#############################";
 echo "Preparing the environment..."
 echo "#############################";
-cd ~/Documents2/webdev/appflow
+cd ~/Documents/webdev/appflow
 make local ask-sudo-pass=true;
 
 echo "#############################";
