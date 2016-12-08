@@ -163,8 +163,8 @@ jenkins:
 	@source ~/.appflow/config ; docker stop jenkins ; docker-compose up -d
 
 local:
-	@printf "[$(.BOLD)$(.CYAN)provision$(.CLEAR)][$(.BOLD)$(.WHITE)appflow-mrrobot$(.CLEAR)][$(.BOLD)local$(.CLEAR)]\n"
-	@ansible-playbook $(args) -i examples/appflow-mrrobot/local/inventory playbooks/local.yml
+	@printf "[$(.BOLD)$(.CYAN)auto-provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
+	@ansible-playbook $(args) --limit local -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/local.yml
 
 ssh:
 	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)

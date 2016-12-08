@@ -39,6 +39,12 @@
   when: conf_env != "local" and conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
+- name: Hosts In Local
+  lineinfile: dest=/etc/hosts line="192.168.80.2 {{ item.value.servername }}" state=present insertafter='EOF'
+  with_dict: '{{ conf_vhosts_common }}'
+  when: conf_env == "local"
+  tags: [ common ]
+
 - include: etckeeper.yml
   when: conf_etckeeper_webhook_url is defined
   tags: [ common ]

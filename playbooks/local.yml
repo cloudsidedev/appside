@@ -2,7 +2,7 @@
 
 # file: playbooks/local.yml
 
-- hosts: all
+- hosts: local
 
 
   roles:
