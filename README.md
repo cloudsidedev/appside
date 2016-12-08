@@ -4,7 +4,21 @@
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
-`% make provision env=production limit=webservers tenant=mrrobot tags=base_packages`
+
+```
+% bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
+```
+
+## Local development
+
+```
+% cd ~/appflow ; make vagrant ; vagrant up ; ssh atlantis
+```
+
+## Remote provisioning
+```
+% cd ~/appflow ; make provision env=production limit=webservers tenant=mrrobot tags=base_packages
+```
 
 ## Features
 

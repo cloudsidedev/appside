@@ -13,26 +13,14 @@ Be sure to have installed this components:
 ### AppFlow installation
 
 ```
-% mkdir -p ~/Documents/webdev
-% cd ~/Documents/webdev
-% git clone git@github.com:ttssdev/appflow.git
-% ln -s ~/Documents/webdev/appflow ~/
+% bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
+``
 
-```
-
-## Provison local required packages
-
-Run AppFlow locally to provision all the required packages we need for remote provisioning and deployment. AppFlow installs different packages depending on the local development environment:
+Install and run AppFlow locally to provision all the required packages.
+AppFlow installs different packages depending on the local development environment:
 
 - [OS X](https://github.com/ttssdev/appflow/tree/master/playbooks/vars/os/environment/Darwin-local.yml)
 - [GNU/Linux](https://github.com/ttssdev/appflow/tree/master/playbooks/vars/os/environment/Linux-local.yml)
-
-When running `make local` add option `ask-sudo-pass=true` if you locally need a password for sudo actions.
-
-```
-% cd ~/appflow
-% make local [ask-sudo-pass=true]
-```
 
 ## AppFlow configuration
 
