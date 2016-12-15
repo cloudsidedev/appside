@@ -24,10 +24,10 @@ nice	= 0
 
 performance_schema=OFF
 
-# TT: Zurmo related
+# Z related
 log_bin_trust_function_creators = on
 max_sp_recursion_depth          = 32
-thread_stack		            = 576K
+thread_stack		                = 576K
 optimizer_search_depth          = 0
 local-infile
 
@@ -41,10 +41,10 @@ lower_case_table_names = {{ conf_mysql_lower_case_table_names }}
 #
 # * Basic Settings
 #
-user		      = mysql
+user		        = mysql
 pid-file	      = /var/run/mysqld/mysqld.pid
 socket		      = /var/run/mysqld/mysqld.sock
-port		      = 3306
+port		        = 3306
 basedir		      = {{ conf_mysql_basedir }}
 datadir		      = {{ conf_mysql_datadir }}
 
@@ -58,6 +58,7 @@ skip-external-locking
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
 # bind-address		= 127.0.0.1
+bind-address		= 0.0.0.0
 
 #
 # * Fine Tuning
@@ -147,7 +148,7 @@ join_buffer_size        = {{ conf_mysql_join_buffer_size }}
 #
 # Percona
 #
-wsrep_notify_cmd = /usr/local/bin/galeranotify
+# wsrep_notify_cmd = /usr/local/bin/galeranotify
 wsrep_provider = {{ conf_lib_path }}/libgalera_smm.so
 wsrep_node_address = {{ conf_wsrep_node_address }}
 wsrep_node_name = {{ conf_wsrep_node_name }}
