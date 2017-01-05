@@ -50,4 +50,5 @@ In the main appflow folder (where you cloned the repo) you can start provisionin
 ```
 % cd ~/appflow
 % make ssh [tenant=<tenant>] [env=<environment>]
+% assh config build > ~/.ssh/config
 ```
