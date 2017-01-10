@@ -190,5 +190,12 @@ vagrant-centos:
 	vagrant plugin install vagrant-vbguest
 	
 support:
-	@utils/support.sh	
-	
+	@utils/support.sh
+
+install:
+	@sudo cp ~/appflow/appflow /usr/local/bin/appflow
+	@sudo chmod +x /usr/local/bin/appflow	
+
+uninstall:
+	@sudo rm /usr/local/bin/appflow
+		
