@@ -1,5 +1,9 @@
 #!/bin/bash
 
 pushd ~/appflow/ > /dev/null
-make $@
+if [[ $1 != 'vm' ]]; then
+	make $@
+else
+	vagrant ${@: +2}
+fi
 popd > /dev/null
