@@ -134,16 +134,16 @@ provision-debug:
 
 encrypt:
 	@printf "[$(.BOLD)$(.CYAN)encrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault encrypt {} \
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f ! -iname ".*" -exec ansible-vault encrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 
 decrypt:
 	@printf "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@-rm -f /tmp/.appflow-$(USER)/$($(tenant))/appflow-$(env)-md5
 	@mkdir -p /tmp/.appflow-$(USER)/$($(tenant))
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec ansible-vault decrypt {} \
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f ! -iname ".*" -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
-	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f -exec md5sum {} > /tmp/.appflow-$(USER)/$($(tenant))/appflow-$(env)-md5 \;
+	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f ! -iname ".*" -exec md5sum {} > /tmp/.appflow-$(USER)/$($(tenant))/appflow-$(env)-md5 \;
 
 reset:
 	@printf "[$(.BOLD)$(.CYAN)reset$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
