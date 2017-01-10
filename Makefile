@@ -188,3 +188,7 @@ vagrant-centos:
 	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
 	vagrant plugin install vagrant-cachier
 	vagrant plugin install vagrant-vbguest
+	
+support:
+	@utils/support.sh	
+	
