@@ -16,7 +16,8 @@ Be sure to have installed this components:
 % bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
 ```
 
-Install and run AppFlow locally to provision all the required packages.
+This will Install and run AppFlow locally to provision all the required packages.
+It will also initialize the base VM (atlantis) if you want.
 AppFlow installs different packages depending on the local development environment:
 
 - [OS X](https://github.com/ttssdev/appflow/tree/master/playbooks/vars/os/environment/Darwin-local.yml)
@@ -34,21 +35,32 @@ AppFlow installs different packages depending on the local development environme
 5. Copy the `vault` folder in `examples` to `~/.appflow/vault`
 
 Now you are ready to deploy!
-In the main appflow folder (where you cloned the repo) you can start provisioning with:
-	`make provision env=development tenant=mrrobot`
+You can start provisioning with:
+	`appflow provision env=development tenant=mrrobot`
 
 ## Atlantis VM
 
+In case you did not initialize the VM during the installation process, or you want
+to initialize a new VM, these are simple steps:
+
 ```
-% cd ~/appflow
-% make vagrant
-% vagrant up
+% appflow vagrant
+% appflow vm up atlantis
+
+```
+This will initialize the default VM (Ubuntu 14.04)
+In case you prefer CentOS/RHEL (Experimental for now)
+
+
+```
+% appflow vagrant-centos
+% appflow vm up atlantis-centos
+
 ```
 
 ## Provison local assh settings for tenants
 
 ```
-% cd ~/appflow
-% make ssh [tenant=<tenant>] [env=<environment>]
+% appflow ssh [tenant=<tenant>] [env=<environment>]
 % assh config build > ~/.ssh/config
 ```
