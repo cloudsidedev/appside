@@ -1,0 +1,65 @@
+---
+
+# file: playbooks/roles/common/tasks/munin.yml
+
+#
+# conf_munin_client: true/false
+# conf_munin_server: true/false
+#
+
+- name: munin master packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - munin
+    - libnet-cidr-lite-perl
+  when:
+    - conf_munin_master is defined and conf_munin_master == true
+    - ansible_os_family == "Debian"
+  tags: [ munin ]
+
+- name: munin client packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - munin-node
+    - libnet-cidr-lite-perl
+  when:
+    - conf_munin_client is defined and conf_munin_client == true
+    - ansible_os_family == "Debian"
+  tags: [ munin ]
+
+- name: provision master apache2 configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - munin/apache.conf
+  when:
+    - conf_munin_master is defined and conf_munin_master == true
+    - ansible_os_family == "Debian"
+  notify: handle_reload_apache2
+  tags: [ munin, munin-conf ]
+
+- name: provision master configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - munin/munin.conf
+  when:
+    - conf_munin_master is defined and conf_munin_master == true
+    - ansible_os_family == "Debian"
+  notify: handle_restart_munin
+  tags: [ munin, munin-conf ]
+
+- name: provision client configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - munin/munin-node.conf
+  when:
+    - conf_munin_client is defined and conf_munin_client == true
+    - ansible_os_family == "Debian"
+  notify: handle_restart_munin_node
+  tags: [ munin, munin-conf ]
+
+# - name: enable munin service
+#   service: name=munin state=started enabled=yes
+#   when:
+#     - conf_munin_client is defined and conf_munin_client == true
+#     - ansible_os_family == "Debian"
+#   tags: [ munin, munin-conf ]

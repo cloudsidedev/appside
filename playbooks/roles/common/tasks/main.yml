@@ -105,6 +105,10 @@
   when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
   tags: [ common ]
 
+- include: munin.yml
+  when: conf_munin_master is defined or conf_munin_client is defined
+  tags: [ common ]
+
 - include: borg.yml
   when: conf_env != "local" and conf_backup_client == true
   tags: [ common ]

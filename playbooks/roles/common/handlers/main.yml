@@ -29,6 +29,12 @@
 - name: handle_restart_icinga2
   service: name=icinga2 state=restarted
 
+- name: handle_restart_munin
+  service: name=munin state=restarted
+
+- name: handle_restart_munin_node
+  service: name=munin-node state=restarted
+
 - name: handle_restart_carbon_cache
   service: name=carbon-cache state=restarted
 
