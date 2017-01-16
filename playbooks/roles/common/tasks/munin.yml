@@ -6,12 +6,14 @@
 # conf_munin_client: true/false
 # conf_munin_server: true/false
 #
+# TODO a2enmod cgi
 
 - name: munin master packages (Debian family)
   apt: pkg={{ item }} update_cache=yes state=latest
   with_items:
     - munin
     - libnet-cidr-lite-perl
+    - libcgi-fast-perl
   when:
     - conf_munin_master is defined and conf_munin_master == true
     - ansible_os_family == "Debian"
