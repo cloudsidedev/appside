@@ -10,7 +10,7 @@ Be sure to have installed this components:
 * [VirtualBox](https://www.virtualbox.org)
 * [Vagrant](https://www.vagrantup.com/downloads.html)
 
-### AppFlow installation
+### AppFlow auto installation
 
 ```
 % bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
@@ -30,6 +30,7 @@ AppFlow installs different packages depending on the local development environme
   * `CFG_TENANT_ID` - identity of the own tenant
   * `CFG_TENANT_NAME` - name of the own tenant
   * `CFG_TENANT_ENV` - default provisioning environment
+  * `CFG_APPFLOW_SUPPORT_MAIL` - e-mail address to send support requests to
 3. Copy the `appflow-mrrobot` folder in `examples` to `~/.appflow/tenant/`
 4. Link the folder: `ln -s ~/.appflow/tenant/appflow-mrrobot ~/.appflow/tenant/mrrobot`
 5. Copy the `vault` folder in `examples` to `~/.appflow/vault`

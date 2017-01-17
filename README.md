@@ -77,6 +77,7 @@ Infrastructure:
   * `CFG_TENANT_ID` - identity of the own tenant
   * `CFG_TENANT_NAME` - name of the own tenant
   * `CFG_TENANT_ENV` - default provisioning environment
+  * `CFG_APPFLOW_SUPPORT_MAIL` - e-mail address to send support requests to
 3. Copy the `appflow-mrrobot` folder in `examples` to `~/.appflow/tenant/`
 4. Link the folder: `ln -s ~/.appflow/tenant/appflow-mrrobot ~/.appflow/tenant/mrrobot`
 5. Copy the `vault` folder in `examples` to `~/.appflow/vault`
@@ -123,7 +124,7 @@ play #1 (all): all	TAGS: []
 % vagrant vbguest --status
 ```
 
-Before you can `vagrant up atlantis`. This will download the needed trusty64 box.
+Before you can `appflow vm reload atlantis`. This will download the needed trusty64 box.
 ```
 % appflow vagrant
 ```
