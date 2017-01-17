@@ -4,20 +4,29 @@
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
+## Auto installation
 
 ```
 % bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
 ```
 
+## Manual installation
+
+```
+% cd ~/ ; git clone git@github.com:ttssdev/appflow.git
+% cd ~/appflow ; make install ; source ~/.zshrc
+% appflow local
+```
+
 ## Local development
 
 ```
-% cd ~/appflow ; make vagrant ; vagrant up ; ssh atlantis
+% appflow vm reload atlantis ; ssh atlantis
 ```
 
 ## Remote provisioning
 ```
-% cd ~/appflow ; make provision env=production limit=webservers tenant=mrrobot tags=base_packages
+% appflow provision env=production limit=webservers tenant=mrrobot tags=base_packages
 ```
 
 ## Features
@@ -74,7 +83,7 @@ Infrastructure:
 
 Now you are ready to deploy!
 In the main appflow folder (where you cloned the repo) you can start provisioning with:
-	`make provision env=development tenant=mrrobot`
+	`appflow provision env=development tenant=mrrobot`
 
 ## Documentation
 
@@ -83,24 +92,24 @@ Take a look at the [walkthrough](https://github.com/ttssdev/appflow/wiki/Walkthr
 For easy code management, just use:
 
 ```
-% make checkout env=production tenant=mrrobot
-% make decrypt env=production tenant=mrrobot
+% appflow checkout env=production tenant=mrrobot
+% appflow decrypt env=production tenant=mrrobot
 % edit tenant's configs in ~/.appflow/tenant/appflow-mrrobot/production
-% make status env=production tenant=mrrobot
-% make checkin env=production tenant=mrrobot
+% appflow status env=production tenant=mrrobot
+% appflow checkin env=production tenant=mrrobot
 ```
 
 Forgot what you've done? go back:
 
-`% make reset env=production tenant=mrrobot`
+`% appflow reset env=production tenant=mrrobot`
 
 Want to update everything and provision?
 
-`% make update ; make checkout ; make provision local=true`
+`% appflow update ; appflow checkout ; appflow provision local=true`
 
 ## Tags
 
-`% make tags`
+`% appflow tags`
 
 ```
 play #1 (all): all	TAGS: []
@@ -116,7 +125,7 @@ play #1 (all): all	TAGS: []
 
 Before you can `vagrant up atlantis`. This will download the needed trusty64 box.
 ```
-% make vagrant
+% appflow vagrant
 ```
 
 ### Troubleshooting
