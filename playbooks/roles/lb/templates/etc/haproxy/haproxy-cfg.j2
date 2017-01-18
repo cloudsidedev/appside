@@ -104,7 +104,7 @@ backend www-backend
     mode http
     balance {{ conf_haproxy_www_backend_balance }}
     # capture cookie vgnvisitor= len 32
-    # cookie SERVERID insert indirect nocache
+    cookie SERVERID insert indirect nocache
     # option forwardfor
     option httpchk
     # option httpclose
