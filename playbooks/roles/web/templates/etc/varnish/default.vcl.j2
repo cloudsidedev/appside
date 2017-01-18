@@ -32,6 +32,16 @@ acl purge {
 ################
 # sub vcl_recv #
 ################
+sub vcl_hash {
+  hash_data(req.http.host);
+  hash_data(req.url);
+  hash_data(req.http.X-Forwarded-Proto);
+  return(hash);
+}
+
+################
+# sub vcl_recv #
+################
 sub vcl_recv {
   {{ conf_varnish_vcl_recv }}}
 
