@@ -5,6 +5,15 @@
 {% if item.value.htaccess is defined %}
 {{ item.value.htaccess }}{% endif %}
 
+{% if item.value.htpasswd_password != false %}
+# BEGIN Basic Auth
+AuthType Basic
+AuthName "Protectd"
+AuthUserFile /etc/apache2/.htpasswd
+Require user {{ item.key }}
+# END Basic Auth
+{% endif %}
+
 {% if item.value.htaccess_ithemes_security_enable is defined and item.value.htaccess_ithemes_security_enable == true %}
 # BEGIN iThemes Security - Do not modify or remove this line
 # iThemes Security Config Details: 2
