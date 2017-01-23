@@ -18,5 +18,6 @@
     - ansible=2.1.3.0-1ppa~trusty
   environment:
     DEBIAN_FRONTEND: noninteractive
+  ignore_errors: yes
   when: ansible_os_family == "Debian"
   tags: [ ansible ]

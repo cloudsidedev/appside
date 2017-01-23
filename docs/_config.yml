@@ -1,0 +1,35 @@
+theme: jekyll-theme-cayman
+
+markdown: kramdown
+highlighter: rouge
+
+title: AppFlow
+name: AppFlow • Multitenant environment automation
+description: Multitenant environment automation.
+url: http://appflow.sh
+
+show_downloads: false
+google_analytics: UA-49696993-3
+
+repository: ttssdev/appflow
+help_url: http://appflow.sh/help
+
+timezone: Europe/Zurich
+
+# twitter:
+  # username:
+
+# logo: /img/logo-2x.png
+
+gems:
+  - jekyll-avatar
+  - jekyll-feed
+  - jekyll-mentions
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jemoji
+
+exclude:
+  - .gitignore
+  - README.md

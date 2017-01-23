@@ -61,6 +61,11 @@
 #   tags: vhosts
 
 #
+# htpasswd
+#
+- include: htpasswd.yml
+
+#
 # vhosts archived
 #
 - include: vhosts-archived.yml
