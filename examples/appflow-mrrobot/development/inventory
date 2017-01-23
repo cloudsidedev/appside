@@ -5,6 +5,9 @@
 # For staging and production use the remote nodes on which you want to deploy to.
 # Create your node profile in  ~/.appflow/tenant/mrrobot/development/host_vars/<nodename>
 
+[local]
+local	ansible_connection=local conf_env=local
+
 [webservers]
 atlantis
 
