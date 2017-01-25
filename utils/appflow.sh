@@ -6,6 +6,9 @@ echo "Installing dependencies...";
 echo "#############################";
 DIST=`uname -s`
 if [ $DIST == 'Darwin' ]; then 
+	if ! brew ls --versions bash-completion | grep HEAD; then
+		brew install bash-completion
+	fi
 	if ! brew ls --versions ansible | grep HEAD; then
 		brew unlink ansible ; brew unlink ansible20 ; brew reinstall ansible --HEAD;
 	fi 
@@ -31,8 +34,8 @@ else
 			PKG=${osInfo[$f]}
 		fi
 	done
-	#sudo pip install git+git://github.com/ansible/ansible.git; 
-	sudo $PKG install -y vagrant virtualbox
+	sudo pip install git+git://github.com/ansible/ansible.git; 
+	sudo $PKG install -y vagrant virtualbox bash-completion
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
 you cannot use AppFlow, But it can still be installed.
@@ -67,9 +70,21 @@ echo "Cloning AppFlow..."
 echo "#############################";
 git clone git@github.com:ttssdev/appflow.git;
 ln -s $HOME/Documents/webdev/appflow $HOME/appflow;
+
+
+echo "#############################";
+echo "Installing AppFlow..."
+echo "#############################";
 sudo mkdir -p /usr/local/bin/
 sudo cp $HOME/appflow/appflow /usr/local/bin/appflow
 sudo chmod +x /usr/local/bin/appflow
+if [ $DIST == 'Darwin' ]; then 
+	sudo cp $HOME/appflow/utils/autocomplete /usr/local/etc/bash_completion.d/appflow
+	source /usr/local/etc/bash_completion.d
+else
+	sudo cp $HOME/appflow/utils/autocomplete /etc/bash_completion.d/appflow
+	source /usr/share/bash-completion/bash_completion 
+fi
 
 echo "#############################";
 echo "Preparing the environment..."
@@ -112,7 +127,7 @@ if [ ! -z $dist ]; then
 fi
 
 case $vm in
-	[Yy]* ) make vagrant$DIS && vagrant up atlantis$DIS;;
+	[Yy]* ) make vagrant$DIS && vagrant up atlantis$DIS && appflow provision firstrun=true limit=atlantis$DIS;;
 	[Nn]* ) ;;
 	* ) echo "Please answer yes or no.";;
 esac
