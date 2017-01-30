@@ -12,6 +12,7 @@
 - name: purge unwanted packages (Debian family)
   apt: pkg={{ item }} state=absent purge=yes
   with_items: '{{ conf_unwanted_packages }}'
+  ignore_errors: yes
   when: ansible_os_family == "Debian"
 
 - name: install golang ppa (Debian Family)

@@ -50,6 +50,7 @@
   tags: [ common ]
 
 - include: timezone.yml
+  when: conf_env != "local"
   tags: [ common ]
 
 - include: rsyslog.yml

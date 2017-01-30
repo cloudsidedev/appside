@@ -13,7 +13,7 @@ conf_base_packages:
     - zsh
     - vim
     # - screen
-    - go
+    - golang
     - tmux
     - tmate
     - mosh
