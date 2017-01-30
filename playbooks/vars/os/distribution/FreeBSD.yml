@@ -35,6 +35,7 @@ conf_base_packages:
     - lynx
     - linux_base-f10
     - "{{ var_package_git }}"
+    - tig
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
 

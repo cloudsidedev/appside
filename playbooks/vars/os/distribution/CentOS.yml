@@ -57,11 +57,11 @@ conf_base_packages:
     - make
     - php
     - lynx
-    - nmap 
-    - screen 
+    - nmap
+    - screen
     - subversion
     - traceroute
-    - whois 
+    - whois
     - gcc
     - dkms
     - kernel
@@ -70,6 +70,7 @@ conf_base_packages:
     - "@Development Tools"
     - go
     - "{{ var_package_git }}"
+    - tig
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
 

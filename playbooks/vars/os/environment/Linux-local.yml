@@ -32,3 +32,4 @@ conf_base_packages:
     - make
     - git
     - convmv
+    - tig

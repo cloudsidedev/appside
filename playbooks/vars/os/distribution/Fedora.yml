@@ -37,5 +37,4 @@ conf_mysql_lc_messages_dir: "/usr/share/mysql"
 conf_etckeeper_lowlevel_package_manager: "rpm"
 conf_etckeeper_highlevel_package_manager: "dnf"
 
-
 var_package_git: git
