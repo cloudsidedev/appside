@@ -81,3 +81,15 @@ sub vcl_pass {
         error 502 "PURGE on a passed object";
     }
 }
+
+###################
+# sub vcl_deliver #
+###################
+sub vcl_deliver {
+  # If the page is already cached return a HIT header, otherwise MISS.
+  if (obj.hits > 0) {
+    set resp.http.X-Cache = "HIT";
+  } else {
+    set resp.http.X-Cache = "MISS";
+  }
+}
