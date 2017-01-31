@@ -49,6 +49,11 @@ sub vcl_recv {
 # sub vcl_fetch #
 #################
 sub vcl_fetch {
+  # Strip any cookies before an image/JS/CSS is inserted into cache.
+  if (req.url ~ "\.(jpe?g|jpe|gif|png|css|js)$") {
+     unset beresp.http.set-cookie;
+  }
+
   #set obj.grace = 5m;
   set beresp.grace = 2m;
 }
