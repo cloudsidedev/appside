@@ -9,26 +9,26 @@ AppFlow is a multitenant environment automation tool based on Ansible.
 ## Auto installation
 
 ```
-% bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
+bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
 ```
 
 ## Manual installation
 
 ```
-% cd ~/ ; git clone git@github.com:ttssdev/appflow.git
-% cd ~/appflow ; make install ; source ~/.zshrc
-% appflow local
+cd ~/ ; git clone git@github.com:ttssdev/appflow.git
+cd ~/appflow ; make install ; source ~/.zshrc
+appflow local
 ```
 
 ## Local development
 
 ```
-% appflow vm reload atlantis ; ssh atlantis
+appflow vm reload atlantis ; ssh atlantis
 ```
 
 ## Remote provisioning
 ```
-% appflow provision env=production limit=webservers tenant=mrrobot tags=base_packages
+appflow provision env=production limit=webservers tenant=mrrobot tags=base_packages
 ```
 
 ## Features
@@ -58,18 +58,18 @@ Infrastructure:
 
 ## Requirements
 
-* `% brew install md5sha1sum`
+* `brew install md5sha1sum`
 
 ### Capistrano
 
 #### Ubuntu
 
 ```
-% sudo apt-get install software-properties-common
-% sudo apt-add-repository ppa:brightbox/ruby-ng
-% sudo apt-get update
-% sudo apt-get install ruby2.3 libxml2-dev zlib1g-dev
-% sudo gem2.3 install bundler
+sudo apt-get install software-properties-common
+sudo apt-add-repository ppa:brightbox/ruby-ng
+sudo apt-get update
+sudo apt-get install ruby2.3 libxml2-dev zlib1g-dev
+sudo gem2.3 install bundler
 ```
 
 ## Installation
@@ -95,24 +95,24 @@ Take a look at the [walkthrough](https://github.com/ttssdev/appflow/wiki/Walkthr
 For easy code management, just use:
 
 ```
-% appflow checkout env=production tenant=mrrobot
-% appflow decrypt env=production tenant=mrrobot
-% edit tenant's configs in ~/.appflow/tenant/appflow-mrrobot/production
-% appflow status env=production tenant=mrrobot
-% appflow checkin env=production tenant=mrrobot
+appflow checkout env=production tenant=mrrobot
+appflow decrypt env=production tenant=mrrobot
+edit tenant's configs in ~/.appflow/tenant/appflow-mrrobot/production
+appflow status env=production tenant=mrrobot
+appflow checkin env=production tenant=mrrobot
 ```
 
 Forgot what you've done? go back:
 
-`% appflow reset env=production tenant=mrrobot`
+`appflow reset env=production tenant=mrrobot`
 
 Want to update everything and provision?
 
-`% appflow update ; appflow checkout ; appflow provision local=true`
+`appflow update ; appflow checkout ; appflow provision local=true`
 
 ## Tags
 
-`% appflow tags`
+`appflow tags`
 
 ```
 play #1 (all): all	TAGS: []
@@ -122,28 +122,28 @@ play #1 (all): all	TAGS: []
 ## Vagrant
 
 ```
-% vagrant plugin install vagrant-vbguest
-% vagrant vbguest --status
+vagrant plugin install vagrant-vbguest
+vagrant vbguest --status
 ```
 
 Before you can `appflow vm reload atlantis`. This will download the needed trusty64 box.
 ```
-% appflow vagrant
+appflow vagrant
 ```
 
 ### Troubleshooting
 
 ```
 Issue: The box you attempted to add doesn't match the provider you specified.`
-Solve: % vagrant up --provider=virtualbox atlantis
+Solve: vagrant up --provider=virtualbox atlantis
 ```
 
 Issue: Lost Vagrant reference to VirtualBox VM
 Solve:
 ```
-% VBoxManage list vms
+VBoxManage list vms
   "vagrant-atlantis" {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx}
-% echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
+echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
 ```
 
 Issue: `vagragnt Warning: Authentication failure. Retrying...`
