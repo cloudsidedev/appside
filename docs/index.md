@@ -12,6 +12,8 @@ AppFlow is a multitenant environment automation tool based on Ansible.
 bash <(curl -s https://raw.githubusercontent.com/ttssdev/appflow/master/utils/appflow.sh)
 ```
 
+on macOS install [brew](http://brew.sh), on GNU/Linux install [VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads) before.
+
 ## Manual installation
 
 ```
@@ -23,10 +25,11 @@ appflow local
 ## Local development
 
 ```
-appflow vm reload atlantis ; ssh atlantis
+appflow vagrant reload atlantis ; ssh atlantis
 ```
 
 ## Remote provisioning
+
 ```
 appflow provision env=production limit=webservers tenant=mrrobot tags=base_packages
 ```
@@ -56,9 +59,7 @@ Infrastructure:
 * Easy development environments with [Vagrant](http://www.vagrantup.com/)
 * Easy server provisioning with [Ansible](http://www.ansible.com/) (Ubuntu 14.04, PHP 5.6)
 
-## Requirements
-
-* `brew install md5sha1sum`
+## Deployment requirements
 
 ### Capistrano
 
