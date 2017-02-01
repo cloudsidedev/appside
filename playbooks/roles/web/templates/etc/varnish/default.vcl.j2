@@ -49,6 +49,11 @@ sub vcl_recv {
 # sub vcl_fetch #
 #################
 sub vcl_fetch {
+  # Strip any cookies before an image/JS/CSS is inserted into cache.
+  if (req.url ~ "\.(jpe?g|jpe|gif|png|css|js)$") {
+     unset beresp.http.set-cookie;
+  }
+
   #set obj.grace = 5m;
   set beresp.grace = 2m;
 }
@@ -80,4 +85,16 @@ sub vcl_pass {
     if (req.request == "PURGE") {
         error 502 "PURGE on a passed object";
     }
+}
+
+###################
+# sub vcl_deliver #
+###################
+sub vcl_deliver {
+  # If the page is already cached return a HIT header, otherwise MISS.
+  if (obj.hits > 0) {
+    set resp.http.X-Cache = "HIT";
+  } else {
+    set resp.http.X-Cache = "MISS";
+  }
 }
