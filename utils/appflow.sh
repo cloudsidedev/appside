@@ -39,10 +39,12 @@ else
 		sudo add-apt-repository universe
 	fi 
 	if [[ $PKG == "dnf" ]]; then
-		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel
+		sudo $PKG groupinstall -y "C Development Tools and Libraries" "Development Tools" "Container Management" 
+		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel 
 	else
 		sudo $PKG update
-		sudo $PKG install -y git vagrant bash-completion zlib1g-dev python-pip python python3 python-dev
+		sudo $PKG install -y git vagrant bash-completion python-pip python python3 libffi-dev \
+							python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
 	fi
 	sudo pip install git+git://github.com/ansible/ansible.git;
 	
