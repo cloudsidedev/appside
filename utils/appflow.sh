@@ -34,10 +34,14 @@ else
 			PKG=${osInfo[$f]}
 		fi
 	done
-	
+	cat /etc/os-release | grep -i ubuntu
+	if (( $? == 0 )); then
+		sudo add-apt-repository universe
+	fi 
 	if [[ $PKG == "dnf" ]]; then
 		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel
 	else
+		sudo $PKG update
 		sudo $PKG install -y git vagrant bash-completion zlib1g-dev python-pip python python3 python-dev
 	fi
 	sudo pip install git+git://github.com/ansible/ansible.git;
