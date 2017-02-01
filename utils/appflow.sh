@@ -34,7 +34,7 @@ else
 			PKG=${osInfo[$f]}
 		fi
 	done
-	sudo pip install git+git://github.com/ansible/ansible.git;
+	sudo pip install https://github.com/ttssdev/appflow.git;
 	sudo $PKG install -y vagrant virtualbox bash-completion zlib1g-dev
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
