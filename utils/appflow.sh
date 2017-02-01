@@ -34,8 +34,9 @@ else
 			PKG=${osInfo[$f]}
 		fi
 	done
+	
 	sudo pip install git+git://github.com/ansible/ansible.git;
-	sudo $PKG install -y vagrant virtualbox bash-completion zlib1g-dev
+	sudo $PKG install -y git vagrant bash-completion zlib1g-dev
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
 you cannot use AppFlow, But it can still be installed.
@@ -106,6 +107,18 @@ rsync -av $HOME/Documents/webdev/appflow/examples/appflow-mrrobot/ $HOME/.appflo
 cp $HOME/Documents/webdev/appflow/config.example $HOME/.appflow/config
 cd $HOME/Documents/webdev/appflow
 make local ask-sudo-pass=true;
+
+if [[ $DIST == *"Linux"* ]]; then
+	virtualbox --help > /dev/null	
+	if (( $? != 0 )); then
+		echo "#############################";
+		echo "DONE!"
+		echo "To utilize atlantis and vagrant, please install VIRTUALBOX from repos"
+		echo "#############################";
+		cd $currdir;
+		exit 1;
+	fi  
+fi 
 
 echo "Would you like to initialize the Atlantis VM now?"
 read  -n 1 -p "[y/N]:" vm
