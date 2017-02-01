@@ -36,7 +36,12 @@ else
 	done
 	
 	sudo pip install git+git://github.com/ansible/ansible.git;
-	sudo $PKG install -y git vagrant bash-completion zlib1g-dev
+	if [[ $PKG == "dnf" ]]; then
+		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel
+	else
+		sudo $PKG install -y git vagrant bash-completion zlib1g-dev python-pip python python3 python-dev
+	fi
+	
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
 you cannot use AppFlow, But it can still be installed.
