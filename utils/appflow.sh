@@ -35,12 +35,12 @@ else
 		fi
 	done
 	
-	sudo pip install git+git://github.com/ansible/ansible.git;
 	if [[ $PKG == "dnf" ]]; then
 		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel
 	else
 		sudo $PKG install -y git vagrant bash-completion zlib1g-dev python-pip python python3 python-dev
 	fi
+	sudo pip install git+git://github.com/ansible/ansible.git;
 	
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
