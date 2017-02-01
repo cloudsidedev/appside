@@ -69,7 +69,9 @@ echo "#############################";
 echo "Cloning AppFlow..."
 echo "#############################";
 if [[ -d appflow ]]; then
+	cd appflow
 	git pull;
+	cd ..
 else
 	git clone https://github.com/ttssdev/appflow.git;
 fi
