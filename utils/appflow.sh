@@ -68,7 +68,11 @@ cd $HOME/Documents/webdev;
 echo "#############################";
 echo "Cloning AppFlow..."
 echo "#############################";
-git clone https://github.com/ttssdev/appflow.git;
+if [[ -d appflow ]]; then
+	git pull;
+else
+	git clone https://github.com/ttssdev/appflow.git;
+fi
 ln -s $HOME/Documents/webdev/appflow $HOME/appflow;
 
 
