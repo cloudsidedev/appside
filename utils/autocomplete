@@ -21,6 +21,7 @@ _vagrant-vms()
 {
 	COMPREPLY=($(appflow vm box list | awk '{print $1}'))
 }
+
 _appflow()
 {
 	local cur prev command module i

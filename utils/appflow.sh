@@ -7,7 +7,7 @@ echo "#############################";
 DIST=`uname -s`
 if [ $DIST == 'Darwin' ]; then
 	if ! brew ls --versions bash-completion | grep HEAD; then
-		brew install bash-completion
+		brew install bash-completion bash
 	fi
 	if ! brew ls --versions ansible | grep HEAD; then
 		brew unlink ansible ; brew unlink ansible20 ; brew reinstall ansible --HEAD;
