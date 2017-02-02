@@ -49,6 +49,7 @@
     - php5.6-soap
     - php5-common
     - php-memcache
+    - php-memcached
     - php-db
     - php-mdb2
     - php-pear
@@ -57,7 +58,7 @@
     - optipng
     - libjpeg-progs
     # - varnish
-    # - memcached
+    - memcached
   when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ php, apache2 ]
