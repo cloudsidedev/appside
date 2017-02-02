@@ -48,7 +48,7 @@
     - php5.6-mbstring
     - php5.6-soap
     - php5-common
-    - php-memcache
+    - php-memcached
     - php-db
     - php-mdb2
     - php-pear
