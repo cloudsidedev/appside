@@ -57,7 +57,7 @@
     - optipng
     - libjpeg-progs
     # - varnish
-    # - memcached
+    - memcached
   when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ php, apache2 ]
