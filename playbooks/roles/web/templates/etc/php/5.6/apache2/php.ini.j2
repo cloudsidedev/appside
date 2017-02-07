@@ -34,7 +34,6 @@ variables_order = "GPCS"
 request_order = "GP"
 register_argc_argv = Off
 auto_globals_jit = On
-post_max_size = 8M
 auto_prepend_file =
 auto_append_file =
 default_mimetype = "text/html"
@@ -42,11 +41,14 @@ doc_root =
 user_dir =
 enable_dl = Off
 file_uploads = On
+post_max_size = 20M
 upload_max_filesize = 20M
 max_file_uploads = 20
 allow_url_fopen = On
 allow_url_include = Off
 default_socket_timeout = 60
+always_populate_raw_post_data = -1
+max_input_vars = 1500
 error_log = /var/log/apache2/php_error.log
 
 {% if conf_php_apache2_php is defined %}
