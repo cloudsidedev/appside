@@ -47,6 +47,7 @@
     - php5.6-xml
     - php5.6-mbstring
     - php5.6-soap
+    - php5.6-zip
     - php5-common
     - php-memcached
     - php-db
