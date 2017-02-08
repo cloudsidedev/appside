@@ -152,7 +152,9 @@ Issue: `An error occurred while downloading the remote file. The error message, 
 Solve: `sudo mv /opt/vagrant/embedded/bin/curl /tmp` https://github.com/mitchellh/vagrant/issues/7997
 
 ```
-Issue: An error occurred while mounting /. Keys: Press S to skip mounting or M for manual recovery
+Issue: An error occurred while mounting /.
+Keys: Press S to skip mounting or M for manual recovery
+
 Solve:
 Press S and try to see if atlantis boots up.
 ssh atlantis
