@@ -135,7 +135,7 @@ appflow vagrant
 ### Troubleshooting
 
 ```
-Issue: The box you attempted to add doesn't match the provider you specified.`
+Issue: The box you attempted to add doesn't match the provider you specified.
 Solve: vagrant up --provider=virtualbox atlantis
 ```
 
@@ -153,9 +153,9 @@ Solve: http://stackoverflow.com/a/30792296
 Issue: `An error occurred while downloading the remote file. The error message, if any, is reproduced below. Please fix this error and try again.`
 Solve: `sudo mv /opt/vagrant/embedded/bin/curl /tmp` https://github.com/mitchellh/vagrant/issues/7997
 
-Issue: `An error occurred while mounting /. Keys: Press S to skip mounting or M for manual recovery`
-Solve:
 ```
+Issue: An error occurred while mounting /. Keys: Press S to skip mounting or M for manual recovery
+Solve:
 Press S and try to see if atlantis boots up.
 ssh atlantis
 mount -o remount,rw / (optional)
