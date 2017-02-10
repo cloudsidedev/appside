@@ -23,10 +23,12 @@
 #
 # MySQL
 #
-127.0.0.1 mysql.local
+# we can override mysql.local (firs entry is resolved first)
+#
 {% for item in conf_hosts_mysql %}
 {{ item }}
 {% endfor %}
+127.0.0.1 mysql.local
 
 # The following lines are desirable for IPv6 capable hosts
 ::1 ip6-localhost ip6-loopback
