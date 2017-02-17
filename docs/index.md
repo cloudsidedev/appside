@@ -36,6 +36,13 @@ appflow provision env=production limit=webservers tenant=mrrobot tags=base_packa
 
 ## Features
 
+Provisioning:
+
+* Multitenant architecture (different teams with different environments)
+* Supports `development`, `testing`, `staging` and `production`
+* All configuration files are encrypted in git with `ansible-vault`
+* Provision all nodes with one command
+
 Development:
 
 * Provides a Vagrant based development environment called `atlantis`
