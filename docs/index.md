@@ -36,7 +36,7 @@ appflow provision env=production limit=webservers tenant=mrrobot tags=base_packa
 
 ## Features
 
-Provisiong:
+Provisioning:
 
 * Multitenant architecture (different teams with different environments)
 * Supports `development`, `testing`, `staging` and `production`
