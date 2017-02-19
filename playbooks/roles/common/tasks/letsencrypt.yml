@@ -1,0 +1,42 @@
+---
+
+# file: playbooks/roles/common/tasks/letsencrypt.yml
+
+- name: clone certbot to /opt/certbot
+  git:
+    repo: https://github.com/certbot/certbot.git
+    dest: /opt/certbot
+    version: master
+    update: yes
+    force: yes
+  tags: [ letsencrypt ]
+
+- name: ensure certbot-auto is executable
+  file:
+    path: /opt/certbot/certbot-auto
+    mode: 0755
+  tags: [ letsencrypt ]
+
+- name: symlink /opt/certbot/certbot-auto
+  file: src=/opt/certbot/certbot-auto dest=/usr/local/bin/certbot-auto state=link
+  tags: [ letsencrypt ]
+
+- name: create /etc/letsencrypt
+  file: path=/etc/letsencrypt state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ letsencrypt, letsencrypt-conf ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - letsencrypt/cli.ini
+  # notify: handle_restart_letsencrypt
+  tags: [ letsencrypt, letsencrypt-conf ]
+
+# - name: Add cron job for 'certbot-auto renew' (if configured).
+#   cron:
+#     name: Certbot automatic renewal.
+#     job: "{{ certbot_dir }}/certbot-auto renew --quiet --no-self-upgrade"
+#     minute: "{{ certbot_auto_renew_minute }}"
+#     hour: "{{ certbot_auto_renew_hour }}"
+#     user: "{{ certbot_auto_renew_user }}"
+#   when: certbot_auto_renew

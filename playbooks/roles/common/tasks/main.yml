@@ -10,6 +10,10 @@
   when: conf_env != "local"
   tags: [ common, users, shell ]
 
+#- include: ssh.yml
+#  when: conf_env != "local"
+#  tags: [ common ]
+
 - include: sudo.yml
   when: conf_env != "local"
   tags: [ common, users, sudo ]
@@ -101,6 +105,12 @@
 # - include: vpn.yml
 #   when: conf_vpn_netname is defined
 #   tags: [ common ]
+
+- include: letsencrypt.yml
+  when:
+    - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
+  tags: [ common, letsencrypt ]
 
 - include: icinga.yml
   when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
