@@ -24,6 +24,9 @@ for domainconf in $(ls /etc/letsencrypt/renewal/); do
 	cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > ${haproxy_pem_path}/${domain}.pem
 done
 
+chown root.ssl-cert ${haproxy_pem_path}/*.pem
+chmod 0640 ${haproxy_pem_path}/*.pem
+
 # At the end, reload haproxy
 echo "$(date +%c) Reload haproxy"
 service haproxy reload

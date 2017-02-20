@@ -19,6 +19,8 @@ ${certbot_bin}  certonly  --domains $1
 if [ $? -eq 0 ]; then
     echo "$(date +%c) Success ! Now creating ${1}.pem"
     cat /etc/letsencrypt/live/$1/fullchain.pem /etc/letsencrypt/live/$1/privkey.pem > ${haproxy_pem_path}/$1.pem
+    chown root.ssl-cert ${haproxy_pem_path}/*.pem
+    chmod 0640 ${haproxy_pem_path}/*.pem
     service haproxy reload
 else
     echo "$(date +%c) Error creating certificate with error code $?, exit script..."
