@@ -22,7 +22,10 @@
   tags: [ letsencrypt ]
 
 - name: create /etc/letsencrypt
-  file: path=/etc/letsencrypt state=directory owner=root group={{ conf_root_group }} mode=0755
+  file: path={{ item }} state=directory owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+    - /etc/letsencrypt
+    - /mnt/glusterfs/gvol0/brick1/certs
   tags: [ letsencrypt, letsencrypt-conf ]
 
 - name: provision configs
@@ -30,6 +33,13 @@
   with_items:
       - letsencrypt/cli.ini
   # notify: handle_restart_letsencrypt
+  tags: [ letsencrypt, letsencrypt-conf ]
+
+- name: provision scripts
+  template: src={{ item }}.j2 dest=/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+      - usr/local/bin/cert-renew.sh
+      - usr/local/bin/cert-create.sh
   tags: [ letsencrypt, letsencrypt-conf ]
 
 # - name: Add cron job for 'certbot-auto renew' (if configured).

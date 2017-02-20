@@ -6,6 +6,7 @@ rsa-key-size = {{ conf_letsencrypt_rsa_key_size }}
 email = {{ conf_letsencrypt_email }}
 authenticator = {{ conf_letsencrypt_authenticator }}
 preferred-challenge: {{ conf_letsencrypt_preferred_challenge }}
-domains: {{ conf_letsencrypt_domains }}
+http-01-port: {{ conf_letsencrypt_http_01_port }}
 agree-tos: {{ conf_letsencrypt_agree_tos }}
 renew-by-default: {{ conf_letsencrypt_renew_by_default }}
+noninteractive: {{ conf_letsencrypt_noninteractive }}

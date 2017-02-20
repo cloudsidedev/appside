@@ -97,8 +97,15 @@ frontend www-frontend
 {% endif %}
 {% endif %}
 
+{% if conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true %}
+{% if conf_haproxy_letsencrypt_backend is defined %}
+    # See: http://comments.gmane.org/gmane.comp.web.haproxy/18273
+    bind :443 ssl crt /etc/certs/ crt /mnt/glusterfs/gvol0/brick1/certs no-sslv3 ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS:!AES256
+{% endif %}
+{% else %}
     # See: http://comments.gmane.org/gmane.comp.web.haproxy/18273
     bind :443 ssl crt /etc/certs/ no-sslv3 ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS:!AES256
+{% endif %}
     bind :80
 
     stats enable
@@ -214,7 +221,6 @@ backend grafana-backend
 backend letsencrypt-backend
     mode http
     balance {{ conf_haproxy_letsencrypt_backend_balance }}
-    # option httpchk
     {{ conf_haproxy_letsencrypt_backend }}
 {% endif %}
 {% endif %}

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+# Configuration variables
+certbot_bin="/usr/local/bin/certbot-auto"
+haproxy_pem_path="/mnt/glusterfs/gvol0/brick1/certs"
+
+# Renew all certificates that needed it
+${certbot_bin} renew
+if [ $? -eq 0 ]; then
+	echo "$(date +%c)Certificates renewed! Now creating .pem"
+else
+	echo "$(date +%c) Error renewing certificates with error code $?, exit script..."
+	exit 1
+fi
+
+# Then, create domain.pem containing fullchain et privkey for haproxy
+for domainconf in $(ls /etc/letsencrypt/renewal/); do
+	domain=${domainconf%.conf}
+	echo "$(date +%c)create ${domain}.pem"
+	cat /etc/letsencrypt/live/${domain}/fullchain.pem /etc/letsencrypt/live/${domain}/privkey.pem > ${haproxy_pem_path}/${domain}.pem
+done
+
+# At the end, reload haproxy
+echo "$(date +%c) Reload haproxy"
+service haproxy reload
