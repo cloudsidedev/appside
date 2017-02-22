@@ -17,17 +17,14 @@
 - name: handle_restart_tinc
   service: name=tinc state=restarted
 
-- name: install_zabbix
-  apt: deb=/tmp/{{ conf_zabbix_repo_config_package }}
-
-- name: handle_restart_zabbix_agent
-  service: name=zabbix-agent state=restarted
-
 - name: handle_restart_apache2
   service: name=apache2 state=restarted
 
 - name: handle_restart_icinga2
   service: name=icinga2 state=restarted
+
+- name: handle_reload_icinga2
+  service: name=icinga2 state=reloaded
 
 - name: handle_restart_munin
   service: name=munin state=restarted
@@ -40,6 +37,9 @@
 
 - name: handle_restart_grafana
   service: name=grafana-server state=restarted
+
+- name: handle_restart_ssh
+  service: name=ssh state=restarted
 
 - name: handle_restart_autossh
   service: name=autossh state=restarted

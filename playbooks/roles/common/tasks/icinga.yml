@@ -149,7 +149,7 @@
   shell: ssh-keyscan -t dsa,rsa {{ item.value.address }} >> /var/lib/nagios/.ssh/known_hosts
   with_dict: '{{ conf_icinga_hosts }}'
   when: conf_icinga_master == true or conf_icinga_satellite == true
-  notify: handle_restart_icinga2
+  notify: handle_reload_icinga2
   tags: [ icinga, icinga-ssh ]
 
 - name: Change file permissions for /var/lib/nagios/.ssh/known_hosts
@@ -199,7 +199,7 @@
       - icinga2/conf.d/templates.conf
       - icinga2/conf.d/notifications.conf
   when: conf_icinga_master == true or conf_icinga_satellite == true
-  notify: handle_restart_icinga2
+  notify: handle_reload_icinga2
   tags: [ icinga, icinga-conf, icinga-conf-etc ]
 
 - name: deploy scripts
@@ -208,7 +208,7 @@
       - init.d/icinga2
       - icinga2/scripts/slack-service-notification.sh
   when: conf_icinga_master == true or conf_icinga_satellite == true
-  notify: handle_restart_icinga2
+  notify: handle_reload_icinga2
   tags: [ icinga, icinga-conf ]
 
 - name: enable Apache2 modules
@@ -239,7 +239,7 @@
   template: src=etc/icinga2/conf.d/hosts/host.conf.j2 dest=/{{ conf_local_etc_path }}/icinga2/conf.d/hosts/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_icinga_master == true or conf_icinga_satellite == true
   with_dict: '{{ conf_icinga_hosts }}'
-  notify: handle_restart_icinga2
+  notify: handle_reload_icinga2
   tags: [ icinga, icinga-conf, icinga-conf-hosts ]
 
 - name: enable Icinga2 features
@@ -251,7 +251,7 @@
   register: features_result
   when: conf_icinga_master == true or conf_icinga_satellite == true
   changed_when: "'for these changes to take effect' in features_result.stdout"
-  notify: handle_restart_icinga2
+  notify: handle_reload_icinga2
   tags: [ icinga, icinga-conf ]
 
 - name: create /usr/local/nagios directory
