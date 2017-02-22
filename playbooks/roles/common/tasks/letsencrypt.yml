@@ -2,6 +2,13 @@
 
 # file: playbooks/roles/common/tasks/letsencrypt.yml
 
+- name: be sure required packages packages are installed
+  package: name={{ item }} state=latest
+  with_items:
+      - ssl-cert-check
+  when: ansible_os_family == "Debian"
+  tags: [ letsencrypt ]
+
 - name: clone certbot to /opt/certbot
   git:
     repo: https://github.com/certbot/certbot.git
@@ -40,6 +47,7 @@
   with_items:
       - usr/local/bin/cert-renew.sh
       - usr/local/bin/cert-create.sh
+      - usr/local/bin/cert-verify.sh
   tags: [ letsencrypt, letsencrypt-conf ]
 
 # - name: Add cron job for 'certbot-auto renew' (if configured).

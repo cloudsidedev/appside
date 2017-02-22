@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+# Configuration variables
+certbot_bin="/usr/local/bin/certbot-auto"
+haproxy_pem_path="/mnt/glusterfs/gvol0/brick1/certs"
+etc_pem_path="/etc/certs"
+
+cat <<EOT
+
+[${etc_pem_path}]
+
+  Host                                            Status       Expires      Days
+  ----------------------------------------------- ------------ ------------ ----
+EOT
+
+# etc certs
+cd ${etc_pem_path}
+for domain in $(ls *); do
+  echo -n "  " ; ssl-cert-check -b -c ${domain}
+done
+
+cat <<EOT
+
+[${haproxy_pem_path}]
+
+  Host                                            Status       Expires      Days
+  ----------------------------------------------- ------------ ------------ ----
+EOT
+
+# Let`s encrypt certs
+cd ${haproxy_pem_path}
+for domain in $(ls *); do
+  echo -n "  " ; ssl-cert-check -b -c ${domain}
+done
+
+echo
