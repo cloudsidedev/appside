@@ -56,7 +56,7 @@ sub vcl_fetch {
   # We standardize and remove these when unnecessary to make it easier to cache requests.
   if (req.http.Accept-Encoding) {
     # If the request URL has any of these extensions, remove the Accept-Encoding header as it is meaningless.
-   if (req.url ~ "\.(jpe?g|jpe|gif|png|css|js)$") {
+   if (req.url ~ "\.(jpe?g|jpe|gif|png)$") {
       remove req.http.Accept-Encoding;
     # If the Accept-Encoding contains 'gzip' standardize it.
     } elsif (req.http.Accept-Encoding ~ "gzip") {
