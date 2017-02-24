@@ -43,7 +43,10 @@ sub vcl_hash {
 # sub vcl_recv #
 ################
 sub vcl_recv {
-  {{ conf_varnish_vcl_recv }}}
+{% if conf_varnish_vcl_recv is defined %}
+    {{ conf_varnish_vcl_recv }}
+{% endif %}
+}
 
 #################
 # sub vcl_fetch #
@@ -56,6 +59,10 @@ sub vcl_fetch {
 
   #set obj.grace = 5m;
   set beresp.grace = 2m;
+
+{% if conf_varnish_vcl_fetch is defined %}
+  {{ conf_varnish_vcl_fetch }}
+{% endif %}
 }
 
 ###############
@@ -66,6 +73,10 @@ sub vcl_hit {
     purge;
     error 200 "Purged.";
   }
+
+{% if conf_varnish_vcl_hit is defined %}
+  {{ conf_varnish_vcl_hit }}
+{% endif %}
 }
 
 ################
@@ -76,15 +87,23 @@ sub vcl_miss {
     purge;
     error 200 "Not in cache.";
   }
+
+{% if conf_varnish_vcl_miss is defined %}
+  {{ conf_varnish_vcl_miss }}
+{% endif %}
 }
 
 ################
 # sub vcl_pass #
 ################
 sub vcl_pass {
-    if (req.request == "PURGE") {
-        error 502 "PURGE on a passed object";
-    }
+  if (req.request == "PURGE") {
+      error 502 "PURGE on a passed object";
+  }
+
+{% if conf_varnish_vcl_pass is defined %}
+  {{ conf_varnish_vcl_pass }}
+{% endif %}
 }
 
 ###################
@@ -98,4 +117,8 @@ sub vcl_deliver {
   } else {
     set resp.http.X-Cache = "MISS";
   }
+
+{% if conf_varnish_vcl_deliver is defined %}
+  {{ conf_varnish_vcl_deliver }}
+{% endif %}
 }
