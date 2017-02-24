@@ -52,6 +52,24 @@ sub vcl_recv {
 # sub vcl_fetch #
 #################
 sub vcl_fetch {
+  # Many requests contain Accept-Encoding HTTP headers.
+  # We standardize and remove these when unnecessary to make it easier to cache requests.
+  if (req.http.Accept-Encoding) {
+    # If the request URL has any of these extensions, remove the Accept-Encoding header as it is meaningless.
+   if (req.url ~ "\.(jpe?g|jpe|gif|png|css|js)$") {
+      remove req.http.Accept-Encoding;
+    # If the Accept-Encoding contains 'gzip' standardize it.
+    } elsif (req.http.Accept-Encoding ~ "gzip") {
+      set req.http.Accept-Encoding = "gzip";
+    # If the Accept-Encoding contains 'deflate' standardize it.
+    } elsif (req.http.Accept-Encoding ~ "deflate") {
+      set req.http.Accept-Encoding = "deflate";
+    # If the Accept-Encoding header isn't matched above, remove it.
+    } else {
+      remove req.http.Accept-Encoding;
+    }
+  }
+
   # Strip any cookies before an image/JS/CSS is inserted into cache.
   if (req.url ~ "\.(jpe?g|jpe|gif|png|css|js)$") {
      unset beresp.http.set-cookie;
