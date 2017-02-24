@@ -27,28 +27,28 @@
   apt: pkg={{ item }} state=latest force=yes
   with_items:
     - apache2
-    - libapache2-mod-php5.6
+    - libapache2-mod-php{{ conf_php_version_debian_family }}
     - libapache2-mod-rpaf
     - apachetop
-    - php5.6
-    - php5.6-cli
-    - php5.6-gd
-    - php5.6-json
-    - php5.6-mysql
-    - php5.6-tidy
-    - php5.6-curl
-    - php5.6-gd
-    - php5.6-imagick
-    - php5.6-imap
-    - php5.6-intl
-    - php5.6-ldap
-    - php5.6-mcrypt
-    - php5.6-gettext
-    - php5.6-xml
-    - php5.6-mbstring
-    - php5.6-soap
-    - php5.6-zip
-    - php5-common
+    - php{{ conf_php_version_debian_family }}
+    - php{{ conf_php_version_debian_family }}-cli
+    - php{{ conf_php_version_debian_family }}-gd
+    - php{{ conf_php_version_debian_family }}-json
+    - php{{ conf_php_version_debian_family }}-mysql
+    - php{{ conf_php_version_debian_family }}-tidy
+    - php{{ conf_php_version_debian_family }}-curl
+    - php{{ conf_php_version_debian_family }}-gd
+    - php{{ conf_php_version_debian_family }}-imagick
+    - php{{ conf_php_version_debian_family }}-imap
+    - php{{ conf_php_version_debian_family }}-intl
+    - php{{ conf_php_version_debian_family }}-ldap
+    - php{{ conf_php_version_debian_family }}-mcrypt
+    - php{{ conf_php_version_debian_family }}-gettext
+    - php{{ conf_php_version_debian_family }}-xml
+    - php{{ conf_php_version_debian_family }}-mbstring
+    - php{{ conf_php_version_debian_family }}-soap
+    - php{{ conf_php_version_debian_family }}-zip
+    # - php5-common
     - php-memcached
     - php-db
     - php-mdb2
@@ -59,6 +59,16 @@
     - libjpeg-progs
     # - varnish
     - memcached
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: [ php, apache2 ]
+
+- name: update-alternatives (Debian family)
+  alternatives: name={{ item }} path=/usr/bin/{{ item }}{{ conf_php_version_debian_family }}
+  with_items:
+    - php
+    - phar
+    - phar.phar
   when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ php, apache2 ]
@@ -77,7 +87,7 @@
   tags: [ php ]
 
 - name: deploy php.ini (Debian family)
-  template: src=etc/php/5.6/{{ item }}/php.ini.j2 dest={{ conf_local_etc_path }}/php/5.6/{{ item }}/php.ini owner=root group={{ conf_root_group }} mode=0644
+  template: src=etc/php/{{ conf_php_version_debian_family }}/{{ item }}/php.ini.j2 dest={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/{{ item }}/php.ini owner=root group={{ conf_root_group }} mode=0644
   with_items:
     - apache2
     - cli
@@ -86,7 +96,7 @@
   tags: [ php, php-conf ]
 
 - name: config PHP date.timezone (Debian family)
-  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=Date option=date.timezone value='"{{ conf_timezone }}"' mode=0644
+  action: ini_file dest=/etc/php/{{ conf_php_version_debian_family }}/{{ item }}/php.ini section=Date option=date.timezone value='"{{ conf_timezone }}"' mode=0644
   with_items:
     - "apache2"
     - "cli"
@@ -95,7 +105,7 @@
   tags: [ php, php-conf ]
 
 - name: config PHP error_log (Debian family)
-  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=PHP option=error_log value='/var/log/apache2/php_error.log' mode=0644
+  action: ini_file dest=/etc/php/{{ conf_php_version_debian_family }}/{{ item }}/php.ini section=PHP option=error_log value='/var/log/apache2/php_error.log' mode=0644
   with_items:
     - "apache2"
   notify: handle_restart_apache2
@@ -103,7 +113,7 @@
   tags: [ php, php-conf ]
 
 - name: config PHP display_errors off  (Debian family, production)
-  action: ini_file dest=/etc/php/5.6/{{ item }}/php.ini section=PHP option=display_errors value=Off mode=0644
+  action: ini_file dest=/etc/php/{{ conf_php_version_debian_family }}/{{ item }}/php.ini section=PHP option=display_errors value=Off mode=0644
   with_items:
     - "apache2"
   notify: handle_restart_apache2
