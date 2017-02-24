@@ -929,6 +929,9 @@ default_socket_timeout = 60
 ;extension=php_xmlrpc.dll
 ;extension=php_xsl.dll
 
+{% if conf_php_apache2_php is defined %}
+{{ conf_php_apache2_php }}{% endif %}
+
 ;;;;;;;;;;;;;;;;;;;
 ; Module Settings ;
 ;;;;;;;;;;;;;;;;;;;
