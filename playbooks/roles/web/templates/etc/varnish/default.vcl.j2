@@ -33,54 +33,110 @@ acl purge {
 # sub vcl_recv #
 ################
 sub vcl_hash {
-  hash_data(req.http.host);
-  hash_data(req.url);
+  # Hash protocol and URL.
   hash_data(req.http.X-Forwarded-Proto);
-  return(hash);
+  hash_data(req.url);
+
+  # Hash host or server IP.
+  if (req.http.host) {
+      hash_data(req.http.host);
+  } else {
+      hash_data(server.ip);
+  }
+
+  # Hash cookies for requests that have them.
+  if (req.http.Cookie) {
+      hash_data(req.http.Cookie);
+  }
+
+  return (hash);
 }
 
 ################
 # sub vcl_recv #
 ################
 sub vcl_recv {
+  # Only deal with "normal" method requests. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.request != "GET" &&
+      req.request != "HEAD" &&
+      req.request != "PUT" &&
+      req.request != "POST" &&
+      req.request != "TRACE" &&
+      req.request != "OPTIONS" &&
+      req.request != "PATCH" &&
+      req.request != "DELETE") {
+      /* Non-RFC2616 or CONNECT which is weird. */
+      return (pipe);
+  }
+
+  # Only cache GET or HEAD requests. This makes sure the POST requests are always passed. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.request != "GET" && req.request != "HEAD") {
+      return (pass);
+  }
+
+  # Normalize Accept-Encoding header.
+  if (req.http.Accept-Encoding) {
+      if (req.url ~ "^[^?]*\.(7z|avi|bz2|docx|eot|flac|flv|gif|ico|gz|jpeg|jpg|mka|mkv|mov|mp3|mp4|mpeg|mpg|ogg|ogm|opus|pdf|png|pptx|rar|svgz|tbz|tgz|txz|webm|webp|woff2|xlsx|xz|zip)(\?.*)?$") {
+          # No point in compressing these.
+          remove req.http.Accept-Encoding;
+      } elsif (req.http.Accept-Encoding ~ "gzip") {
+          set req.http.Accept-Encoding = "gzip";
+      } elsif (req.http.Accept-Encoding ~ "deflate") {
+          set req.http.Accept-Encoding = "deflate";
+      } else {
+          # Unkown algorithm.
+          remove req.http.Accept-Encoding;
+      }
+  }
+
+  # Large static files should be piped, so they are delivered directly to the end-user without
+  # waiting for Varnish to fully read the file first.
+  if (req.url ~ "^[^?]*\.(7z|avi|bz2|flac|flv|gz|mka|mkv|mov|mp3|mp4|mpeg|mpg|ogg|ogm|opus|rar|tar|tgz|tbz|txz|wav|webm|xz|zip)(\?.*)?$") {
+      unset req.http.Cookie;
+      return (pipe);
+  }
+
+  # Remove all cookies for static files.
+  if (req.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
+      unset req.http.Cookie;
+      return (lookup);
+  }
+
 {% if conf_varnish_vcl_recv is defined %}
-    {{ conf_varnish_vcl_recv }}
+  {{ conf_varnish_vcl_recv }}
 {% endif %}
+
+  # Don't cache requests with authorization. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.http.Authorization) {
+      return (pass);
+  }
+
+  return (lookup);
 }
 
 #################
 # sub vcl_fetch #
 #################
 sub vcl_fetch {
-  # Many requests contain Accept-Encoding HTTP headers.
-  # We standardize and remove these when unnecessary to make it easier to cache requests.
-  if (req.http.Accept-Encoding) {
-    # If the request URL has any of these extensions, remove the Accept-Encoding header as it is meaningless.
-   if (req.url ~ "\.(jpe?g|jpe|gif|png|webp)$") {
-      remove req.http.Accept-Encoding;
-    # If the Accept-Encoding contains 'gzip' standardize it.
-    } elsif (req.http.Accept-Encoding ~ "gzip") {
-      set req.http.Accept-Encoding = "gzip";
-    # If the Accept-Encoding contains 'deflate' standardize it.
-    } elsif (req.http.Accept-Encoding ~ "deflate") {
-      set req.http.Accept-Encoding = "deflate";
-    # If the Accept-Encoding header isn't matched above, remove it.
-    } else {
-      remove req.http.Accept-Encoding;
-    }
-  }
-
-  # Strip any cookies before an image/JS/CSS is inserted into cache.
-  if (req.url ~ "\.(jpe?g|jpe|gif|png|webp|svg|css|js)$") {
+  # Strip any cookies before a static file is inserted into cache.
+  if (req.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
      unset beresp.http.set-cookie;
   }
 
-  #set obj.grace = 5m;
-  set beresp.grace = 2m;
+  # Allow stale content, in case the backend goes down. (Old content to show is better than no content at all.)
+  set beresp.grace = 6h;
 
-{% if conf_varnish_vcl_fetch is defined %}
-  {{ conf_varnish_vcl_fetch }}
-{% endif %}
+  {% if conf_varnish_vcl_fetch is defined %}
+    {{ conf_varnish_vcl_fetch }}
+  {% endif %}
+
+  # Set 2min cache if unset for static files. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-fetch)
+  if (beresp.ttl <= 0s || beresp.http.Set-Cookie || beresp.http.Vary == "*") {
+      set beresp.ttl = 120s;
+      return (hit_for_pass);
+  }
+
+  return (deliver);
 }
 
 ###############
@@ -95,6 +151,8 @@ sub vcl_hit {
 {% if conf_varnish_vcl_hit is defined %}
   {{ conf_varnish_vcl_hit }}
 {% endif %}
+
+  return (deliver);
 }
 
 ################
@@ -109,6 +167,8 @@ sub vcl_miss {
 {% if conf_varnish_vcl_miss is defined %}
   {{ conf_varnish_vcl_miss }}
 {% endif %}
+
+  return (fetch);
 }
 
 ################
@@ -122,6 +182,8 @@ sub vcl_pass {
 {% if conf_varnish_vcl_pass is defined %}
   {{ conf_varnish_vcl_pass }}
 {% endif %}
+
+  return (pass);
 }
 
 ###################
@@ -139,4 +201,6 @@ sub vcl_deliver {
 {% if conf_varnish_vcl_deliver is defined %}
   {{ conf_varnish_vcl_deliver }}
 {% endif %}
+
+  return (deliver);
 }
