@@ -56,6 +56,16 @@ sub vcl_hash {
 # sub vcl_recv #
 ################
 sub vcl_recv {
+  # Allow purging.
+  if (req.request == "PURGE") {
+      if (!client.ip ~ purge) {
+          error 405 "This IP is not allowed to send PURGE requests.";
+      }
+
+      # Force entry into vcl_hit() or vcl_miss() below and purge the actual cache.
+      return (lookup);
+  }
+
   # Only deal with "normal" method requests. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
   if (req.request != "GET" &&
       req.request != "HEAD" &&
