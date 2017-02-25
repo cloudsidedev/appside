@@ -136,9 +136,9 @@ sub vcl_fetch {
   # Allow stale content, in case the backend goes down. (Old content to show is better than no content at all.)
   set beresp.grace = 6h;
 
-  {% if conf_varnish_vcl_fetch is defined %}
-    {{ conf_varnish_vcl_fetch }}
-  {% endif %}
+{% if conf_varnish_vcl_fetch is defined %}
+  {{ conf_varnish_vcl_fetch }}
+{% endif %}
 
   # Set 2min cache if unset for static files. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-fetch)
   if (beresp.ttl <= 0s || beresp.http.Set-Cookie || beresp.http.Vary == "*") {
