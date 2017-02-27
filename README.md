@@ -217,6 +217,16 @@ reboot
 
 ### Developers
 
+#### Contribute a new feature
+
+ - Create a new issue, e.g. #XX new superfeature
+ - Create local branch: `git checkout -b XX-new-superfeature`
+ - Code on it.
+ - Push it to remote as new branch: `git push -u origin XX-new-superfeature`
+ - Create new pull request (`base: master ... compare: XX-new-superfeature`)
+
+#### Get all vars
+
 `ansible all -m setup --tree /tmp/facts -i examples/appflow-mrrobot/local/inventory -a "filter=ansible_distribution*"`
 
 ## Contributing
