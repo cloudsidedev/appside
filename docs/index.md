@@ -116,8 +116,20 @@ Want to update everything and provision?
 `appflow tags`
 
 ```
-play #1 (all): all	TAGS: []
-    TASK TAGS: [apache2, apache2-conf, apt, apt-listchanges, apticron, base_packages, borg, borgmatic, cloud, clustercheck, common, composer, env, etckeeper, fstab, geoip, glusterfs, groups, haproxy, haproxy-acl, haproxy-conf, hosts, htaccess, jenkins, keepalived, keepalived-conf, lvm, motd, mysql, mysql-conf, mysql-users, mysqlpass, nodejs, ntp, nullmailer, percona, php, php-conf, pkg, rsyslog, shell, shell-users, smtpd, ssh, ssl, ssl-conf, sudo, swap, update, users, varnish, varnish-conf, vhosts, web_packages, wp-cli, xfs]
+playbook: playbooks/generic.yml
+
+  play #1 (all): all	TAGS: []
+      TASK TAGS: [ansible, apache2, apache2-conf, apt, apt-listchanges,
+      apticron, assh, assh-conf, autossh, autossh-conf, base_packages, borg,
+      borgmatic, cloud, clustercheck, common, composer, env, environment,
+      etckeeper, fstab, geoip, glusterfs, golang, grafana, groups, haproxy,
+      haproxy-acl, haproxy-conf, hold, hosts, htaccess, htpasswd, icinga,
+      icinga-conf, icinga-conf-etc, icinga-conf-hosts, icinga-ssh, jenkins,
+      keepalived, keepalived-conf, letsencrypt, letsencrypt-conf, lvm, motd,
+      munin, munin-conf, mysql, mysql-conf, mysql-users, mysqlpass, nodejs, ntp,
+      nullmailer, percona, php, php-conf, pkg, rsyslog, shell, shell-users,
+      smtpd, ssh, ssh-keys, ssl, ssl-conf, sudo, swap, update, users, varnish,
+      varnish-conf, vhosts, web_packages, wp-cli, xfs, yum_proxy]
 ```
 
 ## Vagrant
