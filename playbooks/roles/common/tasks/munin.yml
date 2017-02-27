@@ -71,7 +71,6 @@
     - { src: 'mysql_queries', dest: 'mysql_queries' }
     - { src: 'mysql_threads', dest: 'mysql_threads' }
     - { src: 'mysql_slowqueries', dest: 'mysql_slowqueries' }
-    - { src: 'mysql_slowqueries', dest: 'mysql_slowqueries' }
     - { src: 'varnish_', dest: 'varnish_memory_usage' }
     - { src: 'varnish_', dest: 'varnish_expunge' }
     - { src: 'varnish_', dest: 'varnish_hit_rate' }
