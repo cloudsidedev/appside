@@ -83,7 +83,8 @@
     - { src: 'varnish_', dest: 'varnish_threads' }
     - { src: 'varnish_', dest: 'varnish_uptime' }
   when:
-    - conf_munin_client is defined and conf_munin_client == true
+    - (conf_munin_master is defined and conf_munin_master == true) or
+      (conf_munin_client is defined and conf_munin_client == true)
     - ansible_os_family == "Debian"
   notify: handle_restart_munin_node
   tags: [ munin, munin-plugins ]
