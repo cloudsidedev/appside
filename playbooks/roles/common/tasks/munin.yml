@@ -59,6 +59,33 @@
   notify: handle_restart_munin_node
   tags: [ munin, munin-conf ]
 
+- name: provision munin plugins
+  file:
+    src: /usr/share/munin/plugins/{{ item.src }}
+    dest: /etc/munin/plugins/{{ item.dest }}
+    state: link
+  with_items:
+    - { src: 'mysql_bytes', dest: 'mysql_bytes' }
+    - { src: 'mysql_queries', dest: 'mysql_queries' }
+    - { src: 'mysql_threads', dest: 'mysql_threads' }
+    - { src: 'mysql_slowqueries', dest: 'mysql_slowqueries' }
+    - { src: 'mysql_slowqueries', dest: 'mysql_slowqueries' }
+    - { src: 'varnish_', dest: 'varnish_memory_usage' }
+    - { src: 'varnish_', dest: 'varnish_expunge' }
+    - { src: 'varnish_', dest: 'varnish_hit_rate' }
+    - { src: 'varnish_', dest: 'varnish_objects' }
+    - { src: 'varnish_', dest: 'varnish_bad' }
+    - { src: 'varnish_', dest: 'varnish_backend_traffic' }
+    - { src: 'varnish_', dest: 'varnish_transfer_rates' }
+    - { src: 'varnish_', dest: 'varnish_request_rate' }
+    - { src: 'varnish_', dest: 'varnish_threads' }
+    - { src: 'varnish_', dest: 'varnish_uptime' }
+  when:
+    - conf_munin_client is defined and conf_munin_client == true
+    - ansible_os_family == "Debian"
+  notify: handle_restart_munin_node
+  tags: [ munin, munin-plugins ]
+
 # - name: enable munin service
 #   service: name=munin state=started enabled=yes
 #   when:
