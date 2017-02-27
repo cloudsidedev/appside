@@ -134,24 +134,64 @@ appflow vagrant
 
 ### Troubleshooting
 
+#### [vagragnt] Vagrant was unable to mount VirtualBox shared folders
+
+```
+Issue: Vagrant was unable to mount VirtualBox shared folders.
+       This is usually because the filesystem "vboxsf" is not available.
+       This filesystem is made available via the VirtualBox Guest Additions
+       and kernel module. Please verify that these guest additions are properly
+       installed in the guest. This is not a bug in Vagrant and is usually
+       caused by a faulty Vagrant box. For context, the command attempted was:
+
+       id -u deploy
+
+       The error output from the command was:
+
+       id: deploy: no such user
+
+Solve: appflow provision limit=atlantis firstrun=true (password is vagrant).
+```
+
+#### [vagragnt] The box you attempted to add doesn't match the provider you specified
+
 ```
 Issue: The box you attempted to add doesn't match the provider you specified.
+
 Solve: vagrant up --provider=virtualbox atlantis
 ```
 
-Issue: Lost Vagrant reference to VirtualBox VM
-Solve:
+#### [vagragnt] Lost Vagrant reference to VirtualBox VM
+
 ```
+Issue: Lost Vagrant reference to VirtualBox VM
+
+Solve:
 VBoxManage list vms
   "vagrant-atlantis" {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx}
 echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
 ```
 
-Issue: `vagragnt Warning: Authentication failure. Retrying...`
+#### [vagragnt] Warning: Authentication failure. Retrying...
+
+```
+Issue: vagragnt Warning: Authentication failure. Retrying...
+```
+
 Solve: http://stackoverflow.com/a/30792296
 
-Issue: `An error occurred while downloading the remote file. The error message, if any, is reproduced below. Please fix this error and try again.`
-Solve: `sudo mv /opt/vagrant/embedded/bin/curl /tmp` https://github.com/mitchellh/vagrant/issues/7997
+#### [vagragnt] an error occurred while downloading the remote file
+
+```
+Issue: An error occurred while downloading the remote file.
+       The error message, if any, is reproduced below. Please fix this error and try again.
+
+Solve: sudo mv /opt/vagrant/embedded/bin/curl /tmp
+```
+
+See also: https://github.com/mitchellh/vagrant/issues/7997
+
+#### [boot] An error occurred while mounting /
 
 ```
 Issue: An error occurred while mounting /.
