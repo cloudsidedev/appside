@@ -14,6 +14,7 @@
     - munin
     - libnet-cidr-lite-perl
     - libcgi-fast-perl
+    - libxml-parser-perl
   when:
     - conf_munin_master is defined and conf_munin_master == true
     - ansible_os_family == "Debian"
