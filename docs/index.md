@@ -178,7 +178,7 @@ echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/vir
 Issue: vagragnt Warning: Authentication failure. Retrying...
 ```
 
-Solve: http://stackoverflow.com/a/30792296
+Solve: [http://stackoverflow.com/a/30792296](http://stackoverflow.com/a/30792296)
 
 #### [vagragnt] an error occurred while downloading the remote file
 
@@ -189,7 +189,7 @@ Issue: An error occurred while downloading the remote file.
 Solve: sudo mv /opt/vagrant/embedded/bin/curl /tmp
 ```
 
-See also: https://github.com/mitchellh/vagrant/issues/7997
+See also: [https://github.com/mitchellh/vagrant/issues/7997](https://github.com/mitchellh/vagrant/issues/7997)
 
 #### [boot] An error occurred while mounting /
 
