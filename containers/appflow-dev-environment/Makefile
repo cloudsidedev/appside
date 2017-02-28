@@ -1,3 +1,3 @@
 all:
-	docker build -t appflow-toolset .
-	docker run -it appflow-toolset
+	docker build -t appflow-dev-environment .
+	docker run -it appflow-dev-environment
