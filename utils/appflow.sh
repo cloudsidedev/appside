@@ -10,7 +10,7 @@ if [ $DIST == 'Darwin' ]; then
 		brew install bash-completion bash
 	fi
 	if ! brew ls --versions ansible | grep HEAD; then
-		brew unlink ansible ; brew unlink ansible20 ; brew reinstall ansible;
+		brew unlink ansible ; brew unlink ansible20 ; brew reinstall ansible --HEAD;
 	fi
 	brew install caskroom/cask/brew-cask
 	if ! brew cask ls --versions virtualbox; then
@@ -37,17 +37,17 @@ else
 	cat /etc/os-release | grep -i ubuntu
 	if (( $? == 0 )); then
 		sudo add-apt-repository universe
-	fi
+	fi 
 	if [[ $PKG == "dnf" ]]; then
-		sudo $PKG groupinstall -y "C Development Tools and Libraries" "Development Tools" "Container Management"
-		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel
+		sudo $PKG groupinstall -y "C Development Tools and Libraries" "Development Tools" "Container Management" 
+		sudo $PKG install -y git vagrant bash-completion python-pip python python3 python-devel 
 	else
 		sudo $PKG update
 		sudo $PKG install -y git vagrant bash-completion python-pip python python3 libffi-dev \
 							python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
 	fi
 	sudo pip install git+git://github.com/ansible/ansible.git;
-
+	
 	if (($? == 1)); then
 		echo "Error! Check your dependencies! Without vagrant and virtualbox
 you cannot use AppFlow, But it can still be installed.
@@ -75,6 +75,7 @@ echo "#############################";
 echo "Configuring default Dirs..."
 echo "#############################";
 mkdir -p $HOME/Documents/webdev;
+mkdir -p $HOME/Documents/webdev/development;
 cd $HOME/Documents/webdev;
 
 echo "#############################";
@@ -109,18 +110,18 @@ echo "Preparing the environment..."
 echo "#############################";
 
 mkdir -p $HOME/.appflow/tenant
-# ln -s $HOME/Documents/webdev/appflow/examples/appflow-mrrobot $HOME/.appflow/tenant/appflow-mrrobot
-# ln -s $HOME/.appflow/tenant/appflow-mrrobot $HOME/.appflow/tenant/mrrobot
-# ln -s $HOME/Documents/webdev/appflow/examples/vault $HOME/.appflow/tenant/vault
-mkdir -p $HOME/.appflow/tenant/appflow-mrrobot/
-rsync -av $HOME/Documents/webdev/appflow/examples/appflow-mrrobot/ $HOME/.appflow/tenant/appflow-mrrobot/
+ln -s $HOME/Documents/webdev/appflow/examples/appflow-mrrobot $HOME/.appflow/tenant/appflow-mrrobot
+ln -s $HOME/.appflow/tenant/appflow-mrrobot $HOME/.appflow/tenant/mrrobot
+ln -s $HOME/Documents/webdev/appflow/examples/vault $HOME/.appflow/tenant/vault
+#mkdir -p $HOME/.appflow/tenant/appflow-mrrobot/
+#rsync -av $HOME/Documents/webdev/appflow/examples/appflow-mrrobot/ $HOME/.appflow/tenant/appflow-mrrobot/
 # ln -s $HOME/.appflow/tenant/appflow-mrrobot $HOME/.appflow/tenant/mrrobot
 cp $HOME/Documents/webdev/appflow/config.example $HOME/.appflow/config
 cd $HOME/Documents/webdev/appflow
 make local ask-sudo-pass=true;
 
 if [[ $DIST == *"Linux"* ]]; then
-	virtualbox --help > /dev/null
+	virtualbox --help > /dev/null	
 	if (( $? != 0 )); then
 		echo "#############################";
 		echo "DONE!"
@@ -128,8 +129,8 @@ if [[ $DIST == *"Linux"* ]]; then
 		echo "#############################";
 		cd $currdir;
 		exit 1;
-	fi
-fi
+	fi  
+fi 
 
 echo "Would you like to initialize the Atlantis VM now?"
 read  -n 1 -p "[y/N]:" vm
