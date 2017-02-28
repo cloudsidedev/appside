@@ -21,6 +21,10 @@ echo -n "Enter your ssh password and press [ENTER] (will not be shown): "
 read -s OPT_SSH_PASSWORD
 echo
 
+# TODO here we can also call utils/initialize.sh
+
 mkdir -p ~/.appflow/{tenant,vault}
 mkdir -p ~/.appflow/tenant/appflow-$OPT_TENANT
+mkdir -p ~/.appflow/vault/$OPT_TENANT/$OPT_ENV
+# ln -s ~/.appflow/tenant/appflow-$OPT_TENANT $OPT_TENANT
 echo "foo: $OPT_SSH_PASSWORD"
