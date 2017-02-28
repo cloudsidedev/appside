@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-    web:
+    nginx:
         image: nginx:alpine
         ports:
             - "8080:80"
@@ -14,6 +14,12 @@ services:
         image: php:7-fpm-alpine
         volumes:
             - ./code:/code
+        networks:
+            - code-network
+    appflow:
+        image: php:7-cli
+        volumes:
+            - ../../:/usr/local/bin/appflow
         networks:
             - code-network
 
