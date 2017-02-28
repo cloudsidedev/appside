@@ -1,7 +1,7 @@
 all:
 	docker build -t appflow-dev-environment .
 	nohup docker run -dt appflow-dev-environment 
-	
+	docker
 clean:
 	../bin/docker-cleanup.sh
 
