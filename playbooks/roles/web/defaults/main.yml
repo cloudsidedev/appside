@@ -1,0 +1,8 @@
+---
+
+# file: playbooks/roles/web/defaults/main.yml
+
+#
+# PHP
+#
+conf_php_version_debian_family: 5.6

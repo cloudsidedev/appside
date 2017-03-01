@@ -3,8 +3,6 @@
 ;
 
 [PHP]
-{% if conf_php_cli_php is defined %}
-{{ conf_php_cli_php }}{% endif %}
 engine = On
 short_open_tag = Off
 asp_tags = Off
@@ -48,6 +46,9 @@ max_file_uploads = 20
 allow_url_fopen = On
 allow_url_include = Off
 default_socket_timeout = 60
+
+{% if conf_php_cli_php is defined %}
+{{ conf_php_cli_php }}{% endif %}
 
 [CLI Server]
 cli_server.color = On

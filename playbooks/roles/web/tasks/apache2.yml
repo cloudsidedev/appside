@@ -100,11 +100,32 @@
   when: ansible_os_family == "Debian"
   tags: [ apache2, apache2-conf ]
 
-- name: disable apache2 modules
-  apache2_module: state=absent name={{ item }} force=yes
+#- name: disable all apache2 PHP modules
+#  apache2_module: state=absent name={{ item }} force=yes
+#  with_items:
+#    - php7.1
+#    - php5.6
+#    - php5
+#  when: ansible_os_family == "Debian"
+#  ignore_errors: yes
+#  tags: [ apache2, apache2-conf ]
+
+- name: disable all apache2 mods-enabled PHP loads
+  file: path=/etc/apache2/mods-enabled/{{ item }}.load state=absent
   with_items:
+    - php7.1
+    - php5.6
     - php5
-  notify: handle_reload_apache2
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: [ apache2, apache2-conf ]
+
+- name: disable all apache2 mods-enabled PHP confs
+  file: path=/etc/apache2/mods-enabled/{{ item }}.conf state=absent
+  with_items:
+    - php7.1
+    - php5.6
+    - php5
   when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ apache2, apache2-conf ]
@@ -112,7 +133,7 @@
 - name: enable apache2 modules
   apache2_module: state=present name={{ item }}
   with_items:
-    - php5.6
+    - php{{ conf_php_version_debian_family }}
     - rewrite
     - rpaf
     - deflate
