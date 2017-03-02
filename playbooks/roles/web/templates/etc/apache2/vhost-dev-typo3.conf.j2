@@ -13,7 +13,7 @@
 
         ServerAdmin {{ item.value.serveradmin }}
 
-        DocumentRoot /var/www/vhosts/{{ item.key }}/public/web
+        DocumentRoot /var/www/vhosts/{{ item.key }}/web
 
         <Directory /var/www/vhosts/{{ item.key }}/>
                 Options FollowSymLinks
