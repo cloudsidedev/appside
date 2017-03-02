@@ -1,5 +1,0 @@
-synced_folder:
-  appflow_folder: "~/Documents/webdev/appflow"
-  webdev_folder: "~/Documents/webdev/development"
-  # mount_options: "['dmode=0775,fmode=0775,mfsymlinks']"
-  # type: "smb"
