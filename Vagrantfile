@@ -14,7 +14,7 @@ ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 # Synced folders, can be overriden via Vagrantfile.local.yml
 atlantis_synced_folder_appflow = "~/Documents/webdev/appflow"
 atlantis_synced_folder_webdev = "~/Documents/webdev/development"
-atlantis_synced_folder_mount_options = 'dmode=0775,fmode=0775'
+atlantis_synced_folder_mount_options = 'dmode=0775,fmode=0664'
 atlantis_synced_folder_type = ""
 atlantis_synced_folder_smb_username = ""
 atlantis_synced_folder_smb_password = ""
