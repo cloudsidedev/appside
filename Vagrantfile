@@ -33,10 +33,10 @@ if custom_settings['synced_folder']['type']
   atlantis_synced_folder_type = custom_settings['synced_folder']['type']
 end
 if custom_settings['synced_folder']['smb_username']
-  atlantis_synced_folder_mount_options = custom_settings['synced_folder']['smb_username']
+  atlantis_synced_folder_smb_username = custom_settings['synced_folder']['smb_username']
 end
 if custom_settings['synced_folder']['smb_password']
-  atlantis_synced_folder_type = custom_settings['synced_folder']['smb_password']
+  atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
 end
 
 
