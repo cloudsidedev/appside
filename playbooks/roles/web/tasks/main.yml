@@ -86,6 +86,11 @@
 - include: bedrock.yml
 
 #
+# bedrock
+#
+- include: typo3.yml
+
+#
 # Jenkins
 #
 - include: jenkins.yml
