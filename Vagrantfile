@@ -39,7 +39,6 @@ if custom_settings['synced_folder']['smb_password']
   atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
 end
 
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   if Vagrant.has_plugin?("vagrant-cachier")

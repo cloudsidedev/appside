@@ -1,7 +1,8 @@
 synced_folder:
   appflow_folder: "~/appflow-custom-dir"
   webdev_folder: "~/webdev-custom-dir"
-  # mount_options: "dmode=0775,fmode=0775,vers=3.02,mfsymlinks"
+  # Example for SMB mount (supports symlinks)
+  # mount_options: "dir_mode=0775,file_mode=0664,mfsymlinks"
   # type: "smb"
-  # smb_username: foo
-  # smb_password: foo
+  # smb_username: "foo.bar"
+  # smb_password: 'specialCha*rs'
