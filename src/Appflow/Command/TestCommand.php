@@ -1,3 +1,5 @@
+<?php
+
 namespace AppFlow\Command;
 
 use Symfony\Component\Console\Command\Command;
@@ -8,8 +10,14 @@ class TestCommand extends Command
 {
         // ...
 
+    protected function configure()
+    {
+        $this
+            ->setName('appflow');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+         $output->writeln('Command completed');
     }
 }
