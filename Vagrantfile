@@ -20,24 +20,24 @@ atlantis_synced_folder_smb_username = ""
 atlantis_synced_folder_smb_password = ""
 
 custom_settings = YAML.load_file 'Vagrantfile.local.yml'
-# if custom_settings['synced_folder']['appflow_folder']
-#   atlantis_synced_folder_appflow = custom_settings['synced_folder']['appflow_folder']
-# end
-# if custom_settings['synced_folder']['webdev_folder']
-#   atlantis_synced_folder_webdev = custom_settings['synced_folder']['webdev_folder']
-# end
-# if custom_settings['synced_folder']['mount_options']
-#   atlantis_synced_folder_mount_options = custom_settings['synced_folder']['mount_options']
-# end
-# if custom_settings['synced_folder']['type']
-#   atlantis_synced_folder_type = custom_settings['synced_folder']['type']
-# end
-# if custom_settings['synced_folder']['smb_username']
-#   atlantis_synced_folder_smb_username = custom_settings['synced_folder']['smb_username']
-# end
-# if custom_settings['synced_folder']['smb_password']
-#   atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
-# end
+if custom_settings['synced_folder']['appflow_folder']
+  atlantis_synced_folder_appflow = custom_settings['synced_folder']['appflow_folder']
+end
+if custom_settings['synced_folder']['webdev_folder']
+  atlantis_synced_folder_webdev = custom_settings['synced_folder']['webdev_folder']
+end
+if custom_settings['synced_folder']['mount_options']
+  atlantis_synced_folder_mount_options = custom_settings['synced_folder']['mount_options']
+end
+if custom_settings['synced_folder']['type']
+  atlantis_synced_folder_type = custom_settings['synced_folder']['type']
+end
+if custom_settings['synced_folder']['smb_username']
+  atlantis_synced_folder_smb_username = custom_settings['synced_folder']['smb_username']
+end
+if custom_settings['synced_folder']['smb_password']
+  atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
