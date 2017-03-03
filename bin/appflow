@@ -4,11 +4,11 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-# use AppFlow\Command\CreateUserCommand;
+# use AppFlow\Command\TestCommand;
 
 $application = new Application();
 
 // ... register commands
-// $application->add(new \AppFlow\Command\CreateUserCommand());
+$application->add(new AppFlow\Command\TestCommand());
 
 $application->run();
