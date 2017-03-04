@@ -8,8 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckoutCommand extends Command
 {
-        // ...
-
     protected function configure()
     {
         $this
