@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * @author Ivo Marino <ivo.marino@ttss.ch>
@@ -44,6 +46,16 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-         $output->writeln('TENANT: ' . $input->getOption('tenant') . ' ENV: ' . $input->getOption('env') );
+         # $output->writeln('TENANT: ' . $input->getOption('tenant') . ' ENV: ' . $input->getOption('env') );
+
+         $process = new Process('ls -lsa');
+         $process->run();
+
+         // executes after the command finishes
+         if (!$process->isSuccessful()) {
+             throw new ProcessFailedException($process);
+         }
+
+         echo $process->getOutput();
     }
 }

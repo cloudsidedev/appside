@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7ff7bce148e7e745657e586c468bb517",
-    "content-hash": "5bbf5368d59ab1f16f989e9211530154",
+    "hash": "c24f52a65813086d487c554a8b24f49a",
+    "content-hash": "bd38d7d9099b5fb139c8e094e778f41d",
     "packages": [
         {
             "name": "psr/log",
@@ -232,6 +232,55 @@
                 "shim"
             ],
             "time": "2016-11-14 01:06:16"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v3.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "0ab87c1e7570b3534a6e51eb4ca8e9f6d7327856"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/0ab87c1e7570b3534a6e51eb4ca8e9f6d7327856",
+                "reference": "0ab87c1e7570b3534a6e51eb4ca8e9f6d7327856",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2017-02-16 14:07:22"
         }
     ],
     "packages-dev": [],

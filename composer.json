@@ -21,7 +21,8 @@
       "issues": "https://github.com/ttssdev/appflow/issues"
   },
     "require": {
-        "symfony/console": "^3.2"
+        "symfony/console": "^3.2",
+        "symfony/process": "^3.2"
     },
     "autoload": {
         "psr-4": {

@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 $application = new Application('AppFlow', '1.0.0');
 
 /*
+ * https://github.com/bamarni/symfony-console-autocomplete
+ *
  * Arguments:
  *  - 1 argument is required, can be:
  *    - about
@@ -16,6 +18,11 @@ $application = new Application('AppFlow', '1.0.0');
  *    - list
  *    - checkout
  *    - checkin
+ *    - decrypt
+ *    - encrpyt
+ *    - reset
+ *    - support
+ *    - update2
  *
  * Options:
  *  - Should be global.
