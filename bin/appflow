@@ -5,6 +5,7 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Config\FileLocator;
 
 $application = new Application('AppFlow', '1.0.0');
 
@@ -40,5 +41,11 @@ $application->addCommands(array(
     new AppFlow\Command\CheckoutCommand(),
     new AppFlow\Command\CheckinCommand()
 ));
+
+// http://symfony.com/doc/current/components/config/resources.html
+// $configDirectories = array(__DIR__.'/app/config');
+//
+// $locator = new FileLocator($configDirectories);
+// $yamlUserFiles = $locator->locate('users.yml', null, false);
 
 $application->run();
