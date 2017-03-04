@@ -19,23 +19,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Ivo Marino <ivo.marino@ttss.ch>
  */
-class CheckoutCommand extends Command
+class AboutCommand extends Command
 {
-
     protected function configure()
     {
         $this
-            ->setName('checkout')
-            ->setDescription('Pull latest tenant configuration')
+            ->setName('about')
+            ->setDescription('Short information about AppFlow')
             ->setHelp(<<<EOT
-<info>appflow checkout</info>
+<info>appflow about</info>
 EOT
             )
         ;
     }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-         $output->writeln('Command completed');
+        $output->write(<<<EOT
+<info>AppFlow - Multitenant environment automation</info>
+<comment>AppFlow is a fully automated multitenant provisiong tool for different environments.
+See http://appflow.sh/ for more information.</comment>
+
+EOT
+        );
     }
 }
