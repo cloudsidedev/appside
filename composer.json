@@ -22,7 +22,9 @@
   },
     "require": {
         "symfony/console": "^3.2",
-        "symfony/process": "^3.2"
+        "symfony/config": "^3.2",
+        "symfony/process": "^3.2",
+        "symfony/yaml": "^3.2"
     },
     "autoload": {
         "psr-4": {
