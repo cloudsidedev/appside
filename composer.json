@@ -3,6 +3,8 @@
         "symfony/console": "^3.2"
     },
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-4": {
+            "AppFlow\\": "src/"
+        }
     }
 }
