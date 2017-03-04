@@ -4,8 +4,29 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputOption;
 
 $application = new Application('AppFlow', '1.0.0');
+
+/*
+ * Arguments:
+ *  - 1 argument is required, can be:
+ *    - about
+ *    - help
+ *    - list
+ *    - checkout
+ *    - checkin
+ *
+ * Options:
+ *  - Should be global.
+ *    - tenant
+ *    - environment
+ */
+
+ $application->getDefinition()->addOptions([
+     // new InputOption('--env', '-e', InputOption::VALUE_OPTIONAL, 'The environment to operate in.', 'DEV'),
+     new InputOption('foo', 'f', InputOption::VALUE_OPTIONAL, 'The environment to operate in.', 'DEV'),
+ ]);
 
 $application->addCommands(array(
     new AppFlow\Command\AboutCommand(),
