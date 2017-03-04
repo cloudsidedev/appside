@@ -5,9 +5,12 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-$application = new Application();
+$application = new Application('AppFlow', '1.0.0');
 
-$application->add(new AppFlow\Command\AboutCommand());
-$application->add(new AppFlow\Command\CheckoutCommand());
+$application->addCommands(array(
+    new AppFlow\Command\AboutCommand(),
+    new AppFlow\Command\CheckoutCommand(),
+    new AppFlow\Command\CheckinCommand()
+));
 
 $application->run();

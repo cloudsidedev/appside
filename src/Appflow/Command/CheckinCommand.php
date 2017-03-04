@@ -19,16 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Ivo Marino <ivo.marino@ttss.ch>
  */
-class CheckoutCommand extends Command
+class CheckinCommand extends Command
 {
 
     protected function configure()
     {
         $this
-            ->setName('checkout')
-            ->setDescription('Pull latest tenant configuration')
+            ->setName('checkin')
+            ->setDescription('Push latest tenant configuration')
             ->setHelp(<<<EOT
-<info>Pull the latest encrpyted configuration for a given tenant from a repository</info>
+<info>Encrypt and push the latest configuration for a given tenant to a repository</info>
 EOT
             )
         ;
