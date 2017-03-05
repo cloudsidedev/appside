@@ -56,6 +56,6 @@ EOT
              throw new ProcessFailedException($process);
          }
 
-         echo $process->getOutput();
+         // echo $process->getOutput();
     }
 }

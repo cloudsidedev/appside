@@ -6,6 +6,9 @@ require __DIR__.'/../vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\Processor;
+use AppFlow\Config\YamlConfigLoader;
+use AppFlow\Config\Configuration;
 
 $application = new Application('AppFlow', '1.0.0');
 
@@ -44,8 +47,28 @@ $application->addCommands(array(
 
 // http://symfony.com/doc/current/components/config/resources.html
 // $configDirectories = array(__DIR__.'/app/config');
-//
-// $locator = new FileLocator($configDirectories);
-// $yamlUserFiles = $locator->locate('users.yml', null, false);
+$configDirectories = array($_SERVER['HOME'] . '/.appflow');
+
+// convert the config file into an array
+$locator = new FileLocator($configDirectories);
+$loader = new YamlConfigLoader($locator);
+$configValues = $loader->load($locator->locate('config.yml'));
+
+// process the array using the defined configuration
+$processor = new Processor();
+$configuration = new Configuration();
+
+try {
+    $processedConfiguration = $processor->processConfiguration(
+        $configuration,
+        $configValues
+    );
+
+    // configuration validated
+    dump($processedConfiguration);
+
+} catch (Exception $e) {
+    echo $e->getMessage() . PHP_EOL;
+}
 
 $application->run();
