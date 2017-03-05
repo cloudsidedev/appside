@@ -20,16 +20,19 @@
   "support": {
       "issues": "https://github.com/ttssdev/appflow/issues"
   },
-    "require": {
-        "symfony/console": "^3.2",
-        "symfony/config": "^3.2",
-        "symfony/process": "^3.2",
-        "symfony/yaml": "^3.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "AppFlow\\": "src/AppFlow/"
-        }
-    },
-    "bin": ["bin/appflow"]
+  "require": {
+      "symfony/console": "^3.2",
+      "symfony/config": "^3.2",
+      "symfony/process": "^3.2",
+      "symfony/yaml": "^3.2"
+  },
+  "require-dev": {
+      "symfony/var-dumper": "^3.2"
+  },
+  "autoload": {
+      "psr-4": {
+          "AppFlow\\": "src/AppFlow/"
+      }
+  },
+  "bin": ["bin/appflow"]
 }
