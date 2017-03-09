@@ -39,7 +39,7 @@
 #
 - name: make sure .htaccess file exists if enabled (Common)
   file: path=/var/www/vhosts/{{ item.key }}/.htaccess owner=deploy group={{ conf_www_group }} mode=0664 state=touch
-  when: item.value.state == "enabled" and conf_env != "development" and item.value.type != "wp_bedrock" and ansible_os_family == "Debian"
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type != "wp_bedrock" and item.value.type != "typo3" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ vhosts ]
 
