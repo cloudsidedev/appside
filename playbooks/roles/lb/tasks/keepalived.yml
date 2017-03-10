@@ -2,18 +2,18 @@
 
 # file: playbooks/roles/lb/tasks/keepalived.yml
 
-- name: be sure keepalived packages are installed (Ubuntu)
-  apt: pkg={{ item }} state=installed
+- name: be sure keepalived packages are installed
+  package: name={{ item }} state=installed
   with_items:
     - keepalived
-  when: ansible_distribution == "Ubuntu"
+  # when: ansible_distribution == "Ubuntu"
   environment:
     DEBIAN_FRONTEND: noninteractive
   tags: [ haproxy, keepalived ]
 
 - name: set net.ipv4.ip_nonlocal_bind in /etc/sysctl.conf
   lineinfile: "dest=/etc/sysctl.conf regexp='^net.ipv4.ip_nonlocal_bind' state=present line=net.ipv4.ip_nonlocal_bind=1"
-  when: ansible_distribution == "Ubuntu"
+  # when: ansible_distribution == "Ubuntu"
   notify: handle_reload_sysctl
   tags: [ haproxy, keepalived ]
 
@@ -23,16 +23,16 @@
 # 3) if OK deploy to /etc/keepalived/keepalived.cfg
 #
 
-- name: deploy /etc/keepalived/notify.sh (Ubuntu)
+- name: deploy /etc/keepalived/notify.sh
   template: src=etc/keepalived/notify.sh.j2 dest=/etc/keepalived/notify.sh owner=root group={{ conf_root_group }} mode=0755
   notify: handle_restart_keepalived
-  when: ansible_distribution == "Ubuntu"
+  # when: ansible_distribution == "Ubuntu"
   tags: [ haproxy, keepalived ]
 
-- name: deploy /etc/keepalived/keepalived.cfg (Ubuntu)
+- name: deploy /etc/keepalived/keepalived.cfg
   template: src=etc/keepalived/keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf owner=root group={{ conf_root_group }} mode=0644
   notify: handle_restart_keepalived
-  when: ansible_distribution == "Ubuntu"
+  # when: ansible_distribution == "Ubuntu"
   tags: [ haproxy, keepalived ]
 
 - name: start keepalived
