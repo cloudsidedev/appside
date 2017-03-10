@@ -18,7 +18,7 @@
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
   register: bootstrap_check
-  always_run: yes
+  check_mode: no
   tags: [ mysql, percona ]
 
 - debug: var=bootstrap_check.rc

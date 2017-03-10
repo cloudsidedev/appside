@@ -23,7 +23,7 @@
   # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   register: bootstrap_check
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   when: ansible_distribution == "Ubuntu"
   tags: [ mysql, percona ]
@@ -31,7 +31,7 @@
 - name: check to determine if galera is already installed (CentOS)
   shell: "yum -q list installed Percona-XtraDB-Cluster-56 > /dev/null"
   register: bootstrap_check
-  always_run: yes
+  check_mode: no
   ignore_errors: yes
   when: ansible_distribution == "CentOS"
   tags: [ mysql, percona ]
