@@ -2,13 +2,13 @@
 
 # file: playbooks/roles/db/tasks/main.yml
 
-- name: be sure dbtier packages are installed (Ubuntu)
+- name: be sure dbtier packages are installed (Ubuntu family)
   apt: pkg={{ item }} state=installed
   with_items:
     # - mysql-server
     - python-mysqldb
     - bc
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   environment:
     DEBIAN_FRONTEND: noninteractive
   tags: [ mysql ]
@@ -35,17 +35,17 @@
 #
 # - name: deploy debian.cnf to /etc/mysql/debian.cnf
 #   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-#   when: ansible_distribution == "Ubuntu"
+#   when: ansible_os_family == "Debian"
 #   tags: [ mysql, mysql-conf, percona ]
 
 - name: create /etc/mysql
   file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu)
+- name: deploy /etc/mysql/my.cnf (Ubuntu family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (FreeBSD)
@@ -56,11 +56,21 @@
 #
 # percona
 #
+- name: deploy /usr/local/bin/galeranotify.py
+  template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
+  tags: [ mysql, percona ]
+
 - include: percona.yml
   when: ansible_os_family == "Debian"
 
 - include: main-centos.yml
   when: ansible_os_family == "RedHat"
+
+- name: create DB clustercheck user
+  mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
+  when: conf_env != "development" and conf_galera_cluster == true
+  ignore_errors: yes
+  tags: [ mysql, percona, clustercheck ]
 
 - name: create replication user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
@@ -72,13 +82,13 @@
 #
 # - name: deploy debian.cnf to /etc/mysql/debian.cnf
 #   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-#   when: ansible_distribution == "Ubuntu"
+#   when: ansible_os_family == "Debian"
 #   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu)
+- name: deploy /etc/mysql/my.cnf (Ubuntu family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   tags: [ mysql, mysql-conf, percona ]
 
 # - name: restart MySQL
@@ -99,7 +109,7 @@
 #
 - name: mysql service state
   service: name=mysql state=started enabled=yes
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ mysql ]
 
