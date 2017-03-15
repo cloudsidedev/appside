@@ -43,6 +43,7 @@ conf_base_packages:
     - mosh
     - finger
     - tree
+    - net-tools
     - telnet
     - unzip
     - zip
