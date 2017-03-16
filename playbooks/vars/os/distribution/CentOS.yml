@@ -34,6 +34,7 @@ conf_root_group: "root"
 conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
 conf_base_packages:
+    - redhat-lsb-core
     - etckeeper
     - zsh
     - yum-utils
