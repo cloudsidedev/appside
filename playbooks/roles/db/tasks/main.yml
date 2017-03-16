@@ -61,10 +61,6 @@
   tags: [ mysql, percona ]
 
 - include: percona.yml
-  when: ansible_os_family == "Debian"
-
-- include: main-centos.yml
-  when: ansible_os_family == "RedHat"
 
 - name: create DB clustercheck user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
