@@ -22,7 +22,7 @@
 # apache2
 #
 - include: apache2.yml
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
 
 #
 # mod_pagespeed

@@ -29,6 +29,20 @@
   when: ansible_os_family == "Debian"
   tags: [ apache2 ]
 
+- name: create /etc/httpd/sites-available and sites-enabled directory (RedHat family)
+  file: path=/etc/httpd/{{ item }} state=directory owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+    - sites-available
+    - sites-enabled
+  when: ansible_os_family == "RedHat"
+  tags: [ apache2 ]
+
+- name: deploy /etc/httpd/conf.d/custom-apache2-conf (RedHat family)
+  template: src=etc/apache2/conf.d/custom-apache2-conf.j2 dest=/etc/httpd/conf.d/custom-apache2.conf owner=root group={{ conf_root_group }} mode=0644
+  notify: handle_reload_apache2
+  when: ansible_os_family == "RedHat"
+  tags: [ apache2 ]
+
 - name: adapt mpm_prefork /etc/apache2/mods-available/mpm_prefork.conf
   lineinfile:
     dest=/etc/apache2/mods-available/mpm_prefork.conf
@@ -71,6 +85,12 @@
   notify: handle_restart_apache2
   when: ansible_os_family == "Debian"
   tags: [ apache2, apache2-conf ]
+
+- name: listen on 8080 (RedHat Family)
+  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="^Listen 80" state=present create=yes line="Listen 8080"
+  when: ansible_os_family == "RedHat"
+  # notify: handle_restart_apache2
+  tags: [ varnish, varnish-conf, apache2 ]
 
 - name: create /var/www/vhosts directory
   file: path=/var/www/vhosts state=directory owner={{ conf_www_group }} group={{ conf_www_group }} mode=0755

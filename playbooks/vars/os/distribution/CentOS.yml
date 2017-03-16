@@ -31,7 +31,7 @@ conf_lib_path: "/usr/lib64"
 conf_bin_path: "/usr/bin"
 conf_zsh_path: "/bin/zsh"
 conf_root_group: "root"
-conf_www_group: "www-data"
+conf_www_group: "apache"
 conf_sudo_nopasswd_group: "admin"
 conf_base_packages:
     - redhat-lsb-core

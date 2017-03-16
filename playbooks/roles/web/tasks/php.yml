@@ -23,6 +23,13 @@
 # TODO: Add Debian PPA, https://packages.sury.org/php/
 #
 
+- name: be sure web packages packages are installed (RedHat family)
+  yum: pkg={{ item }} state=latest
+  with_items:
+    - httpd
+  when: ansible_os_family == "RedHat"
+  tags: [ php, apache2 ]
+
 - name: be sure web packages packages are installed (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:

@@ -3,5 +3,12 @@
 #
 
 #
-# This file will live in /etc/apache2/conf.d/custom-apache2.conf
+# This file will live in /etc/{apache2|httpd}/conf.d/custom-apache2.conf
 #
+
+{% if ansible_os_family == "RedHat" %}
+#
+# We just include all enabled vhosts, like Ubuntu does.
+#
+IncludeOptional /etc/httpd/sites-enabled/*.conf
+{% endif %}
