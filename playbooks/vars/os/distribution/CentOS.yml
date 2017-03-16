@@ -82,6 +82,7 @@ conf_mysql_conf: "/etc/mysql/my.cnf"
 conf_mysql_basedir: "/usr"
 conf_mysql_datadir: "/var/lib/mysql"
 conf_mysql_lc_messages_dir: "/usr/share/percona-xtradb-cluster"
+conf_mysql_socket: "/var/lib/mysql/mysql.sock"
 
 #
 # Etckeeper

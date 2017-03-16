@@ -2,7 +2,7 @@
 
 # file: playbooks/roles/db/tasks/main.yml
 
-- name: be sure dbtier packages are installed (Ubuntu family)
+- name: be sure dbtier packages are installed (Debian family)
   apt: pkg={{ item }} state=installed
   with_items:
     # - mysql-server
@@ -33,19 +33,21 @@
 #
 # MySQL system config (BEFORE PERCONA)
 #
-# - name: deploy debian.cnf to /etc/mysql/debian.cnf
-#   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-#   when: ansible_os_family == "Debian"
-#   tags: [ mysql, mysql-conf, percona ]
-
 - name: create /etc/mysql
   file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: ansible_os_family == "Debian"
   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu family)
+- name: deploy /etc/mysql/my.cnf (Debian family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
   when: ansible_os_family == "Debian"
+  tags: [ mysql, mysql-conf, percona ]
+
+- name: deploy /etc/my.cnf (RedHat family)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  # notify: handle_restart_mysql
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (FreeBSD)
@@ -81,10 +83,16 @@
 #   when: ansible_os_family == "Debian"
 #   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu family)
+- name: deploy /etc/mysql/my.cnf (Debian family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
   when: ansible_os_family == "Debian"
+  tags: [ mysql, mysql-conf, percona ]
+
+- name: deploy /etc/my.cnf (RedHat family)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  # notify: handle_restart_mysql
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
 # - name: restart MySQL
@@ -103,9 +111,15 @@
 #
 #   First MySQL upgrade then mysql bootstrap
 #
-- name: mysql service state
+- name: mysql service state (Debian family)
   service: name=mysql state=started enabled=yes
   when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: [ mysql ]
+
+- name: mysql service state (RedHat family)
+  service: name=mysql state=started enabled=yes
+  when: conf_wsrep_master == false and ansible_os_family == "RedHat"
   ignore_errors: yes
   tags: [ mysql ]
 

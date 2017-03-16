@@ -6,6 +6,11 @@
 # Debug CentOS:
 #   yum -y remove Percona-XtraDB-Cluster-galera-3.x86_64 ; rm -rf /var/lib/mysql /etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf ; killall -9 mysqld
 #
+# - install PXC on all
+# - ? /etc/my.cnf
+# - bootstrap master
+# - start clients
+# - restart master
 
 - name: apparmor disable mysqld (Debian family)
   file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
@@ -15,8 +20,6 @@
   tags: [ mysql, percona ]
 
 - name: check to determine if galera is aready installed (Debian family)
-  # shell: dpkg-query -s percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
-  # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
   register: bootstrap_check

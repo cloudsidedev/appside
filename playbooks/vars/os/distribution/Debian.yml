@@ -92,6 +92,7 @@ conf_mysql_conf: "/etc/mysql/my.cnf"
 conf_mysql_basedir: "/usr"
 conf_mysql_datadir: "/var/lib/mysql"
 conf_mysql_lc_messages_dir: "/usr/share/mysql"
+conf_mysql_socket: "/var/run/mysqld/mysqld.sock"
 
 #
 # Etckeeper
