@@ -95,6 +95,11 @@ conf_mysql_lc_messages_dir: "/usr/share/mysql"
 conf_mysql_socket: "/var/run/mysqld/mysqld.sock"
 
 #
+# HAProxy
+#
+conf_haproxy_errors_path: "/etc/haproxy/errors"
+
+#
 # Etckeeper
 #
 conf_etckeeper_lowlevel_package_manager: "dpkg"

@@ -85,6 +85,11 @@ conf_mysql_lc_messages_dir: "/usr/share/percona-xtradb-cluster"
 conf_mysql_socket: "/var/lib/mysql/mysql.sock"
 
 #
+# HAProxy
+#
+conf_haproxy_errors_path: "/usr/share/haproxy"
+
+#
 # Etckeeper
 #
 conf_etckeeper_lowlevel_package_manager: "rpm"

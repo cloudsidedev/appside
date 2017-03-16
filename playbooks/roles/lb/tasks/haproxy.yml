@@ -95,9 +95,11 @@
 # SSL PEM #
 ###########
 
-- name: deploy vhost PEM
+- name: deploy vhost PEM (Debian/RedHat family)
   copy: content="{{ item.value.ssl_pem }}" dest="/etc/certs/{{ item.value.ssl_pemfile }}" owner=root group=ssl-cert mode=0640
-  when: ansible_os_family == "Debian" and item.value.state == "enabled" and item.value.ssl_haproxy == true
+  when:
+    - ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+    - item.value.state == "enabled" and item.value.ssl_haproxy == true
   with_dict: '{{ conf_vhosts_common }}'
   notify: handle_reload_haproxy
   tags: [ haproxy, ssl, ssl-conf ]
@@ -114,7 +116,7 @@
 # 3) if OK deploy to /etc/haproxy/haproxy.cfg
 #
 
-- name: deploy /etc/haproxy/haproxy.cfg (Debian)
+- name: deploy /etc/haproxy/haproxy.cfg (Debian/RedHat family)
   template: src=etc/haproxy/haproxy-cfg.j2 dest=/etc/haproxy/haproxy.cfg owner=root group={{ conf_root_group }} mode=0644
   notify: handle_reload_haproxy
   when:
@@ -122,7 +124,7 @@
     - conf_confd_enable is defined and conf_confd_enable == false
   tags: [ haproxy, haproxy-conf, ssl, haproxy-acl ]
 
-- name: deploy /etc/haproxy/*acl-files*.txt (Debian)
+- name: deploy /etc/haproxy/*acl-files*.txt (Debian/RedHat family)
   copy: content="{{ item.value.content }}" dest="/etc/haproxy/{{ item.key }}" owner=root group={{ conf_root_group }} mode=0644
   with_dict: '{{ conf_haproxy_acl_files }}'
   notify: handle_reload_haproxy
