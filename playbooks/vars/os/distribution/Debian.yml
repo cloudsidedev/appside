@@ -97,6 +97,7 @@ conf_mysql_socket: "/var/run/mysqld/mysqld.sock"
 #
 # HAProxy
 #
+conf_haproxy_socket_path: "/run/haproxy"
 conf_haproxy_errors_path: "/etc/haproxy/errors"
 
 #
