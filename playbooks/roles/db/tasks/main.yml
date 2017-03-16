@@ -95,12 +95,6 @@
   when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
-# - name: restart MySQL
-#  command: /bin/true
-#  notify: handle_restart_mysql
-#  when: conf_wsrep_master == false
-#  tags: [ mysql, percona ]
-
 - name: deploy /etc/mysql/my.cnf (FreeBSD)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
   when: ansible_distribution == "FreeBSD"
@@ -114,12 +108,6 @@
 - name: mysql service state (Debian family)
   service: name=mysql state=started enabled=yes
   when: ansible_os_family == "Debian"
-  ignore_errors: yes
-  tags: [ mysql ]
-
-- name: mysql service state (RedHat family)
-  service: name=mysql state=started enabled=yes
-  when: conf_wsrep_master == false and ansible_os_family == "RedHat"
   ignore_errors: yes
   tags: [ mysql ]
 
@@ -137,6 +125,7 @@
 - name: update mysql root password
   mysql_user: check_implicit_admin=yes name=root host=% password={{ conf_mysql_root_password }} priv="*.*:ALL,GRANT"
   # mysql_user: check_implicit_admin=yes login_host={{ ansible_all_ipv4_addresses.0 }} name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users, mysqlpass ]
 
 - name: deploy my.cnf to enabled mysql admins
@@ -153,6 +142,7 @@
     - localhost
     - '{{ ansible_fqdn }}'
     - '{{ ansible_hostname }}'
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
 
 - name: remove unused mysql root accesses
@@ -163,7 +153,14 @@
     - localhost
     - '{{ ansible_fqdn }}'
     - '{{ ansible_hostname }}'
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
+
+- name: mysql service state (RedHat family)
+  service: name=mysql state=restarted enabled=yes
+  when: conf_wsrep_master == false and ansible_os_family == "RedHat"
+  ignore_errors: yes
+  tags: [ mysql ]
 
 #
 # db enabled
