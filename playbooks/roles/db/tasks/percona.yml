@@ -136,13 +136,13 @@
 
 - name: bootstrap-pxc (RedHat family)
   service: name=mysql@bootstrap state=restarted
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  when: bootstrap_check.rc is defined and bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
   # delegate_to: db1
   ignore_errors: true
   tags: [ mysql, percona]
 
 - name: bootstrap-pxc (RedHat family)
   service: name=mysql@bootstrap state=restarted
-  when: bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  when: bootstrap_check.rc is defined and bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
   # delegate_to: db1
   tags: [ mysql, percona]
