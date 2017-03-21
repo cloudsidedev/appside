@@ -15,7 +15,8 @@
 - name: install ansible (Debian family)
   apt: pkg={{ item }} state=present force=yes
   with_items:
-    - ansible=2.1.3.0-1ppa~trusty
+    # - ansible=2.1.3.0-1ppa~trusty
+    - ansible
   environment:
     DEBIAN_FRONTEND: noninteractive
   ignore_errors: yes
