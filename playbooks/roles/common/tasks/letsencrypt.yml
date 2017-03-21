@@ -26,6 +26,7 @@
 
 - name: symlink /opt/certbot/certbot-auto
   file: src=/opt/certbot/certbot-auto dest=/usr/local/bin/certbot-auto state=link
+  ignore_errors: true
   tags: [ letsencrypt ]
 
 - name: create /etc/letsencrypt
@@ -50,11 +51,7 @@
       - usr/local/bin/cert-verify.sh
   tags: [ letsencrypt, letsencrypt-conf ]
 
-# - name: Add cron job for 'certbot-auto renew' (if configured).
-#   cron:
-#     name: Certbot automatic renewal.
-#     job: "{{ certbot_dir }}/certbot-auto renew --quiet --no-self-upgrade"
-#     minute: "{{ certbot_auto_renew_minute }}"
-#     hour: "{{ certbot_auto_renew_hour }}"
-#     user: "{{ certbot_auto_renew_user }}"
-#   when: certbot_auto_renew
+- name: deploy /etc/cron.d/cert-renew
+  template: src=etc/cron.d/cert-renew.j2 dest=/etc/cron.d/cert-renew owner=root group={{ conf_root_group }} mode=0644
+  when: conf_letsencrypt_cron_master == true
+  tags: [ letsencrypt, letsencrypt-conf ]

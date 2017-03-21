@@ -4,6 +4,11 @@
 # --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
 #
 
+#
+# Returns 0 if there are no certs to renew.
+# Returns 1 if certs have been renewed.
+#
+
 # Configuration variables
 certbot_bin="/usr/local/bin/certbot-auto"
 haproxy_pem_path="/mnt/glusterfs/gvol0/brick1/certs"
@@ -17,7 +22,7 @@ if [ $? -eq 1 ]; then
 	echo "$(date +%c) Certificates renewed! Now creating .pem"
 else
 	echo "$(date +%c) No need to renew certs."
-	exit 1
+	exit 0
 fi
 
 if [ $renew -eq 1 ]; then
@@ -37,3 +42,5 @@ if [ $renew -eq 1 ]; then
 	service haproxy reload
 
 fi
+
+exit 1
