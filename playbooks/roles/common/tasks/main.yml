@@ -107,10 +107,10 @@
 #   tags: [ common ]
 
 - include: letsencrypt.yml
-  when:
-    - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
-    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
-    - conf_letsencrypt_cron_master is defined and conf_letsencrypt_cron_master == true
+  # when:
+  #   - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
+  #   - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
+  #   - conf_letsencrypt_cron_master is defined and conf_letsencrypt_cron_master == true
   tags: [ common, letsencrypt ]
 
 - include: icinga.yml
