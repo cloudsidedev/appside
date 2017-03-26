@@ -4,7 +4,15 @@ stage name: 'instanciate a target VM', concurrency: 1
 parallel('vm-ubuntu': {
   node {
     echo 'instanciate vm-ubuntu'
-    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'uname -a\'"'
+    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'
+    cd ~/appflow
+    vagrant status testing
+    vagrant halt testing
+    vagrant destroy -f testing
+    # export ANSIBLE_TAGS=$TAGS
+    # export ANSIBLE_TAGS_SKIP=$SKIP_TAGS
+    vagrant up testing
+    \'"'
   }
 }, 'vm-centos': {
   node {
