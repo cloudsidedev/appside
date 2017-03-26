@@ -9,7 +9,7 @@ parallel('vm-ubuntu': {
 }, 'vm-centos': {
   node {
     echo 'instanciate vm-centos'
-    sh 'echo "do something"'
+    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing.centos ; vagrant halt testing.centos ; vagrant destroy -f testing.centos ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing.centos\'"'
   }
 }, 'vm-macos': {
   node {
