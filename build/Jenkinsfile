@@ -1,1 +1,19 @@
-echo "Hallo"
+stage "unit test"
+
+stage name: 'instanciate a target VM', concurrency: 1
+parallel(vm-ubuntu: {
+  node {
+    echo 'instanciate vm-ubuntu'
+    sh 'echo "do something"'
+  }
+}, vm-centos: {
+  node {
+    echo 'instanciate vm-centos'
+    sh 'echo "do something"'
+  }
+}, vm-macos: {
+  node {
+    echo 'instanciate vm-macos'
+    sh 'echo "do something"'
+  }
+})
