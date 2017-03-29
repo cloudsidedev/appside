@@ -10,9 +10,9 @@
   when: conf_env != "local"
   tags: [ common, users, shell ]
 
-#- include: ssh.yml
-#  when: conf_env != "local"
-#  tags: [ common ]
+- include: ssh.yml
+  when: conf_env != "local"
+  tags: [ common, ssh, sshd  ]
 
 - include: sudo.yml
   when: conf_env != "local"
