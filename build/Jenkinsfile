@@ -5,6 +5,8 @@ parallel('vm-ubuntu': {
   node {
     echo 'instanciate vm-ubuntu'
     // sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing ; vagrant halt testing ; vagrant destroy -f testing ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing\'"'
+    sh 'eval $(ssh-agent)'
+    sh 'ssh-add ~/.ssh/id_rsa*'
     sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'uname -a\'"'
   }
 // }, 'vm-centos': {
