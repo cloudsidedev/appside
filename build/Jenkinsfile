@@ -4,16 +4,17 @@ stage name: 'instanciate a target VM', concurrency: 1
 parallel('vm-ubuntu': {
   node {
     echo 'instanciate vm-ubuntu'
-    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing ; vagrant halt testing ; vagrant destroy -f testing ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing\'"'
+    // sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing ; vagrant halt testing ; vagrant destroy -f testing ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing\'"'
+    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'uname -a\'"'
   }
-}, 'vm-centos': {
-  node {
-    echo 'instanciate vm-centos'
-    sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing.centos ; vagrant halt testing.centos ; vagrant destroy -f testing.centos ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing.centos\'"'
-  }
-}, 'vm-macos': {
-  node {
-    echo 'instanciate vm-macos'
-    sh 'echo "do something"'
-  }
+// }, 'vm-centos': {
+//   node {
+//     echo 'instanciate vm-centos'
+//     sh 'ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cd ~/appflow ; vagrant status testing.centos ; vagrant halt testing.centos ; vagrant destroy -f testing.centos ; export ANSIBLE_TAGS=$TAGS ; export ANSIBLE_TAGS_SKIP=$SKIP_TAGS ; vagrant up testing.centos\'"'
+//   }
+// }, 'vm-macos': {
+//   node {
+//     echo 'instanciate vm-macos'
+//     sh 'echo "do something"'
+//   }
 })
