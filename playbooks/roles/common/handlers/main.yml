@@ -38,6 +38,9 @@
 - name: handle_restart_grafana
   service: name=grafana-server state=restarted
 
+- name: handle_restart_fail2ban
+  service: name=fail2ban state=restarted
+
 - name: handle_restart_ssh
   service: name=ssh state=restarted
 

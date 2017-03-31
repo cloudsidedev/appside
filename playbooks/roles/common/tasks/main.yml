@@ -10,6 +10,10 @@
   when: conf_env != "local"
   tags: [ common, users, shell ]
 
+- include: fail2ban.yml
+  when: conf_env != "local" and conf_fail2ban_enable is defined and conf_fail2ban_enable == true
+  tags: [ common, fail2ban ]
+
 - include: ssh.yml
   when: conf_env != "local"
   tags: [ common, ssh, sshd  ]
