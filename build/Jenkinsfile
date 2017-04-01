@@ -18,9 +18,9 @@ parallel('vm-ubuntu': {
       # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 device nic set type=NIC name=nic nic_mode=BRIDGED nic_device_type=VIRTIO nic_bridge=default nic_macaddr=04:3C:7A:EB:BC:8E\\"\'"
       # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 start\\"\'"
       # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 device nic show\\"\'"
-      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container ubuntu-14.04-01 stop\\"\'"
-      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container ubuntu-14.04-01 delete\\"\'"
-      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container create ubuntu-14.04-01 privileged=yes image=rastasheep/ubuntu-sshd:14.04 interactive=yes host=docker hostname=ubuntu-14.04-01 primary_network_mode=BRIDGED dhcp=yes bridge_macaddress=04:3C:7A:EB:BC:8E port:22/TCP=22 expose_ports=yes autostart=yes\\"\'"
+      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container ubuntu-14.04-01 stop ; docker container ubuntu-14.04-01 delete\\"\'"
+      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container create ubuntu-14.04-01 image=rastasheep/ubuntu-sshd:14.04 interactive=yes host=docker hostname=ubuntu-14.04-01 primary_network_mode=BRIDGED dhcp=yes bridge_macaddress=04:3C:7A:EB:BC:8E port:22/TCP=22 expose_ports=yes autostart=yes volume:/root=/mnt/tank0/containers/base_root_home\\"\'"
+      sleep 10 ; ssh -tt root@192.168.1.44 "uname -a"
     '''
   }
 // }, 'vm-centos': {
