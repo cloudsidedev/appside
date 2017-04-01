@@ -10,7 +10,17 @@ parallel('vm-ubuntu': {
     sh '''
       eval $(ssh-agent)
       ssh-add ~/.ssh/id_rsa*
-      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"help\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 delete ; vm create name=ubuntu-14.04-01 template=ubuntu-14.04-9p datastore=tank0 ; vm ubuntu-14.04-01 start ; vm ubuntu-14.04-01 stop ; vm ubuntu-14.04-01 device nic set nic_mode=BRIDGED nic_device_type=VIRTIO nic_macaddr=02:a0:98:8b:e2:ee ; vm ubuntu-14.04-01 start\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 stop\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 delete\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm create name=ubuntu-14.04-01 template=ubuntu-14.04-9p datastore=tank0 autostart=no\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm show\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 device nic set type=NIC name=nic nic_mode=BRIDGED nic_device_type=VIRTIO nic_bridge=default nic_macaddr=04:3C:7A:EB:BC:8E\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 start\\"\'"
+      # ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"vm ubuntu-14.04-01 device nic show\\"\'"
+      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container ubuntu-14.04-01 stop\\"\'"
+      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container ubuntu-14.04-01 delete\\"\'"
+      ssh -tt $APPFLOW_DH_USERNAME@$APPFLOW_DH_HOSTIP zsh --login -c "\'cli -e \\"docker container create ubuntu-14.04-01 privileged=yes image=rastasheep/ubuntu-sshd:14.04 interactive=yes host=docker hostname=ubuntu-14.04-01 primary_network_mode=BRIDGED dhcp=yes bridge_macaddress=04:3C:7A:EB:BC:8E port:22/TCP=22 expose_ports=yes autostart=yes\\"\'"
     '''
   }
 // }, 'vm-centos': {
