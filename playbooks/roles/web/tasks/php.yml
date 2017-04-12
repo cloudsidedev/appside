@@ -64,6 +64,7 @@
     - gifsicle
     - optipng
     - libjpeg-progs
+    - libimage-exiftool-perl
     # - varnish
     - memcached
   when: ansible_os_family == "Debian"
