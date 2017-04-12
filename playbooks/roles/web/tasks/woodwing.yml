@@ -19,7 +19,7 @@
 
 - name: unarchive ioncube_loader_so
   unarchive:
-    src: http://downloads.woodwing.net/ioncube-loaders/enterprise-server/ioncube-loader-5014.zip
+    src: {{ conf_woodwing_ioncube_url }}
     dest: /tmp/ioncube-loader
     remote_src: true
   when: not ioncube_loader_so.stat.exists
