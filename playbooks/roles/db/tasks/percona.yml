@@ -22,20 +22,23 @@
 - name: check to determine if galera is aready installed (Debian family)
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
-  register: bootstrap_check
+  register: bootstrap_check_debian
   check_mode: no
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
 - name: check to determine if galera is already installed (RedHat family)
   shell: "yum -q list installed Percona-XtraDB-Cluster-56 > /dev/null"
-  register: bootstrap_check
+  register: bootstrap_check_redhat
   check_mode: no
   ignore_errors: yes
   when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
-- debug: var=bootstrap_check.rc
+- debug: var=bootstrap_check_debian.rc
+  tags: [ mysql, percona ]
+
+- debug: var=bootstrap_check_redhat.rc
   tags: [ mysql, percona ]
 
 - name: percona apt-key (Debian family)
@@ -69,22 +72,22 @@
 
 - name: Prepare for bootstrap (gcomm) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
 - name: Prepare for bootstrap (sst) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
 - name: Prepare for bootstrap (sst) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
 - name: Prepare for bootstrap (mysql dir) (Debian family)
   file: path=/var/lib/mysql state=directory mode=0750
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
 - name: install Percona XtraDB Cluster (Debian family)
@@ -136,13 +139,13 @@
 
 - name: bootstrap-pxc (RedHat family)
   service: name=mysql@bootstrap state=restarted
-  when: bootstrap_check.rc is defined and bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  when: bootstrap_check_redhat.rc is defined and bootstrap_check_redhat.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
   # delegate_to: db1
   ignore_errors: true
   tags: [ mysql, percona]
 
 - name: bootstrap-pxc (RedHat family)
   service: name=mysql@bootstrap state=restarted
-  when: bootstrap_check.rc is defined and bootstrap_check.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  when: bootstrap_check_redhat.rc is defined and bootstrap_check_redhat.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
   # delegate_to: db1
   tags: [ mysql, percona]
