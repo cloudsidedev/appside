@@ -101,3 +101,9 @@
 #
 - include: geoip.yml
   when: conf_geoip_enable is defined and conf_geoip_enable == true
+
+#
+# WoodWing
+#
+- include: woodwing.yml
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true

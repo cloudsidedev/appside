@@ -1,0 +1,13 @@
+---
+
+# file: playbooks/roles/web/tasks/woodwing.yml
+
+- name: check if ioncube_loader_so is installed
+  stat: "path={{ conf_php_extension_dir }}/{{ conf_php_ioncube_loader_so }}"
+  register: ioncube_loader_so
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]
+
+- debug: var=ioncube_loader_so.rc
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]

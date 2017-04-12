@@ -84,6 +84,8 @@ conf_base_packages:
     - convmv
     - tig
 conf_php_cli: "/usr/bin/php"
+conf_php_extension_dir: "/usr/lib/php/20131226"
+conf_php_ioncube_loader_so: "ioncube_loader_lin_5.6.so"
 conf_web_cron: "/etc/cron.d/wp-cron"
 
 #
