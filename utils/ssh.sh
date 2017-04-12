@@ -38,8 +38,7 @@ if [[ ! -d $HOME"/.ssh/assh.d" ]]; then
 	cp ~/.ssh/config ~/.ssh/config_personal
 fi
 
-mkdir -p /tmp/.ssh/cm
-mkdir -p ~pwd/tmp/.ssh/cm/
+mkdir -p ~/tmp/.ssh/cm
 mkdir -p ~/.ssh/assh.d/$vault
 cp -f ~/.appflow/tenant/$vault/$env/assh.yml ~/.ssh/assh.d/$vault/$env.yml
 assh config build > ~/.ssh/config
