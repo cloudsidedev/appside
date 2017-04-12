@@ -12,10 +12,10 @@
   when: conf_woodwing_enable is defined and conf_woodwing_enable == true
   tags: [ woodwing, ioncube_loader, php ]
 
-- name: download ioncube_loader_so
-  get_url:
-    url: http://downloads.woodwing.net/ioncube-loaders/enterprise-server/ioncube-loader-5014.zip
-    dest: /tmp/ioncube-loader-5014.zip
-    mode: 0644
+- name: unarchive ioncube_loader_so
+  unarchive:
+    src: http://downloads.woodwing.net/ioncube-loaders/enterprise-server/ioncube-loader-5014.zip
+    dest: /tmp/ioncube-loader
+    remote_src: true
   when: not ioncube_loader_so.stat.exists
   tags: [ woodwing, ioncube_loader, php ]
