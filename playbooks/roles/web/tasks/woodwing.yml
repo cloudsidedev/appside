@@ -12,10 +12,20 @@
   when: conf_woodwing_enable is defined and conf_woodwing_enable == true
   tags: [ woodwing, ioncube_loader, php ]
 
+- name: create /tmp/ioncube-loader
+  file: path=/tmp/ioncube-loader state=directory mode=0750
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
 - name: unarchive ioncube_loader_so
   unarchive:
     src: http://downloads.woodwing.net/ioncube-loaders/enterprise-server/ioncube-loader-5014.zip
     dest: /tmp/ioncube-loader
     remote_src: true
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: remove /tmp/ioncube-loader
+  file: path=/tmp/ioncube-loader state=absent mode=0750
   when: not ioncube_loader_so.stat.exists
   tags: [ woodwing, ioncube_loader, php ]
