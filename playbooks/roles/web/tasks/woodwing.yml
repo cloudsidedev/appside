@@ -2,6 +2,13 @@
 
 # file: playbooks/roles/web/tasks/woodwing.yml
 
+#
+# % php -i | grep "extension"
+#
+
+#
+# ioncube
+#
 - name: check if ioncube_loader_so is installed
   stat: "path={{ conf_php_extension_dir }}/{{ conf_php_ioncube_loader_so }}"
   register: ioncube_loader_so
@@ -17,7 +24,7 @@
   when: not ioncube_loader_so.stat.exists
   tags: [ woodwing, ioncube_loader, php ]
 
-- name: unarchive ioncube_loader_so
+- name: download and unarchive ioncube_loader_so
   unarchive:
     src: "{{ conf_woodwing_ioncube_url }}"
     dest: /tmp/ioncube-loader
@@ -25,7 +32,39 @@
   when: not ioncube_loader_so.stat.exists
   tags: [ woodwing, ioncube_loader, php ]
 
+- name: copy ioncube_loader_so
+  copy:
+    src: "/tmp/ioncube-loader/ioncube_loaders_all_platforms/lin_x86-64/{{ conf_php_ioncube_loader_so }}"
+    dest: "{{ conf_php_extension_dir }}/{{ conf_php_ioncube_loader_so }}"
+    owner: root
+    group: "{{ conf_root_group }}"
+    mode: 0644
+    remote_src: true
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
 - name: remove /tmp/ioncube-loader
   file: path=/tmp/ioncube-loader state=absent mode=0750
   when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: provision ioncube.ini (Debian family)
+  template: src=etc/php/mods-available/ioncube.ini.j2 dest={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/mods-available/ioncube.ini owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_os_family == "Debian"
+  tags: [ woodwing, ioncube_loader, php ]
+
+#- name: enable PHP modules
+#  shell: phpenmod -v {{ conf_php_version_debian_family }} -s ALL {{ item }}
+#  with_items:
+#    - ioncube
+#  notify: handle_reload_apache2
+#  when: ansible_os_family == "Debian"
+#  tags: [ woodwing, ioncube_loader, php ]
+
+- name: enable PHP modules
+  file: src={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/mods-available/ioncube.ini dest={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/{{ item }}/conf.d/10-ioncube.ini state=link
+  with_items:
+    - apache2
+    - cli
+  when: ansible_os_family == "Debian"
   tags: [ woodwing, ioncube_loader, php ]
