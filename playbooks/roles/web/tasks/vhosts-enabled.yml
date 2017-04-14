@@ -47,7 +47,7 @@
 # deploy vhost templates
 #
 - name: deploy vhost templates if enabled (dev)
-  template: src=etc/apache2/vhost-dev-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env == "development" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -56,10 +56,10 @@
   tags: [ vhosts ]
 
 # testing == staging == production (/var/www/vhosts/foo/current/web)
-# vhost-stage-* templates are going to be obsoleted (/var/www/vhosts/foo/web)
+# vhost-{{ conf_env }}-* templates are going to be obsoleted (/var/www/vhosts/foo/web)
 
 - name: deploy vhost templates if enabled (non-dev)
-  template: src=etc/apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env != "development" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -68,7 +68,7 @@
   tags: [ vhosts ]
 
 # - name: deploy vhost templates if enabled (Common, prod)
-#   template: src=etc/apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+#   template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
 #   when: item.value.state == "enabled" and conf_env == "production" and ansible_os_family == "Debian"
 #   with_dict: '{{ conf_vhosts_common }}'
 #   notify:
