@@ -68,3 +68,36 @@
     - cli
   when: ansible_os_family == "Debian"
   tags: [ woodwing, ioncube_loader, php ]
+
+#
+# woodwing
+#
+- name: check if EnterpriseServer has been extracted
+  stat: path=/tmp/EnterpriseServer/Enterprise/index.php
+  register: EnterpriseServer
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: create /tmp/EnterpriseServer
+  file: path=/tmp/EnterpriseServer state=directory mode=0750
+  when: not EnterpriseServer.stat.exists
+  tags: [ woodwing ]
+
+- name: download and unarchive EnterpriseServer
+  unarchive:
+    src: "{{ conf_woodwing_es_url }}"
+    dest: /tmp/EnterpriseServer
+    remote_src: true
+  when: not EnterpriseServer.stat.exists
+  tags: [ woodwing ]
+
+- name: rsync EnterpriseServer
+  synchronize:
+    src: /tmp/EnterpriseServer/Enterprise/
+    dest: /var/www/vhosts/{{ item.key }}/
+    rsync_opts:
+      - "--exclude=config/config.php --exclude=config/configserver.php"
+  with_dict: '{{ conf_vhosts_common }}'
+  delegate_to: "{{ inventory_hostname }}"
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing ]
