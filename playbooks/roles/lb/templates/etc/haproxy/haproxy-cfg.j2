@@ -21,7 +21,7 @@ global
     # Default ciphers to use on SSL-enabled listening sockets.
     # For more information, see ciphers(1SSL). This list is from:
     #  https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
-    ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+    ssl-default-bind-ciphers EECDH+AESGCM:EDH+AESGCM:EECDH+AES256:EDH+AES256:EECDH+AES128:EDH+AES:RSA+AESGCM:RSA+AES:!aNULL:!eNULL:!LOW:!EXPORT:!MEDIUM:!MD5:!PSK:!RSAPSK:!SRP:!DSS:!CAMELLIA:!RC4:!3DES
     ssl-default-bind-options no-sslv3
 
     # Setting tune.ssl.default-dh-param to 1024 by default, if your workload permits it you should set it to at least 2048
@@ -69,16 +69,6 @@ frontend www-frontend
     {{ conf_haproxy_www_request }}
 {% endif %}
 
-    # primary cert is /etc/cert/server.pem
-    # /etc/cert/certdir/ contains additional certificates for SNI clients
-    # bind :443 ssl crt /etc/cert/cacert.pem crt /etc/cert/certdir/
-    # bind :443 ssl crt /etc/cert/cacert.pem
-
-    # bind :443 ssl crt /etc/cert/ ca-file /etc/cert/ca/GandiStandardSSLCA2.pem ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
-    # bind :443 ssl crt /etc/cert/ ca-file /etc/cert/ca/ ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
-
-    # bind :443 ssl crt /etc/certs/ ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
-
 {% if conf_haproxy_www_redirect is defined %}
     # redirect
     {{ conf_haproxy_www_redirect }}
@@ -104,7 +94,7 @@ frontend www-frontend
 {% endif %}
 {% else %}
     # See: http://comments.gmane.org/gmane.comp.web.haproxy/18273
-    bind :443 ssl crt /etc/certs/ no-sslv3 ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS:!AES256
+    bind :443 ssl crt /etc/certs/ no-sslv3 ciphers EECDH+AESGCM:EDH+AESGCM:EECDH+AES256:EDH+AES256:EECDH+AES128:EDH+AES:RSA+AESGCM:RSA+AES:!aNULL:!eNULL:!LOW:!EXPORT:!MEDIUM:!MD5:!PSK:!RSAPSK:!SRP:!DSS:!CAMELLIA:!RC4:!3DES
 {% endif %}
     bind :80
 
