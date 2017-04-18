@@ -58,7 +58,7 @@ sub vcl_hash {
 sub vcl_recv {
   # Allow purging.
   if (req.request == "PURGE") {
-      if (!client.ip ~ purge) {
+      if (req.http.X-Forwarded-For || !client.ip ~ purge) {
           error 405 "This IP is not allowed to send PURGE requests.";
       }
 
