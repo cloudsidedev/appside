@@ -72,6 +72,12 @@
 #
 # woodwing
 #
+- name: create vhost enterprise folder
+  file: path=/var/www/vhosts/{{ item.key }}/enterprise state=directory owner=deploy group=deploy mode=0755
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
 - name: check if EnterpriseServer has been extracted
   stat: path=/tmp/EnterpriseServer/Enterprise/index.php
   register: EnterpriseServer
@@ -94,7 +100,7 @@
 - name: rsync EnterpriseServer
   synchronize:
     src: /tmp/EnterpriseServer/Enterprise/
-    dest: /var/www/vhosts/{{ item.key }}/
+    dest: /var/www/vhosts/{{ item.key }}/enterprise/
     rsync_opts:
       - "--exclude=config/config.php --exclude=config/configserver.php"
   with_dict: '{{ conf_vhosts_common }}'
@@ -103,13 +109,13 @@
   tags: [ woodwing ]
 
 - name: provision woodwing config.php template
-  template: src={{ item.value.type }}/config.php.j2 dest=/var/www/vhosts/{{ item.key }}/config/config.php owner=deploy group={{ conf_www_group }} mode=0644
+  template: src={{ item.value.type }}/config.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/config/config.php owner=deploy group={{ conf_www_group }} mode=0644
   with_dict: '{{ conf_vhosts_common }}'
   when: item.value.state == "enabled" and item.value.type == "woodwing"
   tags: [ woodwing, woodwing-conf ]
 
 - name: provision woodwing configserver.php template
-  template: src={{ item.value.type }}/configserver.php.j2 dest=/var/www/vhosts/{{ item.key }}/config/configserver.php owner=deploy group={{ conf_www_group }} mode=0644
+  template: src={{ item.value.type }}/configserver.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/config/configserver.php owner=deploy group={{ conf_www_group }} mode=0644
   with_dict: '{{ conf_vhosts_common }}'
   when: item.value.state == "enabled" and item.value.type == "woodwing"
   tags: [ woodwing, woodwing-conf ]
