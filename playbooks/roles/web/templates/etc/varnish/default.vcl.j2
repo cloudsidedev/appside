@@ -62,6 +62,11 @@ sub vcl_recv {
           error 405 "This IP is not allowed to send PURGE requests.";
       }
 
+      if (req.http.X-Purge-Method && req.http.X-Purge-Method ~ "(?i)regex") {
+        ban("obj.http.X-Req-URL ~ " + req.url + " && obj.http.X-Req-Host == " + req.http.host);
+        error 200 "Ban added";
+      }
+
       # Force entry into vcl_hit() or vcl_miss() below and purge the actual cache.
       return (lookup);
   }
@@ -128,6 +133,9 @@ sub vcl_recv {
 # sub vcl_fetch #
 #################
 sub vcl_fetch {
+  set beresp.http.X-Req-Host = req.http.host;
+  set beresp.http.X-Req-URL = req.url;
+
   # Strip any cookies before a static file is inserted into cache.
   if (req.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
      unset beresp.http.set-cookie;
@@ -200,6 +208,9 @@ sub vcl_pass {
 # sub vcl_deliver #
 ###################
 sub vcl_deliver {
+  unset resp.http.X-Req-Host;
+  unset resp.http.X-Req-URL;
+
   # If the page is already cached return a HIT header, otherwise MISS.
   if (obj.hits > 0) {
     set resp.http.X-Cache = "HIT";
