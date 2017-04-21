@@ -94,10 +94,12 @@
 
 - name: create /var/www/vhosts directory
   file: path=/var/www/vhosts state=directory owner={{ conf_www_group }} group={{ conf_www_group }} mode=0755
+  ignore_errors: yes
   tags: [ apache2, apache2-conf ]
 
 - name: create /var/www/vhosts-archived directory
   file: path=/var/www/vhosts-archived state=directory owner=root group={{ conf_www_group }} mode=0755
+  ignore_errors: yes
   tags: [ apache2, apache2-conf ]
 
 - name: create /var/www/html directory
