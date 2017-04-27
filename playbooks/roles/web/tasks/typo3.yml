@@ -45,11 +45,11 @@
 # # staging and production: shared/web/app
 # #
 #
-# - name: check typo3 app folder if enabled (common)
-#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/app state=directory owner=deploy group={{ conf_www_group }} mode=0775
-#   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
-#   with_dict: '{{ conf_vhosts_common }}'
-#   tags: [ vhosts ]
+- name: check typo3 web folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
 #
 # - name: check typo3 app folder if enabled (common)
 #   file: path=/var/www/vhosts/{{ item.key }}/web/app state=directory owner=deploy group={{ conf_www_group }} mode=0775
@@ -83,6 +83,36 @@
 #   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
 #   with_dict: '{{ conf_vhosts_common }}'
 #   tags: [ vhosts ]
+
+- name: create vhost gluster web if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/files if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/files state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/files_protected if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/files_protected state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/typo3temp if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/typo3temp state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/uploads if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/uploads state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
 
 #
 # shared/web/.htaccess (staging and production)

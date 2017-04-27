@@ -6,7 +6,7 @@
 # create vhost gluster uploads if enabled
 #
 - name: create vhost gluster uploads if enabled (Common)
-  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{  item.value.glusterfs_uploads }} state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }} state=directory owner=deploy group={{ conf_www_group }} mode=0775
   when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ vhosts ]
