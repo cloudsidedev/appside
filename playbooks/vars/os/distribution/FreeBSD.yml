@@ -20,7 +20,7 @@ conf_base_packages:
     - vim-lite
     - uptimed
     - tmux
-    - mosh
+    # - mosh
     - tree
     - unzip
     - zip
@@ -33,11 +33,12 @@ conf_base_packages:
     - curl
     - links
     - lynx
-    - linux_base-f10
+    # - linux_base-f10
     - "{{ var_package_git }}"
     - tig
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
+conf_ssh_service: sshd
 
 #
 # MySQL/Percona

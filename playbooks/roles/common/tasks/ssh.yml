@@ -20,5 +20,5 @@
   tags: [ ssh, sshd, sshd-conf ]
 
 - name: enable ssh service
-  service: name=ssh state=started enabled=yes
+  service: name={{ conf_ssh_service }} state=started enabled=yes
   tags: [ ssh, sshd, sshd-conf ]

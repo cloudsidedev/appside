@@ -22,6 +22,7 @@ conf_base_packages:
     # - xfsprogs
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
+conf_ssh_service: sshd
 
 #
 # MySQL/Percona
