@@ -54,6 +54,22 @@
   when: ansible_os_family == "RedHat"
   tags: [ nodejs, web_packages ]
 
+###########
+# FreeBSD #
+###########
+
+- name: be sure nodejs packages packages are installed (FreeBSD family)
+  package: name={{ item }} state=present
+  with_items:
+    - node
+    - npm
+  when: ansible_os_family == "FreeBSD"
+  tags: [ nodejs, web_packages ]
+
+###########
+# Generic #
+###########
+
 - name: ensure Node packages are present
   npm: name={{ item }} global=yes state=present
   with_items:
