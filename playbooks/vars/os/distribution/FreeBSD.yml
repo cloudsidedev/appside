@@ -5,15 +5,15 @@
 #
 # Base
 #
-conf_root_shell:
-conf_etc_path:
-conf_local_etc_path:
-conf_lib_path:
-conf_bin_path:
-conf_zsh_path:
-conf_root_group:
-conf_www_group:
-conf_sudo_nopasswd_group:
+conf_root_shell: "/bin/csh"
+conf_etc_path: "/etc"
+conf_local_etc_path: "/usr/local/etc"
+conf_lib_path: "/usr/local/lib"
+conf_bin_path: "/usr/local/bin"
+conf_zsh_path: "/usr/local/bin/zsh"
+conf_root_group: "wheel"
+conf_www_group: "www"
+conf_sudo_nopasswd_group: wheel
 conf_unwanted_packages:
 conf_base_packages:
     - zsh
@@ -34,6 +34,7 @@ conf_base_packages:
     - links
     - lynx
     # - linux_base-f10
+    - go
     - "{{ var_package_git }}"
     - tig
 conf_php_cli: "/usr/bin/php"
