@@ -110,7 +110,8 @@ define ('DBPASS', '{{ item.value.db_password }}'); 		// Password for the databas
 if( OS == 'WIN' )
 	define ('ATTACHMENTDIRECTORY', 'c:/FileStore');
 else // Mac OSX & UNIX:
-	define ('ATTACHMENTDIRECTORY', '/mnt/glusterfs/gvol0/brick1/uploads/{{  item.value.glusterfs_uploads }}');
+	// define ('ATTACHMENTDIRECTORY', '/mnt/glusterfs/gvol0/brick1/uploads/{{  item.value.glusterfs_uploads }}');
+	define ('ATTACHMENTDIRECTORY', '/mnt/nfs/woodwing/{{  item.key }}');
 
 define ('WOODWINGSYSTEMDIRECTORY', ATTACHMENTDIRECTORY     . '/_SYSTEM_'); // no ending '/'
 define ('TEMPDIRECTORY',           WOODWINGSYSTEMDIRECTORY . '/Temp');     // no ending '/'

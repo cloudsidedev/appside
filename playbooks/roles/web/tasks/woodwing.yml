@@ -119,3 +119,30 @@
   with_dict: '{{ conf_vhosts_common }}'
   when: item.value.state == "enabled" and item.value.type == "woodwing"
   tags: [ woodwing, woodwing-conf ]
+
+#
+# Upload folders
+#
+- name: create vhost woodwing Export
+  file: path=/mnt/nfs/woodwing/{{  item.key }}/_SYSTEM_/Export state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing Temp
+  file: path=/mnt/nfs/woodwing/{{  item.key }}/_SYSTEM_/Temp state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing Persistent
+  file: path=/mnt/nfs/woodwing/{{  item.key }}/_SYSTEM_/Persistent state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing TermsFiles
+  file: path=/mnt/nfs/woodwing/{{  item.key }}/_SYSTEM_/TermsFiles state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
