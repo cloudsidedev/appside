@@ -93,6 +93,10 @@
   when: conf_env != "local" and conf_nullmailer_enable == true
   tags: [ common ]
 
+- include: nfs.yml
+  # when: conf_nfs_enable is defined and conf_nfs_enable == true
+  tags: [ common, nfs ]
+
 # Bash prompt
 # - copy: src=../files/profile/nicer-bash-prompt.sh dest=/{{ conf_etc_path }}/profile.d/Z999-nicer-bash-prompt.sh owner=root group={{ conf_root_group }} mode=644
 #   when: ansible_os_family == "Debian"

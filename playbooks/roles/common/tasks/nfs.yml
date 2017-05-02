@@ -1,0 +1,85 @@
+---
+
+# file: playbooks/roles/common/tasks/nfs.yml
+
+#
+# NFS client
+#
+- name: nfs client packages (Debian family)
+  package: name={{ item }} state=latest
+  with_items:
+    - nfs-common
+  when:
+    - conf_nfs_enable is defined and conf_nfs_enable == true and ansible_os_family == "Debian"
+  tags: [ nfs, nfs-conf ]
+
+- name: create nfs mountpoint (/mnt/nfs)
+  file: path=/mnt/nfs state=directory owner=root group={{ conf_root_group }} mode=0755
+  when:
+    - conf_nfs_enable is defined and conf_nfs_enable == true and conf_nfs_autofs is defined and ansible_os_family == "Debian"
+  tags: [ nfs, nfs-conf ]
+
+- name: autofs (Debian family)
+  package: name={{ item }} state=latest
+  with_items:
+    - autofs5
+  when:
+    - conf_nfs_enable is defined and conf_nfs_enable == true and conf_nfs_autofs is defined and ansible_os_family == "Debian"
+  tags: [ nfs, nfs-conf ]
+
+- name: autofs GlusterFS
+  template: src=../../web/templates/etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - "auto.master"
+  when:
+    - conf_nfs_enable is defined and conf_nfs_enable == true and conf_nfs_autofs is defined and ansible_os_family == "Debian"
+  notify: handle_restart_autofs
+  tags: [ nfs, nfs-conf ]
+
+- name: autofs GlusterFS
+  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - "auto.nfs"
+  when:
+    - conf_nfs_enable is defined and conf_nfs_enable == true and conf_nfs_autofs is defined and ansible_os_family == "Debian"
+  notify: handle_restart_autofs
+  tags: [ nfs, nfs-conf ]
+
+#
+# NFS server
+#
+- name: blacklist rpcsec_gss_krb5
+  lineinfile: >
+    state=present
+    dest=/etc/modprobe.d/blacklist.conf
+    line="blacklist rpcsec_gss_krb5"
+  when:
+    - conf_nfs_server_enable is defined and conf_nfs_server_enable == true and ansible_os_family == "Debian"
+  tags: [ nfs, nfs-conf ]
+
+- name: nfs server packages (Debian family)
+  package: name={{ item }} state=latest
+  with_items:
+    - rpcbind
+    - nfs-common
+    - nfs-kernel-server
+  when:
+    - conf_nfs_server_enable is defined and conf_nfs_server_enable == true and ansible_os_family == "Debian"
+  tags: [ nfs ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - default/nfs-common
+      - default/nfs-kernel-server
+      - exports
+  when:
+    - conf_nfs_server_enable is defined and conf_nfs_server_enable == true and ansible_os_family == "Debian"
+  notify: handle_restart_nfs
+  tags: [ nfs, nfs-conf ]
+
+- name: enable nfs service
+  service: name=nfs-kernel-server state=started enabled=yes
+  when:
+    - conf_nfs_server_enable is defined and conf_nfs_server_enable == true and ansible_os_family == "Debian"
+  tags: [ nfs ]
