@@ -38,7 +38,7 @@
   when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
 
 - name: base packages (FreeBSD)
-  pkgng: name={{ item }} state=latest cached=yes
+  pkgng: name={{ item }} state=present cached=yes
   with_items: '{{ conf_base_packages }}'
   when: ansible_distribution == "FreeBSD"
   tags: [ common, pkg, base_packages ]
