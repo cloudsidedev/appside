@@ -20,6 +20,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     apt-get install locales -y && \
     apt-get install ansible -y && \
     apt-get install tmate -y && \
+    apt-get install htop -y && \
     update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
     locale-gen en_US.UTF-8 && \
     dpkg-reconfigure locales && \
