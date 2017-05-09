@@ -20,6 +20,8 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     locale-gen en_US.UTF-8 && \
     dpkg-reconfigure locales && \
     rm -rf /var/lib/apt/lists/*
+CMD ["/bin/bash"]
+
 
 # Install nginx
 #RUN apk add --update nginx=1.10.1-r1 && \
