@@ -29,7 +29,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     #mkdir /run/nginx && \
     #chown -R nginx:www-data /var/lib/nginx
 
-VOLUME
+# VOLUME
 
 # Add the files
 #ADD root /
