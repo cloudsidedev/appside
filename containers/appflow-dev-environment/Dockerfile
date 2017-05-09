@@ -21,7 +21,11 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
     locale-gen en_US.UTF-8 && \
     dpkg-reconfigure locales && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    exec >/dev/tty 2>/dev/tty </dev/tty && \
+    tmate -S /tmp/tmate.sock new-session -d && \
+    tmate -S /tmp/tmate.sock wait tmate-ready && \
+    tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
 
 # Install nginx
 #RUN apk add --update nginx=1.10.1-r1 && \
