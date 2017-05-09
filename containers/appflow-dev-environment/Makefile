@@ -7,6 +7,9 @@ endif
 # Avoid nesting "if .. else if .. else .. endif endif"
 # because maintenance of matching if/else/endif is a pain
 
+SSHPATH := $$(echo $$HOME)/.ssh
+DOCKER_COMMAND := docker
+
 ifneq (,$(findstring CYGWIN,$(uname_S)))
     SSHPATH := /c/Users/$$(echo $$USER)/.ssh
     DOCKER_COMMAND := winpty docker
