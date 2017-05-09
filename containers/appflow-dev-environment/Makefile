@@ -6,29 +6,17 @@ endif
 
 # Avoid nesting "if .. else if .. else .. endif endif"
 # because maintenance of matching if/else/endif is a pain
-
 ifeq ($(uname_S),CYGWIN*)
-    CC := cl
-		echo foo
-endif
-ifeq ($(uname_S),OSF1)
-    CFLAGS += -D_OSF_SOURCE
+    SSHPATH := /c/Users/$$(echo $$USER)/.ssh
 endif
 ifeq ($(uname_S),Linux)
-    CFLAGS += -DNDEBUG
+    SSHPATH := $$(echo $$HOME)/.ssh:/root/.ssh
 endif
-ifeq ($(uname_S),GNU/kFreeBSD)
-    CFLAGS += -D_BSD_ALLOC
-endif
-ifeq ($(uname_S),UnixWare)
-    CFLAGS += -Wextra
-endif
-
 
 all:
 	echo $(uname_S)
 	docker build -t appflow-dev-environment .
-	nohup docker run --privileged -dt -v $$(echo $$HOME)/.ssh:/root/.ssh appflow-dev-environment
+	nohup docker run --privileged -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
 	# docker
 	#nohup
 	#docker run -dt -v /c/Users/$$(echo $$USER)/.ssh:/root/.ssh appflow-dev-environment
