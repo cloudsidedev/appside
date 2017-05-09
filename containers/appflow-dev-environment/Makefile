@@ -18,7 +18,7 @@ endif
 
 all:
 	docker build -t appflow-dev-environment .
-	nohup docker run --name appflow-dev-environment -dt -v $(SSHPATH)/.ssh:/root/.ssh appflow-dev-environment
+	nohup docker run --name appflow-dev-environment -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
 
 clean:
 	../bin/docker-cleanup.sh
