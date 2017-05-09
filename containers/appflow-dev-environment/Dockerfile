@@ -6,8 +6,12 @@ LABEL Description="Testing" Vendor="TTSS AG" Version="1.0"
 
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
+    echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list && \
+    wget https://www.dotdeb.org/dotdeb.gpg && \ # issue here
+    apt-key add dotdeb.gpg && \
     apt-get update && \
     apt-get upgrade -y && \
+    apt-get install php7.0-cli -y && \
     apt-get install vim curl -y && \
     apt-get install supervisor -y && \
     apt-get install logrotate -y && \
