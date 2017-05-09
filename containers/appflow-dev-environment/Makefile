@@ -1,6 +1,6 @@
 all:
 	docker build -t appflow-dev-environment .
-	nohup docker run -dt appflow-dev-environment
+	nohup docker run -dt -v $$(echo $$HOME)/.ssh:/root/.ssh appflow-dev-environment
 	# docker
 
 clean:

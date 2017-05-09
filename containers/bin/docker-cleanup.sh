@@ -11,11 +11,11 @@ then
 else
 
     # stop and rm all containers
-    # docker stop $(docker ps -a -q)
-    # docker rm $(docker ps -a -q)
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
 
     # stop and rm exited containers
-    docker stop $(docker ps -q -f status=exited)
-    docker rm $(docker ps -q -f status=exited)
+    # docker stop $(docker ps -q -f status=exited)
+    # docker rm $(docker ps -q -f status=exited)
 
 fi
