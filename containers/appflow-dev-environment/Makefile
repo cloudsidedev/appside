@@ -6,19 +6,50 @@ endif
 
 # Avoid nesting "if .. else if .. else .. endif endif"
 # because maintenance of matching if/else/endif is a pain
+<<<<<<< HEAD
 ifneq (,$(findstring CYGWIN,$(uname_S)))
   
     SSHPATH := /c/Users/$$(echo $$USER)/.ssh
 endif
 ifeq ($(uname_S),Linux)
     SSHPATH := $$(echo $$HOME)/.ssh
+=======
+
+ifeq ($(uname_S),CYGWIN*)
+    CC := cl
+		echo foo
 endif
+ifeq ($(uname_S),OSF1)
+    CFLAGS += -D_OSF_SOURCE
+endif
+ifeq ($(uname_S),Linux)
+    CFLAGS += -DNDEBUG
+endif
+ifeq ($(uname_S),GNU/kFreeBSD)
+    CFLAGS += -D_BSD_ALLOC
+endif
+ifeq ($(uname_S),UnixWare)
+    CFLAGS += -Wextra
+>>>>>>> 0e029a8f0c9e06a629cd39e5d95d4dbdd6f9d240
+endif
+
 
 all:
 	echo $(uname_S)
+<<<<<<< HEAD
 	echo $(SSHPATH)
 	#docker build -t appflow-dev-environment .
 	#nohup docker run --privileged -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
+=======
+	docker build -t appflow-dev-environment .
+	nohup docker run --name appflow-dev-environment -dt -v $$(echo $$HOME)/.ssh:/root/.ssh appflow-dev-environment
+
+	#exec >/dev/tty 2>/dev/tty </dev/tty && \
+	#tmate -S /tmp/tmate.sock new-session -d && \
+	#tmate -S /tmp/tmate.sock wait tmate-ready && \
+	#tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+
+>>>>>>> 0e029a8f0c9e06a629cd39e5d95d4dbdd6f9d240
 	# docker
 	#nohup
 	#docker run -dt -v /c/Users/$$(echo $$USER)/.ssh:/root/.ssh appflow-dev-environment
@@ -29,7 +60,7 @@ cleanup_all:
 	../bin/docker-cleanup.sh all
 
 shell:
-	docker exec -ti appflow-dev-environment	 sh
+	docker exec -ti appflow-dev-environment	sh
 
 stop:
 	docker ps -a -f ancestor=appflow-dev-environment -q | xargs docker stop
