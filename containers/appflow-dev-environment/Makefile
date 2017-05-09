@@ -1,7 +1,8 @@
 all:
 	docker build -t appflow-dev-environment .
-	nohup docker run -dt appflow-dev-environment 
-	docker
+	nohup docker run -dt appflow-dev-environment
+	# docker
+
 clean:
 	../bin/docker-cleanup.sh
 
@@ -13,6 +14,6 @@ shell:
 
 stop:
 	docker ps -a -f ancestor=appflow-dev-environment -q | xargs docker stop
-	
+
 ip:
 	docker ps -a -f ancestor=appflow-dev-environment -q | xargs docker inspect
