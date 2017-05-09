@@ -25,7 +25,7 @@ cleanup_all:
 	../bin/docker-cleanup.sh all
 
 shell:
-  docker exec -ti appflow-dev-environment sh -c "exec >/dev/tty 2>/dev/tty </dev/tty && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'"
+	docker exec -ti appflow-dev-environment sh -c "exec >/dev/tty 2>/dev/tty </dev/tty && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'"
 
 stop:
 	docker ps -a -f ancestor=appflow-dev-environment -q | xargs docker stop
