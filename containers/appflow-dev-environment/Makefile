@@ -9,9 +9,11 @@ endif
 
 ifneq (,$(findstring CYGWIN,$(uname_S)))
     SSHPATH := /c/Users/$$(echo $$USER)/.ssh
+    DOCKER_COMMAND := winpty docker
 endif
 ifeq ($(uname_S),Linux)
     SSHPATH := $$(echo $$HOME)/.ssh
+    DOCKER_COMMAND := docker
 endif
 
 all:
@@ -25,7 +27,8 @@ cleanup_all:
 	../bin/docker-cleanup.sh all
 
 shell:
-	docker exec -ti appflow-dev-environment sh -c "exec >/dev/tty 2>/dev/tty </dev/tty && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'"
+	echo $(DOCKER_COMMAND)
+	#docker exec -ti appflow-dev-environment sh -c "exec >/dev/tty 2>/dev/tty </dev/tty && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'"
 
 stop:
 	docker ps -a -f ancestor=appflow-dev-environment -q | xargs docker stop
