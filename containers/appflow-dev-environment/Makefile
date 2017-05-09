@@ -6,17 +6,19 @@ endif
 
 # Avoid nesting "if .. else if .. else .. endif endif"
 # because maintenance of matching if/else/endif is a pain
-ifeq ($(uname_S),CYGWIN*)
+ifneq (,$(findstring CYGWIN,$(uname_S)))
+  
     SSHPATH := /c/Users/$$(echo $$USER)/.ssh
 endif
 ifeq ($(uname_S),Linux)
-    SSHPATH := $$(echo $$HOME)/.ssh:/root/.ssh
+    SSHPATH := $$(echo $$HOME)/.ssh
 endif
 
 all:
 	echo $(uname_S)
-	docker build -t appflow-dev-environment .
-	nohup docker run --privileged -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
+	echo $(SSHPATH)
+	#docker build -t appflow-dev-environment .
+	#nohup docker run --privileged -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
 	# docker
 	#nohup
 	#docker run -dt -v /c/Users/$$(echo $$USER)/.ssh:/root/.ssh appflow-dev-environment
