@@ -1,10 +1,22 @@
 FROM debian:stable
 
-MAINTAINER  Luca Di Maio <luca.dimaio@ttss.ch>
+MAINTAINER Luca Di Maio <luca.dimaio@ttss.ch>
 
 LABEL Description="Testing" Vendor="TTSS AG" Version="1.0"
 
-RUN apt update
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install vim curl -y && \
+    apt-get install supervisor -y && \
+    apt-get install logrotate -y && \
+    apt-get install locales -y && \
+    apt-get install ansible -y && \
+    update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
+    locale-gen en_US.UTF-8 && \
+    dpkg-reconfigure locales && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install nginx
 #RUN apk add --update nginx=1.10.1-r1 && \
