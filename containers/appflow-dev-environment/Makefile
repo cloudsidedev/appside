@@ -28,9 +28,10 @@ endif
 all:
 	echo $(uname_S)
 	docker build -t appflow-dev-environment .
-	nohup docker run -dt -v $$(echo $$HOME)/.ssh:/root/.ssh appflow-dev-environment
+	#nohup docker run -dt -v $$(echo $$HOME)/.ssh:/root/.ssh appflow-dev-environment
 	# docker
-
+	#nohup 
+	docker run -dt -v /c/Users/$$(echo $$USER)/.ssh:/root/.ssh appflow-dev-environment
 clean:
 	../bin/docker-cleanup.sh
 
