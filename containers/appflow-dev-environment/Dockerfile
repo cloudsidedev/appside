@@ -13,6 +13,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     apt-key adv --fetch-keys http://www.dotdeb.org/dotdeb.gpg && \
     apt-get update && \
     apt-get upgrade -y && \
+    apt-get install apt-utils -y && \
     apt-get install php7.0-cli -y && \
     apt-get install vim curl -y && \
     apt-get install supervisor -y && \
