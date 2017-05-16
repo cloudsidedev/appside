@@ -1137,12 +1137,18 @@ $ldap_options = array(
 	'EMAIL_NOTIFICATIONS' => true						// Whether or not the email notification options should be enabled for new users imported from LDAP
 );
 
+{% if conf_woodwing_ldap_enable is defined and conf_woodwing_ldap_enable == true %}
 // The port number is mandatory in case an IP-address is used. It will be ignored when an URL is used.
 define( 'LDAP_SERVERS', serialize( array(
-   //  LDAPServer( LDAP server IP, port number, Primary DNS Suffix, Options: see above )
-   // new LDAPServer( '10.91.30.11', 389, 'tst.lan', $ldap_options )
+	new LDAPServer( '{{ conf_woodwing_ldap_ip }}', {{ conf_woodwing_ldap_port }}, '{{ conf_woodwing_ldap_dns }}', $ldap_options )
 )));
-
+{% else %}
+// The port number is mandatory in case an IP-address is used. It will be ignored when an URL is used.
+define( 'LDAP_SERVERS', serialize( array(
+	//  LDAPServer( LDAP server IP, port number, Primary DNS Suffix, Options: see above )
+	// new LDAPServer( '10.91.30.11', 389, 'tst.lan', $ldap_options )
+)));
+{% endif %}
 
 // -------------------------------------------------------------------------------------------------
 // Diagnostics settings
