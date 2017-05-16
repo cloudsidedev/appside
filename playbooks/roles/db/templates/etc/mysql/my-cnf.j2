@@ -37,7 +37,11 @@ local-infile
 
 innodb_log_file_size = {{ conf_mysql_innodb_log_file_size }}
 
-# sql_mode               = STRICT_ALL_TABLES # (WoodWing incompatible)
+{% if conf_woodwing_enable is defined and conf_woodwing_enable == true %}
+# sql_mode             = STRICT_ALL_TABLES # (WoodWing incompatible)
+sql_mode               = NO_ENGINE_SUBSTITUTION
+{% endif %}
+
 ft_min_word_len        = {{ conf_mysql_ft_min_word_len }}
 ft_boolean_syntax      = '{{ conf_mysql_ft_boolean_syntax }}'
 lower_case_table_names = {{ conf_mysql_lower_case_table_names }}
