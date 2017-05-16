@@ -152,3 +152,9 @@
   when: item.value.state == "enabled" and item.value.type == "woodwing"
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing ProductInfo
+  file: path=/mnt/nfs/woodwing/{{  item.key }}/_SYSTEM_/ProductInfo state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
