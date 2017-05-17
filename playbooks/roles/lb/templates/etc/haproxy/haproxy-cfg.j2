@@ -93,8 +93,10 @@ frontend www-frontend
     bind :443 ssl crt /etc/certs/ crt /mnt/glusterfs/gvol0/brick1/certs no-sslv3 ciphers EECDH+AESGCM:EDH+AESGCM:EECDH+AES256:EDH+AES256:EECDH+AES128:EDH+AES:RSA+AESGCM:RSA+AES:!aNULL:!eNULL:!LOW:!EXPORT:!MEDIUM:!MD5:!PSK:!RSAPSK:!SRP:!DSS:!CAMELLIA:!RC4:!3DES
 {% endif %}
 {% else %}
+{% if conf_haproxy_disable_ssl is defined and conf_haproxy_disable_ssl == true %}
     # See: http://comments.gmane.org/gmane.comp.web.haproxy/18273
     bind :443 ssl crt /etc/certs/ no-sslv3 ciphers EECDH+AESGCM:EDH+AESGCM:EECDH+AES256:EDH+AES256:EECDH+AES128:EDH+AES:RSA+AESGCM:RSA+AES:!aNULL:!eNULL:!LOW:!EXPORT:!MEDIUM:!MD5:!PSK:!RSAPSK:!SRP:!DSS:!CAMELLIA:!RC4:!3DES
+{% else %}
 {% endif %}
     bind :80
 
