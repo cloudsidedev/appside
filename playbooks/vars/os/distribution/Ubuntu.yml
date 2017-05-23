@@ -79,7 +79,7 @@ conf_base_packages:
     - traceroute
     - acl
     - make
-    - golang-1.8
+    - golang-1.8-go
     - "{{ var_package_git }}"
     - convmv
     - tig
