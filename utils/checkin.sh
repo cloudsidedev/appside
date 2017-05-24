@@ -25,7 +25,7 @@ for f in $FILES; do
 done
 find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new \;
 changed_files=`(diff /tmp/.appflow-$USER/$tenant/appflow-$env-md5 /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
-if [ $ENC == false ]; then
+if [ "$ENC" = false ]; then
 	make encrypt tenant=$make_tenant env=$env
 fi
 echo $changed_files  | tr ' ' '\n' |  xargs git -C ~/.appflow/tenant/$tenant add
