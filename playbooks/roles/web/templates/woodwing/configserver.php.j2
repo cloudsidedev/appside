@@ -1118,15 +1118,19 @@ require_once BASEDIR.'/server/dataclasses/LDAPServer.class.php';
 //       'EXCLUDE_USERNAMES' => array('woodwing'),
 //       'EMAIL_NOTIFICATIONS' => true
 //
+{% if conf_woodwing_ldap_options is defined %}
 $ldap_options = array(
 {{ conf_woodwing_ldap_options }}
 );
+{% endif %}
 
+{% if conf_woodwing_ldap_options_shared is defined %}
 $ldap_options_shared = array(
 {{ conf_woodwing_ldap_options_shared }}
 );
+{% endif %}
 
-{% if conf_woodwing_ldap_enable is defined and conf_woodwing_ldap_enable == true %}
+{% if conf_woodwing_ldap is defined %}
 // The port number is mandatory in case an IP-address is used. It will be ignored when an URL is used.
 define( 'LDAP_SERVERS', serialize( array(
 {{ conf_woodwing_ldap }}
