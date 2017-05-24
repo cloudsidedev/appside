@@ -1119,28 +1119,17 @@ require_once BASEDIR.'/server/dataclasses/LDAPServer.class.php';
 //       'EMAIL_NOTIFICATIONS' => true
 //
 $ldap_options = array(
-	'AUTH_USER' => '%username%@tst.lan', // %username% will be replaced by entered username
-	'AUTH_PASSWORD' => '%password%',                    // %password% will be replaced by entered password
-	'BASE_DN' => 'DC=tst,DC=lan',     // Search Base e.g. 'dc=myldap,dc=mycompany,dc=local'
-	'USERNAME_ATTRIB' => 'sAMAccountName',              // LDAP attribute that will be matched against entered username
-	'GROUPMEMBER_ATTRIB' => 'memberof',                 // LDAP attribute that will be used to find usergroups, null if you manage groups in Enterprise
-	// Map Enterprise attributes to LDAP attributes. Only Ent att. 'FullName', 'EmailAddress',
-	// 'Language', 'TrackChangesColor', 'Organization', 'Location' are allowed.
- 	// The FullName can be made up from more than one LDAP attribute.
-	// LDAP attributes are always lowercase.
-	'ATTRIB_MAP' => array(
-		'FullName' => array( 'name' ),
-		'EmailAddress' => 'mail'),
-// 	'FULLNAME_SEPARATOR' => ', ',						// Used when the FullName is made up from two (or more) LDAP attributes
-	'GROUP_CLASS' => 'group',                           // LDAP objectClass for groups (e.g. 'group', 'posixGroup')
-	'EXCLUDE_USERNAMES' => array('woodwing','loc_*'),           // Usernames to exclude from LDAP authentication, wildcards (*, ?) can be used
-	'EMAIL_NOTIFICATIONS' => true						// Whether or not the email notification options should be enabled for new users imported from LDAP
+{{ conf_woodwing_ldap_options }}
+);
+
+$ldap_options_shared = array(
+{{ conf_woodwing_ldap_options_shared }}
 );
 
 {% if conf_woodwing_ldap_enable is defined and conf_woodwing_ldap_enable == true %}
 // The port number is mandatory in case an IP-address is used. It will be ignored when an URL is used.
 define( 'LDAP_SERVERS', serialize( array(
-	new LDAPServer( '{{ conf_woodwing_ldap_ip }}', {{ conf_woodwing_ldap_port }}, '{{ conf_woodwing_ldap_dns }}', $ldap_options )
+{{ conf_woodwing_ldap }}
 )));
 {% else %}
 // The port number is mandatory in case an IP-address is used. It will be ignored when an URL is used.
