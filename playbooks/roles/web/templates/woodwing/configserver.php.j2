@@ -1118,6 +1118,7 @@ require_once BASEDIR.'/server/dataclasses/LDAPServer.class.php';
 //       'EXCLUDE_USERNAMES' => array('woodwing'),
 //       'EMAIL_NOTIFICATIONS' => true
 //
+{% if conf_woodwing_ldap_enable is defined and conf_woodwing_ldap_enable == true %}
 {% if conf_woodwing_ldap_options is defined %}
 $ldap_options = array(
 {{ conf_woodwing_ldap_options }}
@@ -1141,6 +1142,7 @@ define( 'LDAP_SERVERS', serialize( array(
 	//  LDAPServer( LDAP server IP, port number, Primary DNS Suffix, Options: see above )
 	// new LDAPServer( '10.91.30.11', 389, 'tst.lan', $ldap_options )
 )));
+{% endif %}
 {% endif %}
 
 // -------------------------------------------------------------------------------------------------
