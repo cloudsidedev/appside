@@ -130,7 +130,7 @@
   tags: [ woodwing, woodwing-plugins ]
 
 - name: create /tmp/BrandLogonManager
-  file: path=/tmp/BrandLogonManager state=directory mode=0750
+  file: path=/tmp/BrandLogonManager state=directory mode=0775
   when: not BrandLogonManager.stat.exists
   tags: [ woodwing, woodwing-plugins ]
 
