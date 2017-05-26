@@ -30,7 +30,7 @@ class BrandLogonManager_EnterprisePlugin extends EnterprisePlugin
 		$limit = $brandLimits['*'];
 		$info = new PluginInfoData();
 		$info->DisplayName = 'Brand Logon Manager - CCU-Liz.: '.$limit;
-		$info->Version     = {{ item.value.brandlogon_woodwing_version }}; // don't use PRODUCTVERSION
+		$info->Version     = "{{ item.value.brandlogon_woodwing_version }}"; // don't use PRODUCTVERSION
 		$info->Description = "Manage logons per Organization, tested with v7.6.x".
 					"\n\nfixed bug in SQL-Statement by Multimedia Solutions AG\n\nKundenlizenzen: ".$limit;
 		$info->Copyright   = COPYRIGHT_WOODWING;
@@ -42,3 +42,5 @@ class BrandLogonManager_EnterprisePlugin extends EnterprisePlugin
 		return array( 'WflLogOn_EnterpriseConnector');
 	}
 }
+
+?>
