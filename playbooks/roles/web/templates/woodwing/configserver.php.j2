@@ -303,7 +303,7 @@ define ('MC_MEDIATOR_ADDRESS', '127.0.0.1');
 //    A UDP port used for the IP address indicated by the MC_MEDIATOR_ADDRESS setting.
 //    Default value: 8094.
 //
-define ('MC_MEDIATOR_PORT', 8094);
+define ('MC_MEDIATOR_PORT', {{ item.value.mc_mediator_port }});
 
 // -------------------------------------------------------------------------------------------------
 // E-mail notification
@@ -312,7 +312,7 @@ define ('MC_MEDIATOR_PORT', 8094);
 // EMAIL_SMTP:
 //    SMTP server to send e-mail. For example: 'smtp.mydomain.com'. Default value: ''.
 //
-define ('EMAIL_SMTP', '');
+define ('EMAIL_SMTP', '{{ item.value.smtp_server }}');
 
 // EMAIL_SMTP_USER:
 //    Log-in user name for your SMTP server. Leave empty when log-in is not required. Default value: ''.
@@ -340,14 +340,14 @@ define ('EMAIL_SSL', '');
 //    When left empty, the e-mail address defined on the User Maintenance page of the user who sent the e-mail is used instead.
 //    Default value: ''.
 //
-define ('EMAIL_SENDER_ADDRESS', '');
+define ('EMAIL_SENDER_ADDRESS', '{{ item.value.smtp_email_sender_address }}');
 
 // EMAIL_SENDER_NAME:
 //    User name to use for the sender of the e-mail.
 //    When left empty, the name defined on the User Maintenance page of the user who sent the e-mail is used instead.
 //    Default value: ''.
 //
-define ('EMAIL_SENDER_NAME', '');
+define ('EMAIL_SENDER_NAME', '{{ item.value.smtp_email_sender_name }}');
 
 // -------------------------------------------------------------------------------------------------
 // InDesign Server / Web Editor settings
@@ -357,7 +357,7 @@ define ('EMAIL_SENDER_NAME', '');
 //    The logical name of the application server to logon to (from an InDesign Server point of view).
 //    This should match the ServerInfo name in the WWSettings.xml file or the APPLICATION_SERVERS setting.
 //
-define ('INDESIGNSERV_APPSERVER', 'tst-sces-11-104' );
+define ('INDESIGNSERV_APPSERVER', '{{ item.value.indesign_server }}' );
 
 // INDESIGNSERV_JOBQUEUES:
 //    For each job type a priority can be specified that overrules the default priority
@@ -412,8 +412,8 @@ define( 'INDESIGNSERV_JOBQUEUES', serialize(array(
 //
 #define ('WEBEDITDIRIDSERV', WOODWINGSYSTEMDIRECTORY.'/WebEdit/');
 
-        define( 'WEBEDITDIR', '/woodwing/filestore/Export/webedit/' );
-        define( 'WEBEDITDIRIDSERV', '//10.91.30.51/Export/webedit/' );
+        define( 'WEBEDITDIR', '{{ item.value.webedit_local_dir }}' );
+        define( 'WEBEDITDIRIDSERV', '{{ item.value.webedit_server_share }}' );
 
 // CURL:
 //	InDesign Server background job needs to have CURL installed and defined.
@@ -738,12 +738,12 @@ define('MTP_POSTPROCESS_LOC', 	SERVERURL_ROOT.INETROOT.'/server/MadeToPrintPostP
 define ('SERVERFEATURES', serialize(array(
 	new Feature( 'Messaging' ),
 	new Feature( 'Broadcasting' ),
-	new Feature( 'EventPort' , 8093 ),
-	new Feature( 'CompanyLanguage' , 'deDE'),
+	new Feature( 'EventPort' , {{ item.value.event_port }} ),
+	new Feature( 'CompanyLanguage' , '{{ item.value.company_language }}'),
 	new Feature( 'KeepCheckedOut' ),
-        new Feature( 'AlwaysSaveDocIntoDatabase' ),
-        new Feature( 'UpdateAllContentAfterOpenArticle' ),
-        new Feature( 'ContentStationAcceptAllChanges' )
+  new Feature( 'AlwaysSaveDocIntoDatabase' ),
+  new Feature( 'UpdateAllContentAfterOpenArticle' ),
+  new Feature( 'ContentStationAcceptAllChanges' )
 
 )));
 
