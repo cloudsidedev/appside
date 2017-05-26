@@ -145,7 +145,7 @@
 - name: rsync EnterpriseServer plugin BrandLogonManager
   synchronize:
     src: /tmp/BrandLogonManager/
-    dest: /var/www/vhosts/{{ item.key }}/enterprise/server/plugins/BrandLogonManager/
+    dest: /var/www/vhosts/{{ item.key }}/enterprise/server/plugins/
     rsync_opts:
       - "--exclude=config.php --exclude=PluginInfo.php"
   with_dict: '{{ conf_vhosts_common }}'
