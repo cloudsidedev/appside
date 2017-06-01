@@ -3,13 +3,13 @@
 #
 
 # Listen for connections from SNMP Server - Format: udp:127.0.0.1:161
-agentAddress {{ snmp_agent_address }}
+agentAddress {{ conf_snmp_agent_address }}
 
 # SNMPv2 configuration
-rocommunity {{ snmp_ro_communiy }}
-syslocation "{{ snmp_sys_location }}"
-syscontact "{{ snmp_sys_contact }}"
+rocommunity {{ conf_snmp_ro_communiy }}
+syslocation "{{ conf_snmp_sys_location }}"
+syscontact "{{ conf_snmp_sys_contact }}"
 
-SNMPDOPTS='"{{ snmp_daemon_options }}"'
+SNMPDOPTS='"{{ conf_snmp_daemon_options }}"'
 
 proc nsd

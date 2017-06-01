@@ -1,18 +1,22 @@
-name: create /etc/snmp
-  file: path=/etc/snmp state=directory owner=root group={{ conf_root_group }} mode=0755
-  tags: [ snmpd ]
-
-name: be sure snmp package is installed (Debian family)
-  apt: pkg={{ item }} state=installed
+- name: install snmpd (Debian family)
+  apt: pkg=snmpd state=latest
   with_items:
     - snmp
   when: ansible_os_family == "Debian"
   tags: [ snmpd ]
-  
-name: deploy /etc/snmp/snmpd.conf
+
+- name: activate snmpd service
+  service: name=nullmailer state=started enabled=yes
+  tags: [ snmpd ]
+
+- name: create /etc/snmp
+  file: path=/etc/snmp state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ snmpd ]
+
+- name: deploy /etc/snmp/snmpd.conf
   template: src=etc/snmp/snmpd.conf.j2 dest=/etc/snmp/snmpd.conf owner=root group={{ conf_root_group }} mode=0600
   tags: [ snmpd ]
 
-name: deploy /etc/snmp/snmptrapd.conf
+- name: deploy /etc/snmp/snmptrapd.conf
   template: src=etc/snmp/snmptrapd.conf.j2 dest=/etc/snmp/snmptrapd.conf owner=root group={{ conf_root_group }} mode=0600
   tags: [ snmpd ]
