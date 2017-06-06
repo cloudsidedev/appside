@@ -167,6 +167,7 @@
               create=yes
               owner=root group={{ conf_root_group }} mode=0644
               state=present
+  when: conf_web_cron_enable is defined and conf_web_cron_enable == true
   tags: [ woodwing, woodwing-conf ]
 
 - name: deploy idsjobsindex-cron entries if enabled
