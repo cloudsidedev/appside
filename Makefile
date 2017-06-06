@@ -166,7 +166,8 @@ jenkins:
 
 local:
 	@printf "[$(.BOLD)$(.CYAN)auto-provision$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
-	@ansible-playbook $(args) --limit local -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/local.yml
+	@ansible-playbook $(args) --limit local -i ~/.appflow/tenant/$($(tenant))/$(env)/inventory playbooks/local.yml \
+--vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 ssh:
 	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
