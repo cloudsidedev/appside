@@ -91,7 +91,11 @@
 
 - include: nullmailer.yml
   when: conf_env != "local" and conf_nullmailer_enable == true
-  tags: [ common ]
+  tags: [ common, nullmailer ]
+
+- include: snmpd.yml
+  when: conf_env != "local" and conf_snmpd_enable is defined and conf_snmpd_enable == true
+  tags: [ common, snmpd ]
 
 - include: nfs.yml
   # when: conf_nfs_enable is defined and conf_nfs_enable == true
