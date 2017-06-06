@@ -158,3 +158,22 @@
   when: item.value.state == "enabled" and item.value.type == "woodwing"
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ woodwing, woodwing-conf ]
+
+- name: deploy woodwing-cron entries if enabled
+  lineinfile: dest={{ conf_web_cron }}
+              regexp='^MAILTO=""'
+              line='MAILTO=""'
+              insertbefore=BOF
+              create=yes
+              owner=root group={{ conf_root_group }} mode=0644
+              state=present
+  tags: [ woodwing, woodwing-conf ]
+
+- name: deploy idsjobsindex-cron entries if enabled
+  lineinfile: dest={{ conf_web_cron }}
+              line='* * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl http://{{ item.value.servername }}/enterprise/idsjobindex.php?maxexectime=15&maxjobprocesses=3'
+              insertafter=EOF
+              state=present
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
