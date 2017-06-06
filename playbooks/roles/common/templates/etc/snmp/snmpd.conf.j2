@@ -1,0 +1,15 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+# Listen for connections from SNMP Server - Format: udp:127.0.0.1:161
+agentAddress {{ conf_snmpd_agent_address }}
+
+# SNMPv2 configuration
+rocommunity {{ conf_snmpd_ro_communiy }}
+syslocation "{{ conf_snmpd_sys_location }}"
+syscontact "{{ conf_snmpd_sys_contact }}"
+
+SNMPDOPTS='"{{ conf_snmpd_daemon_options }}"'
+
+proc nsd
