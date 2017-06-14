@@ -14,6 +14,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install git -y && \
+    apt-get install make -y && \
     apt-get install apt-utils -y && \
     apt-get install php7.0-cli -y && \
     apt-get install vim curl -y && \
@@ -26,8 +27,10 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
     locale-gen en_US.UTF-8 && \
     dpkg-reconfigure locales && \
-    rm -rf /var/lib/apt/lists/* \
-    git clone https://github.com/ttssdev/appflow /opt/appflow \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://github.com/ttssdev/appflow /opt/appflow && \
+    ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
+    
     
 
 # Install nginx
