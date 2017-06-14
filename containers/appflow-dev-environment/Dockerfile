@@ -29,7 +29,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     dpkg-reconfigure locales && \
     rm -rf /var/lib/apt/lists/* && \
     git clone https://github.com/ttssdev/appflow /opt/appflow && \
-    ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
+    ln -s /opt/appflow/appflow /usr/local/bin/appflow
     
     
 
