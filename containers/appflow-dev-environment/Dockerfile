@@ -14,6 +14,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install git -y && \
+    apt-get install apt-utils -y && \
     apt-get install php7.0-cli -y && \
     apt-get install vim curl -y && \
     apt-get install supervisor -y && \
@@ -21,6 +22,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     apt-get install locales -y && \
     apt-get install ansible -y && \
     apt-get install tmate -y && \
+    apt-get install htop -y && \
     update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
     locale-gen en_US.UTF-8 && \
     dpkg-reconfigure locales && \
