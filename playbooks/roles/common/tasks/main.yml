@@ -53,6 +53,10 @@
   when: conf_env == "local"
   tags: [ common ]
 
+- include: firewall.yml
+  when: conf_firewall_enable is defined and conf_firewall_enable == true
+  tags: [ common, firewall ]
+
 - include: etckeeper.yml
   when: conf_etckeeper_webhook_url is defined
   tags: [ common ]
@@ -91,7 +95,11 @@
 
 - include: nullmailer.yml
   when: conf_env != "local" and conf_nullmailer_enable == true
-  tags: [ common ]
+  tags: [ common, nullmailer ]
+
+- include: snmpd.yml
+  when: conf_env != "local" and conf_snmpd_enable is defined and conf_snmpd_enable == true
+  tags: [ common, snmpd ]
 
 - include: nfs.yml
   # when: conf_nfs_enable is defined and conf_nfs_enable == true

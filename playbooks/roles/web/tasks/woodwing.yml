@@ -121,6 +121,51 @@
   tags: [ woodwing, woodwing-conf ]
 
 #
+# Plugins
+#
+- name: check if BrandLogonManager has been extracted
+  stat: path=/tmp/BrandLogonManager/config.php
+  register: BrandLogonManager
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: create /tmp/BrandLogonManager
+  file: path=/tmp/BrandLogonManager state=directory mode=0775
+  when: not BrandLogonManager.stat.exists
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: download and unarchive EnterpriseServer plugin BrandLogonManager
+  unarchive:
+    src: "{{ conf_brandlogonmanager_es_url }}"
+    dest: /tmp/BrandLogonManager
+    remote_src: true
+  when: not BrandLogonManager.stat.exists
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: rsync EnterpriseServer plugin BrandLogonManager
+  synchronize:
+    src: /tmp/BrandLogonManager/
+    dest: /var/www/vhosts/{{ item.key }}/enterprise/server/plugins/
+    rsync_opts:
+      - "--exclude=config.php --exclude=PluginInfo.php"
+  with_dict: '{{ conf_vhosts_common }}'
+  delegate_to: "{{ inventory_hostname }}"
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: provision woodwing plugin BrandLogonManager config template
+  template: src={{ item.value.type }}/plugins/BrandLogonManager/config.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/server/plugins/BrandLogonManager/config.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf, woodwing-plugins ]
+
+- name: provision woodwing plugin BrandLogonManager plugininfo template
+  template: src={{ item.value.type }}/plugins/BrandLogonManager/PluginInfo.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/server/plugins/BrandLogonManager/PluginInfo.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf, woodwing-plugins ]
+
+#
 # Upload folders
 #
 - name: create vhost woodwing Export
@@ -156,5 +201,25 @@
 - name: create vhost woodwing ProductInfo
   file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/ProductInfo state=directory owner=deploy group={{ conf_www_group }} mode=0775
   when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: deploy woodwing-cron entries if enabled
+  lineinfile: dest=/etc/cron.d/woodwing-cron
+              regexp='^MAILTO=""'
+              line='MAILTO=""'
+              insertbefore=BOF
+              create=yes
+              owner=root group={{ conf_root_group }} mode=0644
+              state=present
+  when: conf_web_cron_enable is defined and conf_web_cron_enable == true
+  tags: [ woodwing, woodwing-conf ]
+
+- name: deploy idsjobsindex-cron entries if enabled
+  lineinfile: dest=/etc/cron.d/woodwing-cron
+              line='* * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl "http://{{ item.value.servername }}/enterprise/idsjobindex.php?maxexectime=15&maxjobprocesses=3"'
+              insertafter=EOF
+              state=present
+  when: item.value.state == "enabled" and item.value.type == "woodwing" and conf_web_cron_enable is defined and conf_web_cron_enable == true
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ woodwing, woodwing-conf ]

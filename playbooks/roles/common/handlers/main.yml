@@ -52,3 +52,6 @@
 
 - name: handle_assh_configbuild
   shell: /usr/local/go/bin/assh config build > ~/.ssh/config
+
+- name: restart firewall
+  service: name=firewall state=restarted
