@@ -1,6 +1,9 @@
 #!/bin/bash
-
-pushd ~/appflow/ > /dev/null
+if [ -d /opt/appflow/ ]; then 
+    pushd /opt/appflow/ > /dev/null
+else
+    pushd ~/appflow/ > /dev/null
+fi
 if [[ -z $1 || $1 == *"help" || $1 == "-h" ]]; then
 	make
 	echo "	[action]	=	{ debug | help | update | init | tags | tags= | provision
