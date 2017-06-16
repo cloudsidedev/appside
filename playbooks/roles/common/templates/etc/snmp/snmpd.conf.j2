@@ -6,7 +6,7 @@
 agentAddress {{ conf_snmpd_agent_address }}
 
 # SNMPv2 configuration
-rocommunity {{ conf_snmpd_ro_communiy }}
+rocommunity "{{ conf_snmpd_ro_community }}"
 syslocation "{{ conf_snmpd_sys_location }}"
 syscontact "{{ conf_snmpd_sys_contact }}"
 
