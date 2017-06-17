@@ -2,9 +2,11 @@ FROM debian:stable
 
 MAINTAINER Luca Di Maio <luca.dimaio@ttss.ch>
 
-LABEL Description="Testing" Vendor="TTSS AG" Version="1.0"
+LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+COPY run.sh /usr/local/bin/run.sh
 
 RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
     echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list && \
@@ -29,9 +31,14 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /e
     dpkg-reconfigure locales && \
     rm -rf /var/lib/apt/lists/* && \
     git clone https://github.com/ttssdev/appflow /opt/appflow && \
-    ln -s /opt/appflow/appflow /usr/local/bin/appflow
-    
-    
+    ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
+    chmod +x /usr/local/bin/run.sh
+
+# WORKDIR /home/appflow
+# ENV HOME=/home/appflow
+# USER appflow
+
+ENTRYPOINT ["run.sh"]
 
 # Install nginx
 #RUN apk add --update nginx=1.10.1-r1 && \
