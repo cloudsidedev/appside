@@ -23,6 +23,13 @@ all:
 	docker build -t appflow-dev-environment .
 	nohup docker run --name appflow-dev-environment -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
 
+run:
+	# nohup docker run --name appflow-dev-environment -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
+	docker run --name appflow-dev-environment -dt -v $(SSHPATH):/root/.ssh appflow-dev-environment
+
+exec:
+	docker exec -ti appflow-dev-environment bash
+
 clean:
 	../bin/docker-cleanup.sh
 
