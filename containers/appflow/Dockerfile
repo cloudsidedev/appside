@@ -18,7 +18,7 @@ RUN useradd -ms /bin/bash appflow && \
     apt-get install make -y && \
     apt-get install apt-utils -y && \
     apt-get install php7.1-cli -y && \
-    apt-get install vim curl -y && \
+    apt-get install curl -y && \
     apt-get install supervisor -y && \
     apt-get install logrotate -y && \
     apt-get install locales -y && \
@@ -29,7 +29,6 @@ RUN useradd -ms /bin/bash appflow && \
     rm -rf /var/lib/apt/lists/* && \
     git clone https://github.com/ttssdev/appflow /opt/appflow && \
     ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
-    chmod +x /usr/local/bin/run.sh && \
     chown -R appflow:appflow /opt/appflow
 
 WORKDIR /home/appflow
