@@ -23,7 +23,7 @@ RUN echo "===> Adding appflow user..."  && \
     \
     \
     echo "===> Installing packages)..."  && \
-    apk --update add openssh-client rsync git make && \
+    apk --update add openssh-client rsync git make bash && \
     \
     \
     echo "===> Removing package list..."  && \
