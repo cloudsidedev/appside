@@ -22,6 +22,7 @@ RUN useradd -ms /bin/bash appflow && \
     apt-get install curl -y && \
     apt-get install locales -y && \
     apt-get install golang-1.7-go -y && \
+    apt-get install golang-go -y && \
     apt-get install ansible -y && \
     update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX && \
     locale-gen en_US.UTF-8 && \
