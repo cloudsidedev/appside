@@ -7,6 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN useradd -ms /bin/bash appflow && \
     chown -R appflow:appflow /usr/local &&  \
+    apt-get update && \
+    apt-get install gnupg2 -y && \
     echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list && \
     echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && \
