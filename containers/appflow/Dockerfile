@@ -3,7 +3,11 @@ FROM php:7-alpine
 LABEL Authors="Ivo Marino <ivo.marino@ttss.ch>, Luca Di Maio <luca.dimaio@ttss.ch>"
 LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 
-RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
+RUN echo "===> Adding appflow user..."  && \
+    adduser -D -u 1000 appflow && \
+    \
+    \
+    echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
     \
@@ -18,8 +22,8 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     pip install ansible                && \
     \
     \
-    echo "===> Installing handy tools (not absolutely required)..."  && \
-    apk --update add sshpass openssh-client rsync  && \
+    echo "===> Installing packages)..."  && \
+    apk --update add openssh-client rsync git make && \
     \
     \
     echo "===> Removing package list..."  && \
@@ -29,6 +33,21 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     echo "===> Adding hosts for convenience..."  && \
     mkdir -p /etc/ansible                        && \
-    echo 'localhost' > /etc/ansible/hosts
+    echo 'localhost' > /etc/ansible/hosts        && \
+    \
+    \
+    echo "===> Cloning AppFlow..."  && \
+    git clone https://github.com/ttssdev/appflow /opt/appflow  && \
+    ln -s /opt/appflow/appflow /usr/local/bin/appflow          && \
+    chown -R appflow:appflow /opt/appflow
 
-CMD [ "ansible-playbook", "--version" ]
+WORKDIR /home/appflow
+ENV HOME=/home/appflow
+USER appflow
+
+# ENTRYPOINT ["run.sh"]
+ENTRYPOINT ["appflow"]
+
+# CMD ["appflow"]
+# CMD [ "php", "./your-script.php" ]
+# CMD [ "ansible-playbook", "--version" ]
