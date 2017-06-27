@@ -18,11 +18,8 @@ RUN useradd -ms /bin/bash appflow && \
     apt-get upgrade -y && \
     apt-get install git -y && \
     apt-get install make -y && \
-    apt-get install apt-utils -y && \
     apt-get install php7.0-cli -y && \
     apt-get install curl -y && \
-    apt-get install supervisor -y && \
-    apt-get install logrotate -y && \
     apt-get install locales -y && \
     apt-get install golang-1.7-go -y && \
     apt-get install ansible -y && \
