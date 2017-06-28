@@ -19,22 +19,47 @@ function check_dirs() {
   return $rc
 }
 
+function check_docker() {
+  local rc=-1
+
+  RES=$(docker --version | grep "Docker version")
+  if [[ $? -eq 0 ]]; then
+    RES=$(docker ps)
+    if [[ $? -eq 0 ]]; then
+      rc=0
+    fi
+  fi
+
+  return $rc
+}
+
 function check_ssh_agent_container() {
   local rc=-1
 
-  RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
-  if [ ! "${RES}" ]; then
+  RES=$(docker ps -q -f status=exited -f name=^/ssh-agent$)
+  if [ "${RES}" ]; then
     echo -n "starting whilp/ssh-agent... "
-    $(docker run -u 1000 -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+    $(docker start ssh-agent > /dev/null)
     if [[ $? -eq 0 ]]; then
       echo "done."
       rc=0
     else
       echo "failed."
     fi
-
   else
-    rc=0
+    RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
+    if [ ! "${RES}" ]; then
+      echo -n "running whilp/ssh-agent... "
+      $(docker run -u 1000 -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      if [[ $? -eq 0 ]]; then
+        echo "done."
+        rc=0
+      else
+        echo "failed."
+      fi
+    else
+      rc=0
+    fi
   fi
 
   return $rc
@@ -64,13 +89,21 @@ function check_ssh_key() {
 check_dirs
 if [[ $? -eq 0 ]]; then
 
-  check_ssh_agent_container
+  check_docker
   if [[ $? -eq 0 ]]; then
 
-    check_ssh_key
+    check_ssh_agent_container
     if [[ $? -eq 0 ]]; then
-      docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
+
+      check_ssh_key
+      if [[ $? -eq 0 ]]; then
+        docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
+      fi
     fi
+
+  else
+    echo "Docker not available or not running."
+    exit -1
   fi
 
 else
