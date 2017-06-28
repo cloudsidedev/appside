@@ -1,10 +1,9 @@
 #!/bin/bash
 
 #
-# Steps:
+# Install:
 #
-#   - Check if containers exist: whilp/ssh-agent and ttssdev/appflow
-#   - Check if folders exist: check_dirs()
+# curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
 #
 
 CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh"
