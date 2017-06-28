@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#
+# Steps:
+#
+#   - Check if containers exist: whilp/ssh-agent and ttssdev/appflow
+#   - Check if folders exist:
+#
+#     - ~/.appflow
+#     - ~/.ssh
+#
+
+RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
+if [ ! "${RES}" ]; then
+  echo "Container doesn't exist"
+else
+  RES=$(docker run -u 1000 --rm -v appflow_ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null ; echo $?)
+  if [[ "${RES}" -eq 0 ]]; then
+    echo "yeah ssh key"
+
+    docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
+
+  else
+    RES=$(docker run -u 1000 --rm -v appflow_ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null ; echo $?)
+    if [[ "${RES}" -eq 0 ]]; then
+      echo "ssh key injected successfully."
+    fi
+  fi
+fi
