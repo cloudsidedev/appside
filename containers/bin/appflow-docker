@@ -7,6 +7,9 @@
 #   - Check if folders exist: check_dirs()
 #
 
+CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh"
+CFG_DOCKER_ENVS="-e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER"
+
 function check_dirs() {
   local rc=-1
 
@@ -86,6 +89,21 @@ function check_ssh_key() {
   return $rc
 }
 
+
+function check_dotfiles() {
+  local RES=""
+
+  if [ -d "$HOME/.dotfiles" ]; then
+    RES="$HOME/.dotfiles"
+  fi
+
+  if [ -d "$HOME/dotfiles" ]; then
+    RES="$HOME/dotfiles"
+  fi
+
+  echo $RES
+}
+
 check_dirs
 if [[ $? -eq 0 ]]; then
 
@@ -97,7 +115,14 @@ if [[ $? -eq 0 ]]; then
 
       check_ssh_key
       if [[ $? -eq 0 ]]; then
-        docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
+
+        RES=$(check_dotfiles)
+        if [ "${RES}" ]; then
+          CFG_DOCKER_VOLUMES="$CFG_DOCKER_VOLUMES -v $RES:/home/appflow/dotfiles"
+        fi
+
+        docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow $@
+
       fi
     fi
 
