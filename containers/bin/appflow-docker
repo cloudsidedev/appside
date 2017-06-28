@@ -4,26 +4,78 @@
 # Steps:
 #
 #   - Check if containers exist: whilp/ssh-agent and ttssdev/appflow
-#   - Check if folders exist:
-#
-#     - ~/.appflow
-#     - ~/.ssh
+#   - Check if folders exist: check_dirs()
 #
 
-RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
-if [ ! "${RES}" ]; then
-  echo "Container doesn't exist"
-else
-  RES=$(docker run -u 1000 --rm -v appflow_ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null ; echo $?)
-  if [[ "${RES}" -eq 0 ]]; then
-    echo "yeah ssh key"
+function check_dirs() {
+  local rc=-1
 
-    docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
-
-  else
-    RES=$(docker run -u 1000 --rm -v appflow_ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null ; echo $?)
-    if [[ "${RES}" -eq 0 ]]; then
-      echo "ssh key injected successfully."
+  if [ -d "$HOME/.appflow" ]; then
+    if [ -d "$HOME/.ssh" ]; then
+      rc=0
     fi
   fi
+
+  return $rc
+}
+
+function check_ssh_agent_container() {
+  local rc=-1
+
+  RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
+  if [ ! "${RES}" ]; then
+    echo -n "starting whilp/ssh-agent... "
+    $(docker run -u 1000 -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+    if [[ $? -eq 0 ]]; then
+      echo "done."
+      rc=0
+    else
+      echo "failed."
+    fi
+
+  else
+    rc=0
+  fi
+
+  return $rc
+}
+
+function check_ssh_key() {
+  local rc=-1
+
+  $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  if [[ $? -ne 0 ]]; then
+    echo -n "injecting ssh key... "
+    $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    if [[ $? -eq 0 ]]; then
+      echo "done."
+      rc=0
+    else
+      echo "failed."
+    fi
+
+  else
+    rc=0
+  fi
+
+  return $rc
+}
+
+check_dirs
+if [[ $? -eq 0 ]]; then
+
+  check_ssh_agent_container
+  if [[ $? -eq 0 ]]; then
+
+    check_ssh_key
+    if [[ $? -eq 0 ]]; then
+      docker run --name appflow --rm -it --volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/dotfiles:/home/appflow/dotfiles -e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER ttssdev/appflow $@
+    fi
+  fi
+
+else
+  echo "Folder ~/.appflow or ~/.ssh missing."
+  exit -1
 fi
+
+exit 0
