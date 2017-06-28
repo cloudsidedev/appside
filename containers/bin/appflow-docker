@@ -3,8 +3,15 @@
 #
 # Install:
 #
-# long:  curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
-# short: curl -Lso /tmp/appflow-docker https://goo.gl/4Wq4mk ; bash /tmp/appflow-docker
+#   long:  curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
+#   short: curl -Lso /tmp/appflow-docker https://goo.gl/4Wq4mk ; bash /tmp/appflow-docker
+#
+# Troubleshooting:
+#
+#   Q: Hangs on: injecting ssh key...
+#   A: Probably you have a passphrase on ~/.ssh/id_rsa, just do:
+#      docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa
+#      and insert passphrase when asked.
 #
 
 CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh"
