@@ -3,7 +3,8 @@
 #
 # Install:
 #
-# curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
+# long:  curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
+# short: curl -Lso /tmp/appflow-docker https://goo.gl/4Wq4mk ; bash /tmp/appflow-docker
 #
 
 CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh"
