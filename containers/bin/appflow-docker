@@ -15,11 +15,13 @@
 #
 # TODO:
 #
-#   Add check: check_ssh_passphrase()
+#   Add check: check_ssh_passphrase().
+#   Issue with checkin, we need to pass /tmp probably also.
+#   Check for ~/.gitconfig
 #
 
-CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh"
-CFG_DOCKER_ENVS="-e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER"
+CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig -v /tmp:/tmp"
+CFG_DOCKER_ENVS="-e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER -e USER=$USER"
 
 function check_dirs() {
   local rc=-1
@@ -79,6 +81,26 @@ function check_ssh_agent_container() {
   return $rc
 }
 
+function check_ssh_key_enc() {
+  local rc=-1
+
+  $(grep -q ENCRYPTED ~/.ssh/test/id_rsa-ttss-test)
+  if [[ $? -eq 0 ]]; then
+    echo -n "ssh key is encrypted"
+    # $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    # if [[ $? -eq 0 ]]; then
+    #   echo "done."
+    #   rc=0
+    # else
+    #   echo "failed."
+    # fi
+  else
+    rc=0
+  fi
+
+  return $rc
+}
+
 function check_ssh_key() {
   local rc=-1
 
@@ -99,7 +121,6 @@ function check_ssh_key() {
 
   return $rc
 }
-
 
 function check_dotfiles() {
   local RES=""
@@ -123,6 +144,8 @@ if [[ $? -eq 0 ]]; then
 
     check_ssh_agent_container
     if [[ $? -eq 0 ]]; then
+
+      # check_ssh_key_enc
 
       check_ssh_key
       if [[ $? -eq 0 ]]; then
