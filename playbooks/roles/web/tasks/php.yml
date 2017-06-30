@@ -55,6 +55,7 @@
     - php{{ conf_php_version_debian_family }}-mbstring
     - php{{ conf_php_version_debian_family }}-soap
     - php{{ conf_php_version_debian_family }}-zip
+    - php{{ conf_php_version_debian_family }}-sqlite3
     # - php5-common
     - php-memcached
     - php-db
