@@ -18,6 +18,7 @@
 #   Add check: check_ssh_passphrase().
 #   Issue with checkin, we need to pass /tmp probably also.
 #   Check for ~/.gitconfig
+#   appflow ssh has issues (installs always assh): https://github.com/ttssdev/appflow/blob/master/utils/ssh.sh
 #
 
 CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig -v /tmp:/tmp"
