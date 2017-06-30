@@ -21,7 +21,7 @@
 #   appflow ssh has issues (installs always assh): https://github.com/ttssdev/appflow/blob/master/utils/ssh.sh
 #
 
-CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig -v /tmp:/tmp"
+CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.ansible:/home/appflow/.ansible -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig -v /tmp:/tmp"
 CFG_DOCKER_ENVS="-e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER -e USER=$USER"
 
 function check_dirs() {
