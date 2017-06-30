@@ -10,7 +10,7 @@
 #
 #   Q: Hangs on: injecting ssh key...
 #   A: Probably you have a passphrase on ~/.ssh/id_rsa, just do:
-#      docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa
+#      docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa
 #      and insert passphrase when asked.
 #
 # TODO:
@@ -67,7 +67,7 @@ function check_ssh_agent_container() {
     RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
     if [ ! "${RES}" ]; then
       echo -n "running whilp/ssh-agent... "
-      $(docker run -u 1000 -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      $(docker run -u $UID -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
       if [[ $? -eq 0 ]]; then
         echo "done."
         rc=0
@@ -88,7 +88,7 @@ function check_ssh_key_enc() {
   $(grep -q ENCRYPTED ~/.ssh/test/id_rsa-ttss-test)
   if [[ $? -eq 0 ]]; then
     echo -n "ssh key is encrypted"
-    # $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
     # if [[ $? -eq 0 ]]; then
     #   echo "done."
     #   rc=0
@@ -105,10 +105,10 @@ function check_ssh_key_enc() {
 function check_ssh_key() {
   local rc=-1
 
-  $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
   if [[ $? -ne 0 ]]; then
     echo -n "injecting ssh key... "
-    $(docker run -u 1000 --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
     if [[ $? -eq 0 ]]; then
       echo "done."
       rc=0
