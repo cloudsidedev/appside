@@ -34,7 +34,7 @@
 #	# /tmp
 
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v /tmp:/tmp"
-CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER -e ANSIBLE_SSH_CONTROL_PATH="~/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
+CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
 function check_dirs() {
   local rc=-1
