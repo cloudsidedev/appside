@@ -6,9 +6,10 @@ LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV GOPATH=/opt/go
 
-RUN useradd -ms /bin/bash appflow && \
-    chown -R appflow:appflow /usr/local &&  \
-    apt-get update && \
+# RUN useradd -ms /bin/bash appflow && \
+    # chown -R appflow:appflow /usr/local &&  \
+
+RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install apt-utils -y && \
     apt-get install git -y && \
@@ -24,15 +25,21 @@ RUN useradd -ms /bin/bash appflow && \
     go get -u github.com/moul/advanced-ssh-config/cmd/assh && \
     ln -s /opt/go/bin/assh /usr/local/bin/assh && \
     git clone https://github.com/ttssdev/appflow /opt/appflow && \
-    ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
-    chown -R appflow:appflow /opt/appflow && \
-    mkdir -p /home/appflow/tmp/.ssh/cm && \
-    chown -R appflow:appflow /home/appflow/tmp && \
-    echo 'alias ssh="assh wrapper ssh"' >> /home/appflow/.bashrc
+    ln -s /opt/appflow/appflow /usr/local/bin/appflow
+    # chown -R appflow:appflow /opt/appflow && \
+    # mkdir -p /root/tmp/.ssh/cm && \
+    # chown -R appflow:appflow /home/appflow/tmp && \
+    # echo 'alias ssh="assh wrapper ssh"' >> /root/.bashrc
 
-WORKDIR /home/appflow
-ENV HOME=/home/appflow
+# WORKDIR /home/appflow
+# ENV HOME=/home/appflow
 ENV PATH=$PATH:/opt/go/bin
-USER appflow
+# USER appflow
 
-ENTRYPOINT ["appflow"]
+COPY run.sh /usr/local/bin/run.sh
+
+ENTRYPOINT ["run.sh"]
+
+# run ["run.sh"]
+
+# run ["appflow"]

@@ -6,6 +6,10 @@
 #   long:  curl -so /tmp/appflow-docker https://raw.githubusercontent.com/ttssdev/appflow/88-appflow-exec-container/containers/bin/appflow-docker ; bash /tmp/appflow-docker
 #   short: curl -Lso /tmp/appflow-docker https://goo.gl/4Wq4mk ; bash /tmp/appflow-docker
 #
+# Firstrun:
+#
+#   make provision tenant=mrrobot limit=atlantis firstrun=true
+#
 # Troubleshooting:
 #
 #   Q: Hangs on: injecting ssh key...
@@ -21,8 +25,16 @@
 #   appflow ssh has issues (installs always assh): https://github.com/ttssdev/appflow/blob/master/utils/ssh.sh
 #
 
-CFG_DOCKER_VOLUMES="--volumes-from=ssh-agent -v $HOME/.ansible:/home/appflow/.ansible -v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig -v /tmp:/tmp"
-CFG_DOCKER_ENVS="-e SSH_AUTH_SOCK=/ssh/auth/sock -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER -e USER=$USER"
+# volumes
+#
+#	~/.ansible
+#	~/.appflow
+#	~/.ssh
+#	~/.gitconfig
+#	# /tmp
+
+CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v /tmp:/tmp"
+CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_REMOTE_USER=$USER -e ANSIBLE_SSH_CONTROL_PATH="~/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
 function check_dirs() {
   local rc=-1
@@ -67,7 +79,8 @@ function check_ssh_agent_container() {
     RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
     if [ ! "${RES}" ]; then
       echo -n "running whilp/ssh-agent... "
-      $(docker run -u $UID -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      # $(docker run -u $UID -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      $(docker run -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
       if [[ $? -eq 0 ]]; then
         echo "done."
         rc=0
@@ -105,10 +118,12 @@ function check_ssh_key_enc() {
 function check_ssh_key() {
   local rc=-1
 
-  $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  $(docker run --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add -L >/dev/null)
   if [[ $? -ne 0 ]]; then
     echo -n "injecting ssh key... "
-    $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    $(docker run --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
     if [[ $? -eq 0 ]]; then
       echo "done."
       rc=0
@@ -143,13 +158,13 @@ if [[ $? -eq 0 ]]; then
   check_docker
   if [[ $? -eq 0 ]]; then
 
-    check_ssh_agent_container
-    if [[ $? -eq 0 ]]; then
+    # check_ssh_agent_container
+    # if [[ $? -eq 0 ]]; then
 
       # check_ssh_key_enc
 
-      check_ssh_key
-      if [[ $? -eq 0 ]]; then
+      # check_ssh_key
+      # if [[ $? -eq 0 ]]; then
 
         RES=$(check_dotfiles)
         if [ "${RES}" ]; then
@@ -157,10 +172,10 @@ if [[ $? -eq 0 ]]; then
         fi
 
         # docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow $@
-        docker run --name appflow -u $UID:$UID --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow $@
+        docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
 
-      fi
-    fi
+      # fi
+    # fi
 
   else
     echo "Docker not available or not running."
