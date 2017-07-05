@@ -8,7 +8,7 @@ USER_ID=${LOCAL_USER_ID:-9001}
 echo "Starting with UID : $USER_ID"
 
 # NOTE: /home/appflow exists already due to volume mounts (just need to set perms)
-useradd --shell /bin/bash -u $USER_ID -o -c "" -m appflow
+useradd --shell /bin/bash -u $USER_ID -o -c "" -M appflow
 export HOME=/home/appflow
 
 # chown -R appflow:appflow /opt/appflow
