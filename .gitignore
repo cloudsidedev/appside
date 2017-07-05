@@ -3,6 +3,7 @@
 #
 
 *.retry
+nohup.out
 .vagrant
 Vagrant-Boxes
 Vagrantfile.local.yml

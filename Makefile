@@ -198,5 +198,3 @@ install:
 
 uninstall:
 	@sudo rm /usr/local/bin/appflow
-		
-

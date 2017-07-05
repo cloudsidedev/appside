@@ -1,0 +1,38 @@
+{
+  "name": "ttssdev/appflow",
+  "description": "Multitenant environment automation.",
+  "keywords": ["provision", "deploy", "appflow"],
+  "homepage": "http://appflow.sh/",
+  "type": "library",
+  "license": "AGPL-3.0",
+  "authors": [
+      {
+          "name": "Ivo Marino",
+          "email": "ivo.marino@ttss.ch",
+          "homepage": "http://ttss.ch"
+      },
+      {
+          "name": "Luca Di Maio",
+          "email": "luca.dimaio@ttss.ch",
+          "homepage": "http://ttss.ch"
+      }
+  ],
+  "support": {
+      "issues": "https://github.com/ttssdev/appflow/issues"
+  },
+  "require": {
+      "symfony/console": "^3.2",
+      "symfony/config": "^3.2",
+      "symfony/process": "^3.2",
+      "symfony/yaml": "^3.2"
+  },
+  "require-dev": {
+      "symfony/var-dumper": "^3.2"
+  },
+  "autoload": {
+      "psr-4": {
+          "AppFlow\\": "src/AppFlow/"
+      }
+  },
+  "bin": ["bin/appflow"]
+}
