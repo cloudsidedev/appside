@@ -171,7 +171,7 @@ if [[ $? -eq 0 ]]; then
           CFG_DOCKER_VOLUMES="$CFG_DOCKER_VOLUMES -v $RES:/home/appflow/dotfiles"
         fi
 
-        docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow $@
+        docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:latest $@
         # docker run --name appflow --rm -it $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
 
       # fi
