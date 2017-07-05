@@ -22,7 +22,7 @@
 # apache2
 #
 - include: apache2.yml
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
 
 #
 # mod_pagespeed
@@ -86,6 +86,11 @@
 - include: bedrock.yml
 
 #
+# bedrock
+#
+- include: typo3.yml
+
+#
 # Jenkins
 #
 - include: jenkins.yml
@@ -96,3 +101,9 @@
 #
 - include: geoip.yml
   when: conf_geoip_enable is defined and conf_geoip_enable == true
+
+#
+# WoodWing
+#
+- include: woodwing.yml
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true

@@ -2,26 +2,43 @@
 
 # file: playbooks/roles/db/tasks/percona.yml
 
-- name: deploy /usr/local/bin/galeranotify.py
-  template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
-  tags: [ mysql, percona ]
+#
+# Debug CentOS:
+#   yum -y remove Percona-XtraDB-Cluster-galera-3.x86_64 ; rm -rf /var/lib/mysql /etc/mysql/my.cnf /etc/my.cnf ~/.my.cnf ; killall -9 mysqld
+#
+# - install PXC on all
+# - ? /etc/my.cnf
+# - bootstrap master
+# - start clients
+# - restart master
 
-- name: apparmor disable mysqld
+- name: apparmor disable mysqld (Debian family)
   file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
   notify: handle_reload_apparmor_mysql
   ignore_errors: yes
+  when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: check to determine if galera is aready installed
-  # shell: dpkg-query -s percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
-  # shell: dpkg-query -l | grep percona-xtradb-cluster-galera-3.x &>/dev/null && echo "installed" || echo "bootstrap"
+- name: check to determine if galera is aready installed (Debian family)
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
   ignore_errors: yes
-  register: bootstrap_check
-  always_run: yes
+  register: bootstrap_check_debian
+  check_mode: no
+  when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- debug: var=bootstrap_check.rc
+- name: check to determine if galera is already installed (RedHat family)
+  shell: "yum -q list installed Percona-XtraDB-Cluster-56 > /dev/null"
+  register: bootstrap_check_redhat
+  check_mode: no
+  ignore_errors: yes
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, percona ]
+
+- debug: var=bootstrap_check_debian.rc
+  tags: [ mysql, percona ]
+
+- debug: var=bootstrap_check_redhat.rc
   tags: [ mysql, percona ]
 
 - name: percona apt-key (Debian family)
@@ -33,6 +50,11 @@
 - name: percona repo (Debian family)
   apt_repository: repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' update_cache=yes
   when: ansible_os_family == "Debian"
+  tags: [ mysql, percona ]
+
+- name: percona repo (RedHat family)
+  yum: name=http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm state=present
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, percona ]
 
 - name: remove conflicting MySQL packages (Debian family)
@@ -48,24 +70,24 @@
   when: ansible_os_family == "Debian"
   tags: [ mysql, percona ]
 
-- name: Prepare for bootstrap (gcomm)
+- name: Prepare for bootstrap (gcomm) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_cluster_address' line='wsrep_cluster_address = gcomm://' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
-- name: Prepare for bootstrap (sst)
+- name: Prepare for bootstrap (sst) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_auth' line='wsrep_sst_auth = deploy' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
-- name: Prepare for bootstrap (sst)
+- name: Prepare for bootstrap (sst) (Debian family)
   lineinfile: "dest=/etc/mysql/my.cnf regexp='^wsrep_sst_method' line='wsrep_sst_method = rsync' state=present"
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == false and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
-- name: Prepare for bootstrap (mysql dir)
+- name: Prepare for bootstrap (mysql dir) (Debian family)
   file: path=/var/lib/mysql state=directory mode=0750
-  when: bootstrap_check.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true
+  when: bootstrap_check_debian.rc == 1 and conf_wsrep_master is defined and conf_wsrep_master == true and ansible_os_family == "Debian"
   tags: [ mysql, percona]
 
 - name: install Percona XtraDB Cluster (Debian family)
@@ -80,6 +102,19 @@
   when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ mysql, percona ]
+
+- name: install Percona XtraDB Cluster (RedHat family)
+  yum: pkg={{ item }} state=latest
+  with_items:
+     - Percona-XtraDB-Cluster-56
+     - MySQL-python
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, percona ]
+
+- name: symlink libgalera_smm.so
+  file: src={{ conf_lib_path }}/galera3/libgalera_smm.so dest={{ conf_lib_path }}/libgalera_smm.so state=link
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, percona]
 
 - name: install xinetd (Debian family)
   apt: pkg={{ item }} state=latest force=yes
@@ -102,8 +137,15 @@
   when: ansible_os_family == "Debian" and conf_env != "development" and conf_galera_cluster == true
   tags: [ mysql, percona, clustercheck ]
 
-- name: create DB clustercheck user
-  mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
-  when: conf_env != "development" and conf_galera_cluster == true
-  ignore_errors: yes
-  tags: [ mysql, percona, clustercheck ]
+- name: bootstrap-pxc (RedHat family)
+  service: name=mysql@bootstrap state=restarted
+  when: bootstrap_check_redhat.rc is defined and bootstrap_check_redhat.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  # delegate_to: db1
+  ignore_errors: true
+  tags: [ mysql, percona]
+
+- name: bootstrap-pxc (RedHat family)
+  service: name=mysql@bootstrap state=restarted
+  when: bootstrap_check_redhat.rc is defined and bootstrap_check_redhat.rc == 1 and conf_wsrep_master == true and ansible_os_family == "RedHat"
+  # delegate_to: db1
+  tags: [ mysql, percona]

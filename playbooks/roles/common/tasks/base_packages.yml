@@ -16,9 +16,10 @@
   when: ansible_os_family == "Debian"
 
 - name: install golang ppa (Debian Family)
-  apt_repository: repo='ppa:ubuntu-lxc/lxd-stable' update_cache=yes
+  # apt_repository: repo='ppa:ubuntu-lxc/lxd-stable' update_cache=yes
+  apt_repository: repo='ppa:jonathonf/golang' update_cache=yes
   when: ansible_distribution == "Ubuntu"
-  tags: [ golang ]
+  tags: [ common, golang ]
 
 - name: base packages (Debian family)
   apt: pkg={{ item }} update_cache=yes state=latest
@@ -38,7 +39,7 @@
   when: ansible_os_family == "RedHat" or ansible_os_family == "SHMZ"
 
 - name: base packages (FreeBSD)
-  pkgng: name={{ item }} state=latest cached=yes
+  pkgng: name={{ item }} state=present cached=yes
   with_items: '{{ conf_base_packages }}'
   when: ansible_distribution == "FreeBSD"
   tags: [ common, pkg, base_packages ]
@@ -47,6 +48,11 @@
   file: src=/usr/local/bin/colorize dest=/usr/local/bin/ccze state=link
   when: ansible_distribution == "FreeBSD"
   tags: [ common, pkg, base_packages ]
+
+- name: symlink go
+  file: src=/usr/lib/go-1.8/bin/go dest=/usr/local/bin/go state=link
+  when: ansible_distribution == "Ubuntu"
+  tags: [ common, golang ]
 
 - name: base packages (Darwin)
   package: name={{ item }} state=latest

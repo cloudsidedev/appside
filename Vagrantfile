@@ -14,13 +14,33 @@ ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 # Synced folders, can be overriden via Vagrantfile.local.yml
 atlantis_synced_folder_appflow = "~/Documents/webdev/appflow"
 atlantis_synced_folder_webdev = "~/Documents/webdev/development"
+atlantis_synced_folder_mount_options = 'dmode=0775,fmode=0664'
+atlantis_synced_folder_type = ""
+atlantis_synced_folder_smb_username = ""
+atlantis_synced_folder_smb_password = ""
 
-custom_settings = YAML.load_file 'Vagrantfile.local.yml'
-if custom_settings['synced_folder']['appflow_folder']
-  atlantis_synced_folder_appflow = custom_settings['synced_folder']['appflow_folder']
-end
-if custom_settings['synced_folder']['webdev_folder']
-  atlantis_synced_folder_webdev = custom_settings['synced_folder']['webdev_folder']
+dir = File.dirname(File.expand_path(__FILE__))
+
+if File.file?("#{dir}/Vagrantfile.local.yml")
+  custom_settings = YAML.load_file("#{dir}/Vagrantfile.local.yml")
+  if custom_settings['synced_folder']['appflow_folder']
+    atlantis_synced_folder_appflow = custom_settings['synced_folder']['appflow_folder']
+  end
+  if custom_settings['synced_folder']['webdev_folder']
+    atlantis_synced_folder_webdev = custom_settings['synced_folder']['webdev_folder']
+  end
+  if custom_settings['synced_folder']['mount_options']
+    atlantis_synced_folder_mount_options = custom_settings['synced_folder']['mount_options']
+  end
+  if custom_settings['synced_folder']['type']
+    atlantis_synced_folder_type = custom_settings['synced_folder']['type']
+  end
+  if custom_settings['synced_folder']['smb_username']
+    atlantis_synced_folder_smb_username = custom_settings['synced_folder']['smb_username']
+  end
+  if custom_settings['synced_folder']['smb_password']
+    atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
+  end
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -37,8 +57,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     atlantis.vm.hostname = "atlantis"
     atlantis.vm.box_url = "Vagrant-Boxes/trusty64.box"
     atlantis.vm.network :private_network, ip: "192.168.80.2"
-    atlantis.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    atlantis.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantis.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type, smb_username: atlantis_synced_folder_smb_username, smb_password: atlantis_synced_folder_smb_password
+    atlantis.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type
 
     atlantis.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis", "--natdnshostresolver1", "on"]

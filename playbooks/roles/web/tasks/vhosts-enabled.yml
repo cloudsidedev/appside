@@ -6,7 +6,7 @@
 # create vhost gluster uploads if enabled
 #
 - name: create vhost gluster uploads if enabled (Common)
-  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{  item.value.glusterfs_uploads }} state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }} state=directory owner=deploy group={{ conf_www_group }} mode=0775
   when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ vhosts ]
@@ -39,7 +39,7 @@
 #
 - name: make sure .htaccess file exists if enabled (Common)
   file: path=/var/www/vhosts/{{ item.key }}/.htaccess owner=deploy group={{ conf_www_group }} mode=0664 state=touch
-  when: item.value.state == "enabled" and conf_env != "development" and item.value.type != "wp_bedrock" and ansible_os_family == "Debian"
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type != "wp_bedrock" and item.value.type != "typo3" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ vhosts ]
 
@@ -47,7 +47,7 @@
 # deploy vhost templates
 #
 - name: deploy vhost templates if enabled (dev)
-  template: src=etc/apache2/vhost-dev-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env == "development" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -56,10 +56,10 @@
   tags: [ vhosts ]
 
 # testing == staging == production (/var/www/vhosts/foo/current/web)
-# vhost-stage-* templates are going to be obsoleted (/var/www/vhosts/foo/web)
+# vhost-{{ conf_env }}-* templates are going to be obsoleted (/var/www/vhosts/foo/web)
 
 - name: deploy vhost templates if enabled (non-dev)
-  template: src=etc/apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+  template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
   when: item.value.state == "enabled" and conf_env != "development" and ansible_os_family == "Debian"
   with_dict: '{{ conf_vhosts_common }}'
   notify:
@@ -68,7 +68,7 @@
   tags: [ vhosts ]
 
 # - name: deploy vhost templates if enabled (Common, prod)
-#   template: src=etc/apache2/vhost-prod-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
+#   template: src=etc/apache2/vhost-{{ conf_env }}-{{ item.value.type }}.conf.j2 dest=/etc/apache2/sites-available/{{ item.key }}.conf
 #   when: item.value.state == "enabled" and conf_env == "production" and ansible_os_family == "Debian"
 #   with_dict: '{{ conf_vhosts_common }}'
 #   notify:

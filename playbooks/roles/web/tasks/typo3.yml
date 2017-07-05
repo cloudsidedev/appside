@@ -1,0 +1,150 @@
+---
+
+# file: playbooks/roles/web/tasks/typo3.yml
+
+#
+# The shared folder
+#
+- name: create vhost typo3 shared folder (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared state=directory owner=deploy group=deploy mode=0755
+  when: item.value.state == "enabled" and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# .env templates (Debian family, staging and production)
+#
+- name: deploy typo3 env template (wp) if enabled (common)
+  template: src={{ item.value.type }}/env.j2 dest=/var/www/vhosts/{{ item.key }}/shared/.env owner=deploy group=deploy mode=0644
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, env ]
+
+# #
+# # .env templates (development)
+# #
+# - name: deploy typo3 env template (wp) if enabled (development)
+#   template: src={{ item.value.type }}/env.j2 dest=/tmp/{{ item.key }}-env-{{ item.value.type }} owner=deploy group=deploy mode=0644
+#   when: item.value.state == "enabled" and conf_env == "development" and item.value.config_env == true
+#   with_dict: '{{ conf_vhosts_common }}'
+#   ignore_errors: yes
+#   tags: [ vhosts, env ]
+#
+# - name: copy typo3 env template (wp) if enabled (development)
+#   command: cp -a /tmp/{{ item.key }}-env-{{ item.value.type }} /var/www/vhosts/{{ item.key }}/.env
+#   when: item.value.state == "enabled" and conf_env == "development" and item.value.config_env == true
+#   with_dict: '{{ conf_vhosts_common }}'
+#   ignore_errors: yes
+#   tags: [ vhosts, env ]
+
+# #
+# # T3 app folder
+# #
+# # development: web/app
+# # staging and production: shared/web/app
+# #
+#
+- name: check typo3 web folder if enabled (common)
+  file: path=/var/www/vhosts/{{ item.key }}/shared/web state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+#
+# - name: check typo3 app folder if enabled (common)
+#   file: path=/var/www/vhosts/{{ item.key }}/web/app state=directory owner=deploy group={{ conf_www_group }} mode=0775
+#   when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "typo3"
+#   with_dict: '{{ conf_vhosts_common }}'
+#   tags: [ vhosts ]
+#
+# #
+# # T3 Uploads folder
+# #
+# - name: check typo3 upload folder if enabled (common)
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/uploads state=directory owner=deploy group={{ conf_www_group }} mode=0775
+#   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
+#   with_dict: '{{ conf_vhosts_common }}'
+#   tags: [ vhosts ]
+#
+# #
+# # T3 Languages folder
+# #
+# - name: check typo3 languages folder if enabled (common)
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/languages state=directory owner=deploy group={{ conf_www_group }} mode=0775
+#   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
+#   with_dict: '{{ conf_vhosts_common }}'
+#   tags: [ vhosts ]
+#
+# #
+# # T3 plugins folder
+# #
+# - name: check typo3 plugins folder if enabled (common)
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/app/plugins state=directory owner=deploy group={{ conf_www_group }} mode=0775
+#   when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3"
+#   with_dict: '{{ conf_vhosts_common }}'
+#   tags: [ vhosts ]
+
+- name: create vhost gluster web if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/files if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/files state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/files_protected if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/files_protected state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/typo3temp if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/typo3temp state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: create vhost gluster web/uploads if enabled (Common)
+  file: path=/mnt/glusterfs/gvol0/brick1/uploads/{{ item.value.glusterfs_uploads }}/web/uploads state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.glusterfs_uploads is defined and item.value.type == "typo3"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+#
+# shared/web/.htaccess (staging and production)
+#
+# NOTE: If we only want that .htaccess is touched, use:
+#   file: path=/var/www/vhosts/{{ item.key }}/shared/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0664 state=touch
+#
+- name: make sure .htaccess file exists if enabled (Capistrano, Common)
+  template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/shared/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  when: item.value.state == "enabled" and conf_env != "development" and item.value.type == "typo3" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts, htaccess ]
+
+#
+# web/.htaccess (development)
+# https://github.com/ansible/ansible/issues/9526#issuecomment-87027194
+#
+- name: make sure .htaccess file exists if enabled (Capistrano, Common, dev)
+  # template: src={{ item.value.type }}/htaccess.j2 dest=/var/www/vhosts/{{ item.key }}/web/.htaccess owner=deploy group={{ conf_www_group }} mode=0666
+  template: src={{ item.value.type }}/htaccess.j2 dest=/tmp/{{ item.key }}-htaccess-{{ item.value.type }} owner=deploy group={{ conf_www_group }} mode=0666
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "typo3" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, htaccess ]
+
+- name: copy .htaccess file exists if enabled (Capistrano, Common, dev)
+  command: cp -a /tmp/{{ item.key }}-htaccess-{{ item.value.type }} /var/www/vhosts/{{ item.key }}/web/.htaccess
+  when: item.value.state == "enabled" and conf_env == "development" and item.value.type == "typo3" and ansible_os_family == "Debian"
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ vhosts, htaccess ]
+
+#
+# CRON
+#

@@ -144,7 +144,25 @@ appflow vagrant
 
 ### Troubleshooting
 
-#### [vagragnt] Vagrant was unable to mount VirtualBox shared folders
+#### [vagrant] Missing Vagrantfile.local.yml
+
+```
+Issue: There was an error loading a Vagrantfile. The file being loaded
+       and the error message are shown below. This is usually caused by
+       a syntax error.
+
+       Path: /Users/foo/Documents/webdev/appflow/Vagrantfile
+       Line number: 0
+       Message: Errno::ENOENT: No such file or directory @ rb_sysopen - Vagrantfile.local.yml`
+
+Solve: add Vagrantfile.local.yml to the appflow folder with this content:
+
+       synced_folder:
+         appflow_folder: "~/Documents/webdev/appflow"
+         webdev_folder: "~/Documents/webdev/development"
+```
+
+#### [vagrant] Vagrant was unable to mount VirtualBox shared folders
 
 ```
 Issue: Vagrant was unable to mount VirtualBox shared folders.
@@ -163,7 +181,7 @@ Issue: Vagrant was unable to mount VirtualBox shared folders.
 Solve: appflow provision limit=atlantis firstrun=true (password is vagrant).
 ```
 
-#### [vagragnt] The box you attempted to add doesn't match the provider you specified
+#### [vagrant] The box you attempted to add doesn't match the provider you specified
 
 ```
 Issue: The box you attempted to add doesn't match the provider you specified.
@@ -171,7 +189,7 @@ Issue: The box you attempted to add doesn't match the provider you specified.
 Solve: vagrant up --provider=virtualbox atlantis
 ```
 
-#### [vagragnt] Lost Vagrant reference to VirtualBox VM
+#### [vagrant] Lost Vagrant reference to VirtualBox VM
 
 ```
 Issue: Lost Vagrant reference to VirtualBox VM
@@ -182,15 +200,15 @@ VBoxManage list vms
 echo xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx > ~/appflow/.vagrant/machines/atlantis/virtualbox/id
 ```
 
-#### [vagragnt] Warning: Authentication failure. Retrying...
+#### [vagrant] Warning: Authentication failure. Retrying...
 
 ```
-Issue: vagragnt Warning: Authentication failure. Retrying...
+Issue: vagrant Warning: Authentication failure. Retrying...
 ```
 
 Solve: [http://stackoverflow.com/a/30792296](http://stackoverflow.com/a/30792296)
 
-#### [vagragnt] an error occurred while downloading the remote file
+#### [vagrant] an error occurred while downloading the remote file
 
 ```
 Issue: An error occurred while downloading the remote file.

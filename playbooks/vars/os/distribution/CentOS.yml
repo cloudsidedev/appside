@@ -31,9 +31,10 @@ conf_lib_path: "/usr/lib64"
 conf_bin_path: "/usr/bin"
 conf_zsh_path: "/bin/zsh"
 conf_root_group: "root"
-conf_www_group: "www-data"
+conf_www_group: "apache"
 conf_sudo_nopasswd_group: "admin"
 conf_base_packages:
+    - redhat-lsb-core
     - etckeeper
     - zsh
     - yum-utils
@@ -43,6 +44,7 @@ conf_base_packages:
     - mosh
     - finger
     - tree
+    - net-tools
     - telnet
     - unzip
     - zip
@@ -73,6 +75,7 @@ conf_base_packages:
     - tig
 conf_php_cli: "/usr/bin/php"
 conf_web_cron: "/etc/cron.d/wp-cron"
+conf_ssh_service: ssh
 
 #
 # MySQL/Percona
@@ -80,7 +83,14 @@ conf_web_cron: "/etc/cron.d/wp-cron"
 conf_mysql_conf: "/etc/mysql/my.cnf"
 conf_mysql_basedir: "/usr"
 conf_mysql_datadir: "/var/lib/mysql"
-conf_mysql_lc_messages_dir: "/usr/share/mysql"
+conf_mysql_lc_messages_dir: "/usr/share/percona-xtradb-cluster"
+conf_mysql_socket: "/var/lib/mysql/mysql.sock"
+
+#
+# HAProxy
+#
+conf_haproxy_socket_path: "/var/lib/haproxy"
+conf_haproxy_errors_path: "/usr/share/haproxy"
 
 #
 # Etckeeper

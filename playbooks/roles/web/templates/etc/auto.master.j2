@@ -27,7 +27,13 @@
 # precedence.
 #
 +auto.master
+{% if conf_glusterfs_enable is defined and conf_glusterfs_enable == true %}
 /mnt/glusterfs/gvol0    /etc/auto.glusterfs
 
 # NFS fallback (has problems when only one gluster host is up)
 # /mnt/glusterfs/gvol0    /etc/auto.nfs    --timeout=60
+{% endif %}
+
+{% if conf_nfs_enable is defined and conf_nfs_enable == true and conf_nfs_autofs is defined %}
+/mnt/nfs  /etc/auto.nfs
+{% endif %}

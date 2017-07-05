@@ -23,9 +23,16 @@
 #
 # create DB
 #
-- name: create DB if enabled (Common, login_host=127.0.0.1)
+- name: create DB if enabled (defined encoding)
+  mysql_db: login_host=127.0.0.1 name={{ item.value.db_name }} encoding={{ item.value.db_encoding }} state=present
+  when: item.value.state == "enabled" and item.value.db_name is defined and item.value.db_encoding is defined
+  with_dict: '{{ conf_vhosts_common }}'
+  ignore_errors: yes
+  tags: [ mysql, mysql-users ]
+
+- name: create DB if enabled (default encoding)
   mysql_db: login_host=127.0.0.1 name={{ item.value.db_name }} state=present
-  when: item.value.state == "enabled" and item.value.db_name is defined
+  when: item.value.state == "enabled" and item.value.db_name is defined and item.value.db_encoding is not defined
   with_dict: '{{ conf_vhosts_common }}'
   ignore_errors: yes
   tags: [ mysql, mysql-users ]
@@ -33,7 +40,7 @@
 #
 # create DB user
 #
-- name: create DB user if enabled (Common, login_host=127.0.0.1)
+- name: create DB user if enabled (login_host=127.0.0.1)
   mysql_user: login_host=127.0.0.1 name={{ item.value.db_user }} password={{ item.value.db_password }} host={{ item.value.db_host }} priv="{{ item.value.db_name }}.*:ALL" append_privs=no state=present
   when: item.value.state == "enabled" and item.value.db_user is defined
   with_dict: '{{ conf_vhosts_common }}'
@@ -43,7 +50,7 @@
 #
 # create global DB admin user (if defined)
 #
-- name: create global DB user if enabled (Common, login_host=127.0.0.1)
+- name: create global DB user if enabled (login_host=127.0.0.1)
   mysql_user: login_host=127.0.0.1 name={{ conf_mysql_global_admin_user }} password={{ conf_mysql_global_admin_passsword }} host={{ item.value.db_host }} priv="{{ item.value.db_name }}.*:ALL" append_privs=yes state=present
   when: item.value.state == "enabled" and item.value.db_user is defined and conf_mysql_global_admin_user is defined and conf_mysql_global_admin_passsword is defined
   with_dict: '{{ conf_vhosts_common }}'

@@ -277,7 +277,7 @@ Require user {{ item.key }}
 		# Reduce Comment Spam - Security > Settings > WordPress Tweaks > Comment Spam
 		RewriteCond %{REQUEST_METHOD} POST
 		RewriteCond %{REQUEST_URI} /wp-comments-post\.php$
-		RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+		RewriteCond %{HTTP_USER_AGENT} ^$
 		RewriteRule ^.* - [F]
 	</IfModule>
 

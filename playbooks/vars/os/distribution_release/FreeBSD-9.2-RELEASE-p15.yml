@@ -1,0 +1,6 @@
+---
+
+# file: playbooks/vars/os/distribution/FreeBSD-9.2-RELEASE-p15.yml
+
+var_package_php_apc: php5-apcu
+var_package_git: git

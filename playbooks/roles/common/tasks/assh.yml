@@ -50,8 +50,13 @@
   tags: [ assh ]
 
 - name: install assh (Unix)
-  shell: "export GOPATH=/usr/local/go; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
-  when: ansible_os_family != "Darwin"
+  shell: "export GOPATH=/usr/local/go ; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
+  when: ansible_os_family != "FreeBSD" and ansible_os_family != "Darwin"
+  tags: [ assh, assh-conf ]
+
+- name: install assh (FreeBSD family)
+  shell: "export GOPATH=/usr/local ; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
+  when: ansible_os_family == "FreeBSD"
   tags: [ assh, assh-conf ]
 
 - name: create ControlPath directories (Unix, root)

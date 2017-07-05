@@ -2,12 +2,13 @@
 
 # file: playbooks/roles/db/tasks/main-centos.yml
 
-- name: be sure dbtier packages are installed (CentOS)
-  yum: pkg={{item}} state=latest
-  with_items:
-    - MySQL-python
-  when: ansible_distribution == "CentOS"
-  tags: mysql
+# THIS LEADS TO CONFLICT
+# - name: be sure dbtier packages are installed (RedHat family)
+#   yum: pkg={{item}} state=latest
+#   with_items:
+#     - MySQL-python
+#   when: ansible_os_family == "RedHat"
+#   tags: mysql
 
 #- name: copy tuning-primer
 #  copy: src=../files/mysql/tuning-primer dest=/usr/local/bin/tuning-primer owner=root group={{ conf_root_group }} mode=0755
@@ -23,87 +24,85 @@
 - include: percona-centos.yml
 
 ################################# MAYBE GOOD MAYBE NOT #################################
-#- name: deploy /etc/my.cnf (CentOS)
+#- name: deploy /etc/my.cnf (RedHat family)
 #  template: src=mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
 #  notify: handle_restart_mysql
-#  when: ansible_distribution == "CentOS"
+#  when: ansible_os_family == "RedHat"
 #  tags: mysql
 
-- name: deploy /etc/mysql/my.cnf (CentOS)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  when: ansible_distribution == "CentOS"
-  notify: handle_restart_mysql
-  tags: [ mysql, mysql-conf, percona ]
-#########################################################################################
-
-- name: create mysql log folder (/var/log/mysql)
-  file: path=/var/log/mysql state=directory owner=root group=mysql mode=0775
-  when: ansible_distribution == "CentOS"
-  tags: mysql
-
-- name: mysql service state
-  service: name=mysql state=started enabled=yes
-  tags: mysql
-
-- name: update mysql root password
-  # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
-  mysql_user: check_implicit_admin=yes name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
-  tags: mysql
-
-- name: deploy my.cnf to root
-  template: src=etc/mysql/my-cnf-user.j2 dest=/root/.my.cnf owner=root group={{ conf_root_group }} mode=0600
-  tags: mysql
-
-- name: deploy my.cnf to ansible
-  template: src=etc/mysql/my-cnf-user.j2 dest=/home/ansible/.my.cnf owner=ansible group=ansible mode=0600
-  tags: mysql
-
-- name: remove unused mysql anonymous accesses
-  # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name='' host={{item}} state=absent
-  mysql_user: check_implicit_admin=yes name='' host={{item}} state=absent
-  with_items:
-    - 127.0.0.1
-    - ::1
-    - localhost
-    - '{{ ansible_fqdn }}'
-    - '{{ ansible_hostname }}'
-    - '{{ ansible_hostname }}.unix.production.local'
-  tags: mysql
-
-- name: remove unused mysql root accesses
-  # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host={{item}} state=absent
-  mysql_user: check_implicit_admin=yes name=root host={{item}} state=absent
-  with_items:
-    - 127.0.0.1
-    - ::1
-    - localhost
-    - '{{ ansible_fqdn }}'
-    - '{{ ansible_hostname }}'
-    - '{{ ansible_hostname }}.unix.production.local'
-  tags: mysql
-
-- name: remove unused mysql notch accesses
-  # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host={{item}} state=absent
-  mysql_user: check_implicit_admin=yes name=notch host={{item}} state=absent
-  with_items:
-    - 127.0.0.1
-    - ::1
-    - localhost
-    - '{{ ansible_fqdn }}'
-    - '{{ ansible_hostname }}'
-    - '{{ ansible_hostname }}.unix.production.local'
-  tags: mysql
-
-- name: create DB replication user
-  mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv=*.*:"RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
-  ignore_errors: true
-  tags: mysql
-
-- name: deploy /etc/my.cnf (CentOS)
-  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
-  notify: handle_restart_mysql
-  when: ansible_distribution == "CentOS"
-  tags: mysql
+# - name: deploy /etc/mysql/my.cnf (RedHat family)
+#   template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+#   when: ansible_os_family == "RedHat"
+#   notify: handle_restart_mysql
+#   tags: [ mysql, mysql-conf, percona ]
+# #########################################################################################
+#
+# - name: create mysql log folder (/var/log/mysql)
+#   file: path=/var/log/mysql state=directory owner=root group=mysql mode=0775
+#   when: ansible_os_family == "RedHat"
+#   tags: mysql
+#
+# - name: mysql service state
+#   service: name=mysql state=started enabled=yes
+#   tags: mysql
+#
+# - name: update mysql root password
+#   # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
+#   mysql_user: check_implicit_admin=yes name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
+#   tags: mysql
+#
+# - name: deploy my.cnf to root
+#   template: src=etc/mysql/my-cnf-user.j2 dest=/root/.my.cnf owner=root group={{ conf_root_group }} mode=0600
+#   tags: mysql
+#
+# - name: deploy my.cnf to ansible
+#   template: src=etc/mysql/my-cnf-user.j2 dest=/home/ansible/.my.cnf owner=ansible group=ansible mode=0600
+#   tags: mysql
+#
+# - name: remove unused mysql anonymous accesses
+#   # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name='' host={{item}} state=absent
+#   mysql_user: check_implicit_admin=yes name='' host={{item}} state=absent
+#   with_items:
+#     - 127.0.0.1
+#     - ::1
+#     - localhost
+#     - '{{ ansible_fqdn }}'
+#     - '{{ ansible_hostname }}'
+#   tags: mysql
+#
+# - name: remove unused mysql root accesses
+#   # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host={{item}} state=absent
+#   mysql_user: check_implicit_admin=yes name=root host={{item}} state=absent
+#   with_items:
+#     - 127.0.0.1
+#     - ::1
+#     - localhost
+#     - '{{ ansible_fqdn }}'
+#     - '{{ ansible_hostname }}'
+#   tags: mysql
+#
+# - name: remove unused mysql notch accesses
+#   # mysql_user: check_implicit_admin=yes login_host={{ ansible_fqdn }} name=root host={{item}} state=absent
+#   mysql_user: check_implicit_admin=yes name=notch host={{item}} state=absent
+#   with_items:
+#     - 127.0.0.1
+#     - ::1
+#     - localhost
+#     - '{{ ansible_fqdn }}'
+#     - '{{ ansible_hostname }}'
+#     - '{{ ansible_hostname }}.unix.production.local'
+#   tags: mysql
+#
+# - name: create DB replication user
+#   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv=*.*:"RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
+#   ignore_errors: true
+#   tags: mysql
+#
+# - name: deploy /etc/my.cnf (RedHat family)
+#   template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+#   notify: handle_restart_mysql
+#   when: ansible_os_family == "RedHat"
+#   tags: mysql
 
 #
 # db enabled

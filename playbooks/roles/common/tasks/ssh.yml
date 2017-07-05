@@ -1,0 +1,24 @@
+---
+
+# file: playbooks/roles/common/tasks/ssh.yml
+
+- name: ssh packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - openssh-server
+  when:
+    - ansible_os_family == "Debian"
+  tags: [ ssh, sshd ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - ssh/sshd_config
+  when:
+    - ansible_os_family == "Debian"
+  notify: handle_restart_ssh
+  tags: [ ssh, sshd, sshd-conf ]
+
+- name: enable ssh service
+  service: name={{ conf_ssh_service }} state=started enabled=yes
+  tags: [ ssh, sshd, sshd-conf ]

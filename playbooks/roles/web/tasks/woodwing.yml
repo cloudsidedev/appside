@@ -1,0 +1,225 @@
+---
+
+# file: playbooks/roles/web/tasks/woodwing.yml
+
+#
+# % php -i | grep "extension"
+#
+
+#
+# ioncube
+#
+- name: check if ioncube_loader_so is installed
+  stat: "path={{ conf_php_extension_dir }}/{{ conf_php_ioncube_loader_so }}"
+  register: ioncube_loader_so
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]
+
+- debug: var=ioncube_loader_so
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: create /tmp/ioncube-loader
+  file: path=/tmp/ioncube-loader state=directory mode=0750
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: download and unarchive ioncube_loader_so
+  unarchive:
+    src: "{{ conf_woodwing_ioncube_url }}"
+    dest: /tmp/ioncube-loader
+    remote_src: true
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: copy ioncube_loader_so
+  copy:
+    src: "/tmp/ioncube-loader/ioncube_loaders_all_platforms/lin_x86-64/{{ conf_php_ioncube_loader_so }}"
+    dest: "{{ conf_php_extension_dir }}/{{ conf_php_ioncube_loader_so }}"
+    owner: root
+    group: "{{ conf_root_group }}"
+    mode: 0644
+    remote_src: true
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: remove /tmp/ioncube-loader
+  file: path=/tmp/ioncube-loader state=absent mode=0750
+  when: not ioncube_loader_so.stat.exists
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: provision ioncube.ini (Debian family)
+  template: src=etc/php/mods-available/ioncube.ini.j2 dest={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/mods-available/ioncube.ini owner=root group={{ conf_root_group }} mode=0644
+  when: ansible_os_family == "Debian"
+  tags: [ woodwing, ioncube_loader, php ]
+
+#- name: enable PHP modules
+#  shell: phpenmod -v {{ conf_php_version_debian_family }} -s ALL {{ item }}
+#  with_items:
+#    - ioncube
+#  notify: handle_reload_apache2
+#  when: ansible_os_family == "Debian"
+#  tags: [ woodwing, ioncube_loader, php ]
+
+- name: enable PHP modules
+  file: src={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/mods-available/ioncube.ini dest={{ conf_local_etc_path }}/php/{{ conf_php_version_debian_family }}/{{ item }}/conf.d/10-ioncube.ini state=link
+  with_items:
+    - apache2
+    - cli
+  when: ansible_os_family == "Debian"
+  tags: [ woodwing, ioncube_loader, php ]
+
+#
+# woodwing
+#
+- name: create vhost enterprise folder
+  file: path=/var/www/vhosts/{{ item.key }}/enterprise state=directory owner=deploy group=deploy mode=0755
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ vhosts ]
+
+- name: check if EnterpriseServer has been extracted
+  stat: path=/tmp/EnterpriseServer/Enterprise/index.php
+  register: EnterpriseServer
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, ioncube_loader, php ]
+
+- name: create /tmp/EnterpriseServer
+  file: path=/tmp/EnterpriseServer state=directory mode=0750
+  when: not EnterpriseServer.stat.exists
+  tags: [ woodwing ]
+
+- name: download and unarchive EnterpriseServer
+  unarchive:
+    src: "{{ conf_woodwing_es_url }}"
+    dest: /tmp/EnterpriseServer
+    remote_src: true
+  when: not EnterpriseServer.stat.exists
+  tags: [ woodwing ]
+
+- name: rsync EnterpriseServer
+  synchronize:
+    src: /tmp/EnterpriseServer/Enterprise/
+    dest: /var/www/vhosts/{{ item.key }}/enterprise/
+    rsync_opts:
+      - "--exclude=config/config.php --exclude=config/configserver.php"
+  with_dict: '{{ conf_vhosts_common }}'
+  delegate_to: "{{ inventory_hostname }}"
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing ]
+
+- name: provision woodwing config.php template
+  template: src={{ item.value.type }}/config.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/config/config.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf ]
+
+- name: provision woodwing configserver.php template
+  template: src={{ item.value.type }}/configserver.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/config/configserver.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf ]
+
+#
+# Plugins
+#
+- name: check if BrandLogonManager has been extracted
+  stat: path=/tmp/BrandLogonManager/config.php
+  register: BrandLogonManager
+  when: conf_woodwing_enable is defined and conf_woodwing_enable == true
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: create /tmp/BrandLogonManager
+  file: path=/tmp/BrandLogonManager state=directory mode=0775
+  when: not BrandLogonManager.stat.exists
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: download and unarchive EnterpriseServer plugin BrandLogonManager
+  unarchive:
+    src: "{{ conf_brandlogonmanager_es_url }}"
+    dest: /tmp/BrandLogonManager
+    remote_src: true
+  when: not BrandLogonManager.stat.exists
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: rsync EnterpriseServer plugin BrandLogonManager
+  synchronize:
+    src: /tmp/BrandLogonManager/
+    dest: /var/www/vhosts/{{ item.key }}/enterprise/server/plugins/
+    rsync_opts:
+      - "--exclude=config.php --exclude=PluginInfo.php"
+  with_dict: '{{ conf_vhosts_common }}'
+  delegate_to: "{{ inventory_hostname }}"
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-plugins ]
+
+- name: provision woodwing plugin BrandLogonManager config template
+  template: src={{ item.value.type }}/plugins/BrandLogonManager/config.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/server/plugins/BrandLogonManager/config.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf, woodwing-plugins ]
+
+- name: provision woodwing plugin BrandLogonManager plugininfo template
+  template: src={{ item.value.type }}/plugins/BrandLogonManager/PluginInfo.php.j2 dest=/var/www/vhosts/{{ item.key }}/enterprise/server/plugins/BrandLogonManager/PluginInfo.php owner=deploy group={{ conf_www_group }} mode=0644
+  with_dict: '{{ conf_vhosts_common }}'
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  tags: [ woodwing, woodwing-conf, woodwing-plugins ]
+
+#
+# Upload folders
+#
+- name: create vhost woodwing Export
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/Export state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing Temp
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/Temp state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing Persistent
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/Persistent state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing TermsFiles
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/TermsFiles state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing TransferServerCache
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/TransferServerCache state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: create vhost woodwing ProductInfo
+  file: path=/mnt/nfs/woodwing/{{ item.key }}/_SYSTEM_/ProductInfo state=directory owner=deploy group={{ conf_www_group }} mode=0775
+  when: item.value.state == "enabled" and item.value.type == "woodwing"
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]
+
+- name: deploy woodwing-cron entries if enabled
+  lineinfile: dest=/etc/cron.d/woodwing-cron
+              regexp='^MAILTO=""'
+              line='MAILTO=""'
+              insertbefore=BOF
+              create=yes
+              owner=root group={{ conf_root_group }} mode=0644
+              state=present
+  when: conf_web_cron_enable is defined and conf_web_cron_enable == true
+  tags: [ woodwing, woodwing-conf ]
+
+- name: deploy idsjobsindex-cron entries if enabled
+  lineinfile: dest=/etc/cron.d/woodwing-cron
+              line='* * * * * {{ conf_www_group }} [ -x /var/www/vhosts/{{ item.key }} ] && curl "http://{{ item.value.servername }}/enterprise/idsjobindex.php?maxexectime=15&maxjobprocesses=3"'
+              insertafter=EOF
+              state=present
+  when: item.value.state == "enabled" and item.value.type == "woodwing" and conf_web_cron_enable is defined and conf_web_cron_enable == true
+  with_dict: '{{ conf_vhosts_common }}'
+  tags: [ woodwing, woodwing-conf ]

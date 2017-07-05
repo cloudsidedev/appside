@@ -1,0 +1,42 @@
+#!/bin/bash
+if [ -d /opt/appflow/ ]; then 
+    pushd /opt/appflow/ > /dev/null
+else
+    pushd ~/appflow/ > /dev/null
+fi
+if [[ -z $1 || $1 == *"help" || $1 == "-h" ]]; then
+	make
+	echo "	[action]	=	{ debug | help | update | init | tags | tags= | provision
+				  encrypt | decrypt | reset | status | checkin | checkout | jenkins | local
+				  ssh | vagrant | support | install | uninstall | vm }"
+	echo "	[tags]		=	{ ansible | apache2 | apache2-conf | apt | apt-listchanges | 
+				  apticron | assh | assh-conf | autossh | autossh-conf | base_packages | 
+				  borg | borgmatic | cloud | clustercheck | common | composer | env | 
+				  environment | etckeeper | fstab | geoip | glusterfs | golang | grafana | 
+				  groups | haproxy | haproxy-acl | haproxy-conf | hold | hosts | htaccess | 
+				  htpasswd | icinga | icinga-conf | icinga-conf-etc | icinga-conf-hosts | 
+				  icinga-ssh | jenkins | keepalived | keepalived-conf | lvm | motd | munin | 
+				  munin-conf | mysql | mysql-conf | mysql-users | mysqlpass | nodejs | ntp | 
+				  nullmailer | percona | php | php-conf | pkg | rsyslog | shell | shell-users | 
+				  smtpd | ssh | ssh-keys | ssl | ssl-conf | sudo | swap | update | users | varnish | 
+				  varnish-conf | vhosts | web_packages | wp-cli | xfs | yum_proxy }"
+elif [[ $1 != 'vagrant' ]]; then
+	if [[ $1 == "init-vm" ]]; then
+		echo "Choose your distro: 
+1- Ubuntu 14.04
+2- CentOS/RHEL 7.1 (Experimental, still not complete!) "; read  -n 1 -p "[choose a number]:" dist
+		if [ ! -z $dist ]; then
+			if [ $dist = "1" ]; then
+				DIS=
+			elif [ $dist = "2" ]; then
+				DIS="-centos"
+			fi
+			make vagrant$DIS
+		fi
+	else
+		make $@
+	fi
+else
+	vagrant ${@: +2}
+fi
+popd > /dev/null

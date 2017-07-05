@@ -5,15 +5,15 @@
 <VirtualHost *:8080>
 
         ServerName {{ item.value.servername }}
-        {% if item.value.serveralias.0 is defined %}
-        {% for item in item.value.serveralias %}
+{% if item.value.serveralias.0 is defined %}
+{% for item in item.value.serveralias %}
         ServerAlias {{ item }}
-        {% endfor %}
-        {% endif %}
+{% endfor %}
+{% endif %}
 
         ServerAdmin {{ item.value.serveradmin }}
 
-        DocumentRoot /var/www/vhosts/{{ item.key }}/web
+        DocumentRoot /var/www/vhosts/{{ item.key }}
 
         <Directory /var/www/vhosts/{{ item.key }}/>
                 Options FollowSymLinks

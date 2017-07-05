@@ -2,28 +2,34 @@
 
 # file: playbooks/roles/web/tasks/nodejs.yml
 
-- name: node.js PPA  (Ubuntu)
-  apt_repository: repo='ppa:chris-lea/node.js' update_cache=yes
+- name: node.js apt-key (Ubuntu)
+  apt_key: url="http://deb.nodesource.com/gpgkey/nodesource.gpg.key" validate_certs=False state=present
+  when: ansible_distribution == "Ubuntu"
+  tags: [ nodejs ]
+
+- name: node.js NodeSource repo (Ubuntu)
+  # apt_repository: repo='ppa:chris-lea/node.js' update_cache=yes
+  apt_repository: repo='deb https://deb.nodesource.com/node_7.x {{ ansible_distribution_release }} main' update_cache=yes
   when: ansible_distribution == "Ubuntu"
   ignore_errors: yes
   tags: [ nodejs, update ]
 
 - name: be sure nodejs packages packages are installed (Ubuntu)
-  apt: pkg={{ item }} state=installed force=yes
+  apt: pkg={{ item }} state=latest force=yes
   with_items:
     - nodejs
   when: ansible_distribution == "Ubuntu"
   tags: [ nodejs, web_packages ]
 
 - name: be sure nodejs packages packages are installed (Debian)
-  apt: pkg={{ item }} state=installed force=yes
+  apt: pkg={{ item }} state=latest force=yes
   with_items:
     - npm
   when: ansible_distribution == "Debian"
   tags: [ nodejs, web_packages ]
 
 - name: be sure nodejs packages packages are installed (Debian)
-  apt: pkg={{ item }} state=installed force=yes
+  apt: pkg={{ item }} state=latest force=yes
   with_items:
     - nodejs
     - nodejs-legacy
@@ -35,18 +41,34 @@
 ########
 
 - name: be sure nodejs packages packages are installed (RedHat Family)
-  yum: pkg={{ item }} state=installed
+  yum: pkg={{ item }} state=latest
   with_items:
     - nodejs
   when: ansible_os_family == "RedHat"
   tags: [ nodejs, web_packages ]
 
 - name: be sure nodejs packages packages are installed (RedHat Family)
-  yum: pkg={{ item }} state=installed
+  yum: pkg={{ item }} state=latest
   with_items:
     - npm
   when: ansible_os_family == "RedHat"
   tags: [ nodejs, web_packages ]
+
+###########
+# FreeBSD #
+###########
+
+- name: be sure nodejs packages packages are installed (FreeBSD family)
+  package: name={{ item }} state=present
+  with_items:
+    - node
+    - npm
+  when: ansible_os_family == "FreeBSD"
+  tags: [ nodejs, web_packages ]
+
+###########
+# Generic #
+###########
 
 - name: ensure Node packages are present
   npm: name={{ item }} global=yes state=present

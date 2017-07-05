@@ -10,9 +10,13 @@
   when: conf_env != "local"
   tags: [ common, users, shell ]
 
-#- include: ssh.yml
-#  when: conf_env != "local"
-#  tags: [ common ]
+- include: fail2ban.yml
+  when: conf_env != "local" and conf_fail2ban_enable is defined and conf_fail2ban_enable == true
+  tags: [ common, fail2ban ]
+
+- include: ssh.yml
+  when: conf_env != "local"
+  tags: [ common, ssh, sshd  ]
 
 - include: sudo.yml
   when: conf_env != "local"
@@ -48,6 +52,10 @@
   with_dict: '{{ conf_vhosts_common }}'
   when: conf_env == "local"
   tags: [ common ]
+
+- include: firewall.yml
+  when: conf_firewall_enable is defined and conf_firewall_enable == true
+  tags: [ common, firewall ]
 
 - include: etckeeper.yml
   when: conf_etckeeper_webhook_url is defined
@@ -87,7 +95,15 @@
 
 - include: nullmailer.yml
   when: conf_env != "local" and conf_nullmailer_enable == true
-  tags: [ common ]
+  tags: [ common, nullmailer ]
+
+- include: snmpd.yml
+  when: conf_env != "local" and conf_snmpd_enable is defined and conf_snmpd_enable == true
+  tags: [ common, snmpd ]
+
+- include: nfs.yml
+  # when: conf_nfs_enable is defined and conf_nfs_enable == true
+  tags: [ common, nfs ]
 
 # Bash prompt
 # - copy: src=../files/profile/nicer-bash-prompt.sh dest=/{{ conf_etc_path }}/profile.d/Z999-nicer-bash-prompt.sh owner=root group={{ conf_root_group }} mode=644
@@ -107,9 +123,10 @@
 #   tags: [ common ]
 
 - include: letsencrypt.yml
-  when:
-    - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
-    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
+  # when:
+  #   - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
+  #   - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
+  #   - conf_letsencrypt_cron_master is defined and conf_letsencrypt_cron_master == true
   tags: [ common, letsencrypt ]
 
 - include: icinga.yml

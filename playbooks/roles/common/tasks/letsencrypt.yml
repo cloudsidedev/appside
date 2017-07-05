@@ -6,7 +6,9 @@
   package: name={{ item }} state=latest
   with_items:
       - ssl-cert-check
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt ]
 
 - name: clone certbot to /opt/certbot
@@ -16,16 +18,23 @@
     version: master
     update: yes
     force: yes
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt ]
 
 - name: ensure certbot-auto is executable
   file:
     path: /opt/certbot/certbot-auto
     mode: 0755
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt ]
 
 - name: symlink /opt/certbot/certbot-auto
   file: src=/opt/certbot/certbot-auto dest=/usr/local/bin/certbot-auto state=link
+  ignore_errors: true
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt ]
 
 - name: create /etc/letsencrypt
@@ -33,6 +42,8 @@
   with_items:
     - /etc/letsencrypt
     - /mnt/glusterfs/gvol0/brick1/certs
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt, letsencrypt-conf ]
 
 - name: provision configs
@@ -40,6 +51,8 @@
   with_items:
       - letsencrypt/cli.ini
   # notify: handle_restart_letsencrypt
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt, letsencrypt-conf ]
 
 - name: provision scripts
@@ -48,13 +61,12 @@
       - usr/local/bin/cert-renew.sh
       - usr/local/bin/cert-create.sh
       - usr/local/bin/cert-verify.sh
+  when:
+    - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   tags: [ letsencrypt, letsencrypt-conf ]
 
-# - name: Add cron job for 'certbot-auto renew' (if configured).
-#   cron:
-#     name: Certbot automatic renewal.
-#     job: "{{ certbot_dir }}/certbot-auto renew --quiet --no-self-upgrade"
-#     minute: "{{ certbot_auto_renew_minute }}"
-#     hour: "{{ certbot_auto_renew_hour }}"
-#     user: "{{ certbot_auto_renew_user }}"
-#   when: certbot_auto_renew
+- name: deploy /etc/cron.d/cert-renew
+  template: src=etc/cron.d/cert-renew.j2 dest=/etc/cron.d/cert-renew owner=root group={{ conf_root_group }} mode=0644
+  when:
+    - conf_letsencrypt_cron_master is defined and conf_letsencrypt_cron_master == true
+  tags: [ letsencrypt, letsencrypt-conf ]

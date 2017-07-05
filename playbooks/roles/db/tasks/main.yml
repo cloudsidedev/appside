@@ -2,16 +2,13 @@
 
 # file: playbooks/roles/db/tasks/main.yml
 
-- include: main-centos.yml
-  when: ansible_os_family == "RedHat"
-
-- name: be sure dbtier packages are installed (Ubuntu)
+- name: be sure dbtier packages are installed (Debian family)
   apt: pkg={{ item }} state=installed
   with_items:
     # - mysql-server
     - python-mysqldb
     - bc
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   environment:
     DEBIAN_FRONTEND: noninteractive
   tags: [ mysql ]
@@ -36,19 +33,21 @@
 #
 # MySQL system config (BEFORE PERCONA)
 #
-# - name: deploy debian.cnf to /etc/mysql/debian.cnf
-#   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-#   when: ansible_distribution == "Ubuntu"
-#   tags: [ mysql, mysql-conf, percona ]
-
 - name: create /etc/mysql
   file: path=/etc/mysql state=directory owner=root group={{ conf_root_group }} mode=0755
+  when: ansible_os_family == "Debian"
   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu)
+- name: deploy /etc/mysql/my.cnf (Debian family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
+  tags: [ mysql, mysql-conf, percona ]
+
+- name: deploy /etc/my.cnf (RedHat family)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  # notify: handle_restart_mysql
+  when: ansible_os_family == "RedHat"
   tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (FreeBSD)
@@ -59,8 +58,17 @@
 #
 # percona
 #
+- name: deploy /usr/local/bin/galeranotify.py
+  template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
+  tags: [ mysql, percona ]
+
 - include: percona.yml
-  when: ansible_os_family == "Debian"
+
+- name: create DB clustercheck user
+  mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
+  when: conf_env != "development" and conf_galera_cluster == true
+  ignore_errors: yes
+  tags: [ mysql, percona, clustercheck ]
 
 - name: create replication user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT" state=present
@@ -72,20 +80,20 @@
 #
 # - name: deploy debian.cnf to /etc/mysql/debian.cnf
 #   copy: src=../files/mysql/debian.cnf dest=/etc/mysql/debian.cnf owner=root group={{ conf_root_group }} mode=0600
-#   when: ansible_distribution == "Ubuntu"
+#   when: ansible_os_family == "Debian"
 #   tags: [ mysql, mysql-conf, percona ]
 
-- name: deploy /etc/mysql/my.cnf (Ubuntu)
+- name: deploy /etc/mysql/my.cnf (Debian family)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/mysql/my.cnf owner=root group={{ conf_root_group }} mode=0644
   # notify: handle_restart_mysql
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   tags: [ mysql, mysql-conf, percona ]
 
-# - name: restart MySQL
-#  command: /bin/true
-#  notify: handle_restart_mysql
-#  when: conf_wsrep_master == false
-#  tags: [ mysql, percona ]
+- name: deploy /etc/my.cnf (RedHat family)
+  template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
+  # notify: handle_restart_mysql
+  when: ansible_os_family == "RedHat"
+  tags: [ mysql, mysql-conf, percona ]
 
 - name: deploy /etc/mysql/my.cnf (FreeBSD)
   template: src=etc/mysql/my-cnf.j2 dest=/etc/my.cnf owner=root group={{ conf_root_group }} mode=0644
@@ -97,9 +105,9 @@
 #
 #   First MySQL upgrade then mysql bootstrap
 #
-- name: mysql service state
+- name: mysql service state (Debian family)
   service: name=mysql state=started enabled=yes
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   ignore_errors: yes
   tags: [ mysql ]
 
@@ -117,6 +125,7 @@
 - name: update mysql root password
   mysql_user: check_implicit_admin=yes name=root host=% password={{ conf_mysql_root_password }} priv="*.*:ALL,GRANT"
   # mysql_user: check_implicit_admin=yes login_host={{ ansible_all_ipv4_addresses.0 }} name=root host=% password={{ conf_mysql_root_password }} priv=*.*:ALL,GRANT
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users, mysqlpass ]
 
 - name: deploy my.cnf to enabled mysql admins
@@ -133,6 +142,7 @@
     - localhost
     - '{{ ansible_fqdn }}'
     - '{{ ansible_hostname }}'
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
 
 - name: remove unused mysql root accesses
@@ -143,25 +153,14 @@
     - localhost
     - '{{ ansible_fqdn }}'
     - '{{ ansible_hostname }}'
+  ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
 
-  #
-  # TODO: Drop test database
-  #
-
-# - name: copy latest DB dump (development/staging only)
-#  copy: src=../../../rsync-freedom/archives/latest.sql.bz2 dest=/root
-#  when: conf_env != "production"
-#  notify: handle_mysql_import
-
-# - name: add mysql.local -> localhost (development/staging only)
-#   lineinfile: dest=/etc/hosts state=present line="127.0.0.1 mysql.local"
-#   tags: [ mysql ]
-
-#
-# MySQL binary replication (Outdated)
-#
-# - include: mysql-replication.yml
+- name: mysql service state (RedHat family)
+  service: name=mysql state=restarted enabled=yes
+  when: conf_wsrep_master == false and ansible_os_family == "RedHat"
+  ignore_errors: yes
+  tags: [ mysql ]
 
 #
 # db enabled
