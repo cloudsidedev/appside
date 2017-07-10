@@ -258,18 +258,18 @@ define ('EXTENSIONMAP', serialize( array(
 // -------------------------------------------------------------------------------------------------
 // Ticket expiration - Logon ticket expiration time in seconds
 // -------------------------------------------------------------------------------------------------
-define ('EXPIREDEFAULT',	24*3600);	// Generic logon expiration time. Default value: 24*3600.
-define ('EXPIREWEB',		3600);		// Logon expiration time for Web based clients. Default value: 3600.
+define ('EXPIREDEFAULT',	{{ item.value.ww_expiresession }}*3600);	// Generic logon expiration time. Default value: 24*3600.
+define ('EXPIREWEB',		{{ item.value.ww_expirewebsession }}*3600);		// Logon expiration time for Web based clients. Default value: 3600.
 
 // -------------------------------------------------------------------------------------------------
 // Versioning - Maximum number of versions to store per object type
 // -------------------------------------------------------------------------------------------------
-define ('MAX_ARTICLE_VERSION',	10); // also used for ArticleTemplate
-define ('MAX_IMAGE_VERSION', 	5);
-define ('MAX_VIDEO_VERSION', 	5);
-define ('MAX_AUDIO_VERSION', 	5);
-define ('MAX_LAYOUT_VERSION', 	5); // also used for LayoutTemplate, LayoutModule and LayoutModuleTemplate
-define ('MAX_LIBRARY_VERSION', 	5);
+define ('MAX_ARTICLE_VERSION',	{{ item.value.ww_max_article_version }}); // also used for ArticleTemplate
+define ('MAX_IMAGE_VERSION', 	{{ item.value.ww_max_image_version }});
+define ('MAX_VIDEO_VERSION', 	{{ item.value.ww_max_video_version }});
+define ('MAX_AUDIO_VERSION', 	{{ item.value.ww_max_audio_version }});
+define ('MAX_LAYOUT_VERSION', 	{{ item.value.ww_max_layout_version }}); // also used for LayoutTemplate, LayoutModule and LayoutModuleTemplate
+define ('MAX_LIBRARY_VERSION', 	{{ item.value.ww_max_library_version }});
 
 // Discontinued settings:
 //    CREATEVERSION_ONSTATECHANGE:
