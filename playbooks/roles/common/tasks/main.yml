@@ -85,6 +85,10 @@
 - include: base_packages.yml
   tags: [ common, apt, base_packages ]
 
+- include: docker.yml
+  when: conf_docker_enable is defined and conf_docker_enable == true
+  tags: [ common, docker ]
+
 - include: ansible.yml
   when: conf_env != "local"
 

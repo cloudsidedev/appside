@@ -1,0 +1,51 @@
+---
+
+# file: playbooks/roles/common/tasks/docker.yml
+
+# Good starting point: https://github.com/angstwad/docker.ubuntu
+
+- name: remove conflicting Docker packages (Debian family)
+  apt: pkg={{ item }} state=absent
+  with_items:
+    - docker
+    - docker-engine
+    - docker.io
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian"
+  tags: [ docker ]
+
+- name: Install linux-image-extra-* packages to enable AuFS driver
+  apt: pkg={{ item }} state=present
+  with_items:
+    - linux-image-extra-{{ ansible_kernel }}
+    - linux-image-extra-virtual
+  when: ansible_os_family == "Debian" and ansible_distribution_version|version_compare('14.04', '==')
+  register: linux_image_extra_install
+  ignore_errors: yes
+  tags: [ docker ]
+
+- name: Docker apt-key (Debian family)
+  apt_key: id="58118E89F3A912897C070ADBF76221572C52609D" keyserver="hkp://p80.pool.sks-keyservers.net:80" state=present
+  when: ansible_os_family == "Debian"
+  register: add_repository_key
+  ignore_errors: yes
+  tags: [ docker ]
+
+- name: Docker apt-key (Debian family) | Alternative
+  shell: "curl -sSL {{ apt_key_url }} | sudo apt-key add -"
+  when: add_repository_key|failed
+  tags: [ docker ]
+
+- name: docker repo (Debian family)
+  apt_repository: repo="deb https://apt.dockerproject.org/repo {{ ansible_lsb.id|lower }}-{{ ansible_lsb.codename|lower }} main" update_cache=yes
+  when: ansible_os_family == "Debian"
+  tags: [ docker ]
+
+- name: docker packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items:
+    - docker-engine
+  when:
+    - ansible_os_family == "Debian"
+  tags: [ docker ]
