@@ -113,15 +113,17 @@
 
 - name: provision docker containers
   docker_container:
-    name: "{{ item.key }}"
+    name: "{{ item.value.name|default(item.key) }}"
     state: "{{ item.value.state }}"
     recreate: "{{ item.value.recreate }}"
     image: "{{ item.value.image }}"
     restart_policy: "{{ item.value.restart_policy }}"
+    user: "{{ item.value.user|default(None) }}"    
+    exposed_ports: "{{ item.value.exposed_ports|default([]) }}"
     published_ports: "{{ item.value.published_ports|default([]) }}"
     volumes: "{{ item.value.volumes|default([]) }}"
     command: "{{ item.value.command|default([]) }}"
-    env: "{{ item.value.env|default([]) }}"
+    env: "{{ item.value.env|default('appflow_version=rolling') }}"
   with_dict: '{{ conf_docker_containers }}'
   ignore_errors: yes
   tags: [ docker, docker-conf, containers ]
