@@ -101,14 +101,27 @@
   notify: handle_restart_docker
   tags: [ docker, docker-conf ]
 
+- name: create persistent storage folder
+  file: path={{ conf_docker_persistent_storage_path }} state=directory owner=root group=docker mode=0755
+  tags: [ docker, docker-conf, containers ]
+
+- name: create persistent storage folder for containers
+  file: path={{ conf_docker_persistent_storage_path }}/{{ item.key }} state=directory owner=root group=docker mode=0755
+  when: item.value.state != "absent" and item.value.volumes is defined
+  with_dict: '{{ conf_docker_containers }}'
+  tags: [ docker, docker-conf, containers ]
+
 - name: provision docker containers
   docker_container:
     name: "{{ item.key }}"
     state: "{{ item.value.state }}"
+    recreate: "{{ item.value.recreate }}"
     image: "{{ item.value.image }}"
     restart_policy: "{{ item.value.restart_policy }}"
     published_ports: "{{ item.value.published_ports|default([]) }}"
     volumes: "{{ item.value.volumes|default([]) }}"
+    command: "{{ item.value.command|default([]) }}"
+    env: "{{ item.value.env|default([]) }}"
   with_dict: '{{ conf_docker_containers }}'
   ignore_errors: yes
   tags: [ docker, docker-conf, containers ]
