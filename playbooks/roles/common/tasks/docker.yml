@@ -4,6 +4,31 @@
 
 # Good starting point: https://github.com/angstwad/docker.ubuntu
 
+# Containers
+#
+#   - Create /var/lib/appflow/
+
+- name: python-pip (Debian family)
+  apt: pkg={{ item }} state=present
+  with_items:
+    - python-pip
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian"
+  tags: [ docker ]
+
+- name: install docker-py (pip3)
+  pip: name={{ item }} executable=pip3 state=present
+  with_items:
+    - docker-py
+  tags: [ docker ]
+
+- name: install docker-py (pip)
+  pip: name={{ item }} state=present
+  with_items:
+    - docker-py
+  tags: [ docker ]
+
 - name: remove conflicting Docker packages (Debian family)
   apt: pkg={{ item }} state=absent
   with_items:
@@ -75,4 +100,15 @@
     - ansible_os_family == "Debian"
   notify: handle_restart_docker
   tags: [ docker, docker-conf ]
-  
+
+- name: provision docker containers
+  docker_container:
+    name: "{{ item.key }}"
+    state: "{{ item.value.state }}"
+    image: "{{ item.value.image }}"
+    restart_policy: "{{ item.value.restart_policy }}"
+    published_ports: "{{ item.value.published_ports|default([]) }}"
+    volumes: "{{ item.value.volumes|default([]) }}"
+  with_dict: '{{ conf_docker_containers }}'
+  ignore_errors: yes
+  tags: [ docker, docker-conf, containers ]
