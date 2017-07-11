@@ -14,6 +14,12 @@
 - name: handle_restart_autofs
   service: name=autofs state=restarted
 
+- name: handle_reload_docker
+  service: name=docker state=reloaded
+
+- name: handle_restart_docker
+  service: name=docker state=restarted
+
 - name: handle_restart_tinc
   service: name=tinc state=restarted
 

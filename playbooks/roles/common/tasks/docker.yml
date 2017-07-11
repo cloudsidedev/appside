@@ -8,7 +8,7 @@
   apt: pkg={{ item }} state=absent
   with_items:
     - docker
-    - docker-engine
+    # - docker-engine
     - docker.io
   environment:
     DEBIAN_FRONTEND: noninteractive
@@ -49,3 +49,30 @@
   when:
     - ansible_os_family == "Debian"
   tags: [ docker ]
+
+- name: Add users to the docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  with_items: "{{ conf_docker_group_members }}"
+  when: conf_docker_group_members is defined
+
+- name: provision configs (Debian family)
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - default/docker
+  when:
+    - ansible_os_family == "Debian"
+  notify: handle_restart_docker
+  tags: [ docker, docker-conf ]
+
+- name: provision service (Debian family)
+  template: src=lib/{{ item }}.j2 dest=/lib/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - systemd/system/docker.service
+  when:
+    - ansible_os_family == "Debian"
+  notify: handle_restart_docker
+  tags: [ docker, docker-conf ]
+  
