@@ -35,6 +35,11 @@
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v /tmp:/tmp"
 CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
+RES=$(command -v docker.exe >/dev/null 2>&1)
+if [[ $? -eq 0 ]]; then
+  alias docker='docker.exe'
+fi
+
 function check_selinux() {
 
   RES=$(command -v getenforce >/dev/null 2>&1)
