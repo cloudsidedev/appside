@@ -35,9 +35,11 @@
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v /tmp:/tmp"
 CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
+CFG_DOCKER=$(which docker)
+
 RES=$(command -v docker.exe >/dev/null 2>&1)
 if [[ $? -eq 0 ]]; then
-  alias docker='docker.exe'
+    CFG_DOCKER=$(which docker.exe)
 fi
 
 function check_selinux() {
@@ -70,9 +72,9 @@ function check_dirs() {
 function check_docker() {
   local rc=-1
 
-  RES=$(docker --version | grep "Docker version")
+  RES=$($CFG_DOCKER --version | grep "Docker version")
   if [[ $? -eq 0 ]]; then
-    RES=$(docker ps)
+    RES=$($CFG_DOCKER ps)
     if [[ $? -eq 0 ]]; then
       rc=0
     fi
@@ -84,10 +86,10 @@ function check_docker() {
 function check_ssh_agent_container() {
   local rc=-1
 
-  RES=$(docker ps -q -f status=exited -f name=^/ssh-agent$)
+  RES=$($CFG_DOCKER ps -q -f status=exited -f name=^/ssh-agent$)
   if [ "${RES}" ]; then
     echo -n "starting whilp/ssh-agent... "
-    $(docker start ssh-agent > /dev/null)
+    $($CFG_DOCKER start ssh-agent > /dev/null)
     if [[ $? -eq 0 ]]; then
       echo "done."
       rc=0
@@ -95,11 +97,11 @@ function check_ssh_agent_container() {
       echo "failed."
     fi
   else
-    RES=$(docker ps -q -f status=running -f name=^/ssh-agent$)
+    RES=$($CFG_DOCKER ps -q -f status=running -f name=^/ssh-agent$)
     if [ ! "${RES}" ]; then
       echo -n "running whilp/ssh-agent... "
-      # $(docker run -u $UID -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
-      $(docker run -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      # $($CFG_DOCKER run -u $UID -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
+      $($CFG_DOCKER run -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest > /dev/null)
       if [[ $? -eq 0 ]]; then
         echo "done."
         rc=0
@@ -120,7 +122,7 @@ function check_ssh_key_enc() {
   $(grep -q ENCRYPTED ~/.ssh/test/id_rsa-ttss-test)
   if [[ $? -eq 0 ]]; then
     echo -n "ssh key is encrypted"
-    # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    # $($CFG_DOCKER run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
     # if [[ $? -eq 0 ]]; then
     #   echo "done."
     #   rc=0
@@ -137,12 +139,12 @@ function check_ssh_key_enc() {
 function check_ssh_key() {
   local rc=-1
 
-  # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add -L >/dev/null)
-  $(docker run --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  # $($CFG_DOCKER run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add -L >/dev/null)
+  $($CFG_DOCKER run --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add -L >/dev/null)
   if [[ $? -ne 0 ]]; then
     echo -n "injecting ssh key... "
-    # $(docker run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
-    $(docker run --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    # $($CFG_DOCKER run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
+    $($CFG_DOCKER run --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
     if [[ $? -eq 0 ]]; then
       echo "done."
       rc=0
@@ -192,8 +194,8 @@ if [[ $? -eq 0 ]]; then
 
         check_selinux
 
-        docker run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:latest $@
-        # docker run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
+        $CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:latest $@
+        # $CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
 
       # fi
     # fi
