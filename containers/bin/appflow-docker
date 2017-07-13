@@ -36,13 +36,20 @@
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v /tmp:/tmp"
 CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
-SELINUX=$(getenforce)
-if (( $? != 127 )); then
-  if [ "$SELINUX" = "Enforcing" ]; then
-    sudo chcon -Rt svirt_sandbox_file_t /tmp
-    sudo chcon -Rt svirt_sandbox_file_t $HOME
+function check_selinux() {
+
+  RES=$(command -v foo >/dev/null 2>&1)
+  if [[ $? -eq 0 ]]; then
+
+    SELINUX=$(getenforce)
+    if (( $? != 127 )); then
+      if [ "$SELINUX" = "Enforcing" ]; then
+        sudo chcon -Rt svirt_sandbox_file_t /tmp
+        sudo chcon -Rt svirt_sandbox_file_t $HOME
+      fi
+    fi
   fi
-fi
+}
 
 function check_dirs() {
   local rc=-1
@@ -178,6 +185,8 @@ if [[ $? -eq 0 ]]; then
         if [ "${RES}" ]; then
           CFG_DOCKER_VOLUMES="$CFG_DOCKER_VOLUMES -v $RES:/home/appflow/dotfiles"
         fi
+
+        check_selinux
 
         docker run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:latest $@
         # docker run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
