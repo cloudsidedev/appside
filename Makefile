@@ -140,7 +140,7 @@ encrypt:
 decrypt:
 	@printf "[$(.BOLD)$(.CYAN)decrypt$(.CLEAR)][$(.BOLD)$(.WHITE)$($(vault))$(.CLEAR)][$(.BOLD)$(.$(env))$(.CLEAR)]\n"
 	@-rm -f  ~/.appflow/tmp/.appflow-$(USER)/$($(tenant))/tmp/.appflow-$(USER)/$($(tenant))/appflow-$(env)-md5
-	@mkdir -p  ~/.appflow/tmp/.appflow-$(USER)/$($(tenant))/tmp/.appflow-$(USER)/$($(tenant))
+	@mkdir -p  ~/.appflow/tmp/.appflow-$(USER)/$($(tenant))
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f ! -iname ".*" -exec ansible-vault decrypt {} \
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env) \; ||:
 	@find ~/.appflow/tenant/$($(tenant))/$(env) -type f ! -iname ".*" -exec md5sum {} >  ~/.appflow/tmp/.appflow-$(USER)/$($(tenant))/appflow-$(env)-md5 \;
