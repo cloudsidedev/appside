@@ -18,7 +18,7 @@ if [ $status -eq 0 ]; then
 	git -C ~/.appflow/tenant/$tenant diff-files --name-only -B -R -M $env
 	exit 0
 fi
-find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new \;
-changed_files=`(diff /tmp/.appflow-$USER/$tenant/appflow-$env-md5 /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
+find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5-new \;
+changed_files=`(diff $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5 $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
 echo $changed_files  | tr ' ' '\n' 
 

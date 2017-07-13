@@ -23,8 +23,9 @@ for f in $FILES; do
 		fi
 	fi
 done
-find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new \;
-changed_files=`(diff /tmp/.appflow-$USER/$tenant/appflow-$env-md5 /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
+mkdir -p $HOME/.appflow/tmp/.appflow-$USER/$tenant/
+find ~/.appflow/tenant/$tenant/$env -type f -exec md5sum {} > $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5-new \;
+changed_files=`(diff $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5 $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5-new | cut -d " " -f 4 | grep "/" | sort | uniq )`
 if [ "$ENC" = false ]; then
 	make encrypt tenant=$make_tenant env=$env
 fi
@@ -32,4 +33,4 @@ echo $changed_files  | tr ' ' '\n' |  xargs git -C ~/.appflow/tenant/$tenant add
 git -C ~/.appflow/tenant/$tenant commit -m "Auto commit"
 git -C ~/.appflow/tenant/$tenant push
 git -C ~/.appflow/tenant/$tenant/$env checkout .
-rm /tmp/.appflow-$USER/$tenant/appflow-$env-md5-new
+rm $HOME/.appflow/tmp/.appflow-$USER/$tenant/appflow-$env-md5-new
