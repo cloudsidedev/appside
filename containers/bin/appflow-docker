@@ -37,7 +37,7 @@ CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH=
 
 function check_selinux() {
 
-  RES=$(command -v foo >/dev/null 2>&1)
+  RES=$(command -v getenforce >/dev/null 2>&1)
   if [[ $? -eq 0 ]]; then
 
     SELINUX=$(getenforce)
