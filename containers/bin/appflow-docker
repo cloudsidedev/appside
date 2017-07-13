@@ -123,7 +123,7 @@ function check_ssh_agent_container() {
 function check_ssh_key_enc() {
   local rc=-1
 
-  $(grep -q ENCRYPTED ~/.ssh/test/id_rsa-ttss-test)
+  $(grep -q ENCRYPTED $HOME/.ssh/test/id_rsa-ttss-test)
   if [[ $? -eq 0 ]]; then
     echo -n "ssh key is encrypted"
     # $($CFG_DOCKER run -u $UID --rm -v ssh:/ssh -v $HOME:$HOME -t whilp/ssh-agent:latest ssh-add $HOME/.ssh/id_rsa >/dev/null)
