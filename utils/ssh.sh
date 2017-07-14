@@ -44,5 +44,8 @@ cp -f ~/.appflow/tenant/$vault/$env/assh.yml ~/.ssh/assh.d/$vault/$env.yml
 assh config build > ~/.ssh/config
 make reset tenant=$make_tenant env=$env
 # Restore original config hosts
+
+echo qui no problem
+
 cat ~/.ssh/config_personal >> ~/.ssh/config
 assh info | grep $vault
