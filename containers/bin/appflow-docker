@@ -33,7 +33,7 @@
 #	# /tmp
 
 if [[ "$OSTYPE" =~ ^cygwin ]]; then
-    HOME=$(cygpath -w ~)
+    HOME=$(cygpath -m ~ | sed 's/C:/\/c/g')
 fi
 
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro"
