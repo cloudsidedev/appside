@@ -23,10 +23,11 @@
     - docker-py
   tags: [ docker ]
 
-- name: install docker-py (pip)
+- name: install docker-py and docker-compose (pip)
   pip: name={{ item }} state=present
   with_items:
     - docker-py
+    # - docker-compose
   tags: [ docker ]
 
 - name: remove conflicting Docker packages (Debian family)
@@ -101,15 +102,42 @@
   notify: handle_restart_docker
   tags: [ docker, docker-conf ]
 
+# - name: install docker-compose
+#   get_url: url={{ conf_docker_compose_url }} dest=/usr/local/bin/docker-compose force=yes
+#   tags: [ docker, docker-compose ]
+
+# - name: set permissions on docker-compose binary
+#   file: path=/usr/local/bin/docker-compose mode=0755
+#   tags: [ docker, docker-compose ]
+
 - name: create persistent storage folder
   file: path={{ conf_docker_persistent_storage_path }} state=directory owner=root group=docker mode=0755
-  tags: [ docker, docker-conf, containers ]
+  tags: [ docker, docker-conf, docker-containers ]
 
 - name: create persistent storage folder for containers
   file: path={{ conf_docker_persistent_storage_path }}/{{ item.key }} state=directory owner=root group=docker mode=0755
   when: item.value.state != "absent" and item.value.volumes is defined
   with_dict: '{{ conf_docker_containers }}'
-  tags: [ docker, docker-conf, containers ]
+  tags: [ docker, docker-conf, docker-containers ]
+
+- name: provision docker networks
+  docker_network:
+    name: "{{ item.value.name|default(item.key) }}"
+    state: "{{ item.value.state }}"
+    driver: "{{ item.value.driver|default('bridge') }}"
+    # recreate: "{{ item.value.recreate }}"
+    # image: "{{ item.value.image }}"
+    # restart_policy: "{{ item.value.restart_policy }}"
+    # user: "{{ item.value.user|default(None) }}"    
+    # exposed_ports: "{{ item.value.exposed_ports|default([]) }}"
+    # published_ports: "{{ item.value.published_ports|default([]) }}"
+    # volumes: "{{ item.value.volumes|default([]) }}"
+    # links: "{{ item.value.links|default([]) }}"
+    # command: "{{ item.value.command|default([]) }}"
+    # env: "{{ item.value.env|default('appflow_version=rolling') }}"
+  with_dict: '{{ conf_docker_networks }}'
+  ignore_errors: yes
+  tags: [ docker, docker-conf, docker-networks ]
 
 - name: provision docker containers
   docker_container:
@@ -122,8 +150,10 @@
     exposed_ports: "{{ item.value.exposed_ports|default([]) }}"
     published_ports: "{{ item.value.published_ports|default([]) }}"
     volumes: "{{ item.value.volumes|default([]) }}"
+    networks: "{{ item.value.networks|default([]) }}"
+    links: "{{ item.value.links|default([]) }}"
     command: "{{ item.value.command|default([]) }}"
     env: "{{ item.value.env|default('appflow_version=rolling') }}"
   with_dict: '{{ conf_docker_containers }}'
   ignore_errors: yes
-  tags: [ docker, docker-conf, containers ]
+  tags: [ docker, docker-conf, docker-containers ]
