@@ -37,7 +37,7 @@ if [[ "$OSTYPE" =~ ^cygwin ]]; then
 fi
 
 CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro"
-CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
+CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID -e DOCKERHOST_OSTYPE=$OSTYPE" 
 
 CFG_DOCKER="docker"
 
@@ -182,13 +182,13 @@ if [[ $? -eq 0 ]]; then
   check_docker
   if [[ $? -eq 0 ]]; then
 
-    # check_ssh_agent_container
-    # if [[ $? -eq 0 ]]; then
+        # check_ssh_agent_container
+        # if [[ $? -eq 0 ]]; then
 
-      # check_ssh_key_enc
+        # check_ssh_key_enc
 
-      # check_ssh_key
-      # if [[ $? -eq 0 ]]; then
+        # check_ssh_key
+        # if [[ $? -eq 0 ]]; then
 
         RES=$(check_dotfiles)
         if [ "${RES}" ]; then
