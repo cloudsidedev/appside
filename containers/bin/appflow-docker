@@ -32,14 +32,11 @@
 #	~/.gitconfig
 #	# /tmp
 
-TMP_DIR="/tmp"
-
 if [[ "$OSTYPE" =~ ^cygwin ]]; then
     HOME=$(cygpath -w ~)
-    TMP_DIR=$(cygpath -w /tmp)
 fi
 
-CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro -v $TMP_DIR:/tmp"
+CFG_DOCKER_VOLUMES="-v $HOME/.appflow:/home/appflow/.appflow -v $HOME/.ssh:/home/appflow/.ssh -v $HOME/.gitconfig:/home/appflow/.gitconfig:ro"
 CFG_DOCKER_ENVS="-e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_SSH_CONTROL_PATH="/home/appflow/tmp/.ssh/cm/%%C.sock" -e ANSIBLE_RETRY_FILES_ENABLED="False" -e LOCAL_USER_ID=$UID"
 
 CFG_DOCKER="docker"
@@ -57,7 +54,6 @@ function check_selinux() {
     SELINUX=$(getenforce)
     if (( $? != 127 )); then
       if [ "$SELINUX" = "Enforcing" ]; then
-        sudo chcon -Rt svirt_sandbox_file_t $TMP_DIR
         sudo chcon -Rt svirt_sandbox_file_t $HOME
       fi
     fi

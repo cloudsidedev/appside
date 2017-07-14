@@ -21,4 +21,5 @@ echo 'alias ssh="assh wrapper ssh"' >> /home/appflow/.bashrc
 # exec echo appflow "$@"
 # su - appflow -c "appflow $@"
 PARAMS="$@"
+chmod -R -x /home/appflow/.appflow/vault
 su - appflow --preserve-environment -c "eval \$(ssh-agent) ; ssh-add ; appflow $PARAMS"
