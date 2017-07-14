@@ -22,6 +22,10 @@ echo 'alias ssh="assh wrapper ssh"' >> /home/appflow/.bashrc
 # su - appflow -c "appflow $@"
 PARAMS="$@"
 
-echo $DOCKERHOST_OSTYPE
+
+if [[ "$DOCKERHOST_OSTYPE" =~ ^cygwin ]]; then
+    cp -r /tmp/vault /home/appflow/.appflow
+    chmod -x /home/appflow/.appflow/vault/*/*
+fi
 
 su - appflow --preserve-environment -c "eval \$(ssh-agent) ; ssh-add ; appflow $PARAMS"
