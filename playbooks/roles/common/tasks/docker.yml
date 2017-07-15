@@ -155,6 +155,7 @@
     links: "{{ item.value.links|default([]) }}"
     command: "{{ item.value.command|default([]) }}"
     env: "{{ item.value.env|default('appflow_version=rolling') }}"
+    etc_hosts: "{{ item.value.etc_hosts|default([]) }}"
   with_dict: '{{ conf_docker_containers }}'
   ignore_errors: yes
   tags: [ docker, docker-conf, docker-containers ]
