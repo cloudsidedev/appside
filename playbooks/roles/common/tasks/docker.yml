@@ -153,9 +153,10 @@
     volumes: "{{ item.value.volumes|default([]) }}"
     networks: "{{ item.value.networks|default([]) }}"
     links: "{{ item.value.links|default([]) }}"
-    command: "{{ item.value.command|default([]) }}"
+    entrypoint: "{{ item.value.entrypoint }}"
+    command: "{{ item.value.command|default('') }}"
     env: "{{ item.value.env|default('appflow_version=rolling') }}"
-    etc_hosts: "{{ item.value.etc_hosts|default([]) }}"
+    etc_hosts: "{{ item.value.etc_hosts|default({'dockerhost':'172.17.0.1'}) }}"
   with_dict: '{{ conf_docker_containers }}'
   ignore_errors: yes
   tags: [ docker, docker-conf, docker-containers ]
