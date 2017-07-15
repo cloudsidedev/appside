@@ -170,7 +170,7 @@ local:
 --vault-password-file ~/.appflow/vault/$($(vault))/$(env)
 
 ssh:
-	utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
+	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
 vagrant:
 	mkdir -p ~/Downloads/Software
