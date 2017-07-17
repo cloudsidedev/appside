@@ -9,8 +9,8 @@
   become: false
   tags: [ assh, assh-conf ]
 
-- name: create ControlPath directories (Unix, users)
-  file: path={{ item.value.home }}/.ssh/cm state=directory owner={{ item.key }} group={{ item.key }} mode=0755
-  with_dict: '{{ conf_users }}'
+- name: create ControlPath directories (home)
+  file: path=~/.ssh/cm state=directory mode=0755
+  become: false
   when: item.value.state == "enabled"
   tags: [ assh, assh-conf ]
