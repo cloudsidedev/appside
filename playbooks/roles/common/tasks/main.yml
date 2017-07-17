@@ -7,23 +7,20 @@
 
 - name: set root shell
   user: name=root shell={{ conf_root_shell }}
-  when: conf_env != "local"
   tags: [ common, users, shell ]
 
 - include: fail2ban.yml
-  when: conf_env != "local" and conf_fail2ban_enable is defined and conf_fail2ban_enable == true
+  when: conf_fail2ban_enable is defined and conf_fail2ban_enable == true
   tags: [ common, fail2ban ]
 
 - include: ssh.yml
-  when: conf_env != "local"
   tags: [ common, ssh, sshd  ]
 
 - include: sudo.yml
-  when: conf_env != "local"
   tags: [ common, users, sudo ]
 
 - include: cloud.yml
-  when: conf_env != "local" and conf_cloud_env is defined and conf_cloud_enable == true
+  when: conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
 
 # - name: define proxy settings
@@ -39,19 +36,13 @@
   tags: [ base_packages, yum_proxy, environment ]
 
 - include: centos-epel.yml
-  when: ansible_os_family == "RedHat" and conf_env != "local"
+  when: ansible_os_family == "RedHat" 
   tags: [ common, apt, base_packages ]
 
 - name: template /etc/hosts
   template: src=etc/hosts.j2 dest=/etc/hosts owner=root group={{ conf_root_group }} mode=0644 backup=no
-  when: conf_env != "local" and conf_hosts_fqdn is defined
+  when: conf_hosts_fqdn is defined
   tags: [ common, hosts ]
-
-- name: Hosts In Local
-  lineinfile: dest=/etc/hosts line="192.168.80.2 {{ item.value.servername }}" state=present insertafter='EOF'
-  with_dict: '{{ conf_vhosts_common }}'
-  when: conf_env == "local"
-  tags: [ common ]
 
 - include: firewall.yml
   when: conf_firewall_enable is defined and conf_firewall_enable == true
@@ -62,7 +53,6 @@
   tags: [ common ]
 
 - include: timezone.yml
-  when: conf_env != "local"
   tags: [ common ]
 
 - include: rsyslog.yml
@@ -70,11 +60,9 @@
   tags: [ common, rsyslog ]
 
 - include: lvm.yml
-  when: conf_env != "local"
   tags: [ common ]
 
 - include: users.yml
-  when: conf_env != "local"
   tags: [ common ]
 
 - name: remove deb-src (Debian family)
@@ -90,7 +78,6 @@
   tags: [ common, docker ]
 
 - include: ansible.yml
-  when: conf_env != "local"
 
 - include: assh.yml
   # tags: [ common, assh, assh-conf, base_packages ]
@@ -98,11 +85,11 @@
 - include: autossh.yml
 
 - include: nullmailer.yml
-  when: conf_env != "local" and conf_nullmailer_enable == true
+  when: conf_nullmailer_enable == true
   tags: [ common, nullmailer ]
 
 - include: snmpd.yml
-  when: conf_env != "local" and conf_snmpd_enable is defined and conf_snmpd_enable == true
+  when: and conf_snmpd_enable is defined and conf_snmpd_enable == true
   tags: [ common, snmpd ]
 
 - include: nfs.yml
@@ -115,7 +102,6 @@
 #  tags: [ common, prompt ]
 
 - include: motd.yml
-  when: conf_env != "local"
   tags: [ common, motd ]
 
 - include: apticron.yml
@@ -142,5 +128,5 @@
   tags: [ common ]
 
 - include: borg.yml
-  when: conf_env != "local" and conf_backup_client == true
+  when: conf_backup_client == true
   tags: [ common ]
