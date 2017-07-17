@@ -153,10 +153,56 @@
     volumes: "{{ item.value.volumes|default([]) }}"
     networks: "{{ item.value.networks|default([]) }}"
     links: "{{ item.value.links|default([]) }}"
+    # entrypoint: "{{ item.value.entrypoint }}"
+    # command: "{{ item.value.command|default('') }}"
+    env: "{{ item.value.env|default('appflow_version=rolling') }}"
+    etc_hosts: "{{ item.value.etc_hosts|default({'dockerhost':'172.17.0.1'}) }}"
+  with_dict: '{{ conf_docker_containers }}'
+  ignore_errors: yes
+  tags: [ docker, docker-conf, docker-containers ]
+
+- name: provision docker containers (command)
+  docker_container:
+    name: "{{ item.value.name|default(item.key) }}"
+    state: "{{ item.value.state }}"
+    recreate: "{{ item.value.recreate }}"
+    image: "{{ item.value.image }}"
+    restart_policy: "{{ item.value.restart_policy }}"
+    hostname: "{{ item.value.hostname|default(None) }}"
+    user: "{{ item.value.user|default(None) }}"
+    exposed_ports: "{{ item.value.exposed_ports|default([]) }}"
+    published_ports: "{{ item.value.published_ports|default([]) }}"
+    volumes: "{{ item.value.volumes|default([]) }}"
+    networks: "{{ item.value.networks|default([]) }}"
+    links: "{{ item.value.links|default([]) }}"
+    # entrypoint: "{{ item.value.entrypoint }}"
+    command: "{{ item.value.command|default('') }}"
+    env: "{{ item.value.env|default('appflow_version=rolling') }}"
+    etc_hosts: "{{ item.value.etc_hosts|default({'dockerhost':'172.17.0.1'}) }}"
+  with_dict: '{{ conf_docker_containers }}'
+  when: item.value.command is defined
+  ignore_errors: yes
+  tags: [ docker, docker-conf, docker-containers ]
+
+- name: provision docker containers (entrypoint / command)
+  docker_container:
+    name: "{{ item.value.name|default(item.key) }}"
+    state: "{{ item.value.state }}"
+    recreate: "{{ item.value.recreate }}"
+    image: "{{ item.value.image }}"
+    restart_policy: "{{ item.value.restart_policy }}"
+    hostname: "{{ item.value.hostname|default(None) }}"
+    user: "{{ item.value.user|default(None) }}"
+    exposed_ports: "{{ item.value.exposed_ports|default([]) }}"
+    published_ports: "{{ item.value.published_ports|default([]) }}"
+    volumes: "{{ item.value.volumes|default([]) }}"
+    networks: "{{ item.value.networks|default([]) }}"
+    links: "{{ item.value.links|default([]) }}"
     entrypoint: "{{ item.value.entrypoint }}"
     command: "{{ item.value.command|default('') }}"
     env: "{{ item.value.env|default('appflow_version=rolling') }}"
     etc_hosts: "{{ item.value.etc_hosts|default({'dockerhost':'172.17.0.1'}) }}"
   with_dict: '{{ conf_docker_containers }}'
+  when: item.value.entrypoint is defined and item.value.command is defined
   ignore_errors: yes
   tags: [ docker, docker-conf, docker-containers ]
