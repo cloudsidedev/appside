@@ -182,6 +182,11 @@
   when: conf_backup_client == true
   tags: [ borg, borgmatic ]
 
+- name: deploy /etc/borgmatic/excludes
+  template: src=etc/borgmatic/excludes.j2 dest=/etc/borgmatic/excludes owner=root group={{ conf_root_group }} mode=0644
+  when: conf_backup_client == true and conf_backup_exclude_directories is defined
+  tags: [ borg, borgmatic ]
+
 - name: deploy /etc/cron.d/borgmatic
   template: src=etc/cron.d/borgmatic.j2 dest=/etc/cron.d/borgmatic owner=root group={{ conf_root_group }} mode=0644
   when: conf_backup_client == true
