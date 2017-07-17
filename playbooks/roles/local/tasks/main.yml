@@ -12,5 +12,4 @@
 - name: create ControlPath directories (home)
   file: path=~/.ssh/cm state=directory mode=0755
   become: false
-  when: item.value.state == "enabled"
   tags: [ assh, assh-conf ]
