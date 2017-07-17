@@ -33,7 +33,6 @@
 
 - name: deploy /etc/sudoers
   template: src=etc/sudoers.j2 dest=/etc/sudoers owner=root group={{ conf_root_group }} mode=0440 validate="visudo -cf %s" backup=yes
-  when: conf_env != "local"
   tags: [ sudo ]
 
 # - debug: var="conf_sudo.{{ item }}.content"

@@ -8,7 +8,6 @@
       - "export GOPATH=/usr/local/go"
       - "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin"
       - "alias ssh='assh wrapper ssh'"
-  when: ansible_os_family != "Darwin"
   tags: [ assh ]
 
 - name: set assh exports (zsh/bash) (Unix, root)
@@ -17,26 +16,26 @@
       - [ ".bashrc", ".zshrc" ]
       - [ "export GOPATH=/usr/local/go", "export PATH=$PATH:$GOROOT/bin:$GOPATH/bin",  "alias ssh='assh wrapper ssh'" ]
   ignore_errors: yes
-  tags: [ assh, assh-conf ]
+  tags: [ assh ]
 
 - name: set assh exports (zsh/bash) (Unix, users)
   lineinfile: dest={{ item.value.home }}/.zshrc line="export GOPATH=/usr/local/go" state=present insertafter='EOF'
   with_dict: '{{ conf_users }}'
-  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  when: item.value.state == "enabled"
   ignore_errors: yes
   tags: [ assh ]
 
 - name: set assh exports (zsh/bash) (Unix, users)
   lineinfile: dest={{ item.value.home }}/.zshrc line="export PATH=$PATH:$GOROOT/bin:$GOPATH/bin" state=present insertafter='EOF'
   with_dict: '{{ conf_users }}'
-  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  when: item.value.state == "enabled"
   ignore_errors: yes
   tags: [ assh ]
 
 - name: set assh exports (zsh/bash) (Unix, users)
   lineinfile: dest={{ item.value.home }}/.zshrc line="alias ssh='assh wrapper ssh'" state=present insertafter='EOF'
   with_dict: '{{ conf_users }}'
-  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  when: item.value.state == "enabled"
   ignore_errors: yes
   tags: [ assh ]
 
@@ -51,7 +50,7 @@
 
 - name: install assh (Unix)
   shell: "export GOPATH=/usr/local/go ; go get -u github.com/moul/advanced-ssh-config/cmd/assh"
-  when: ansible_os_family != "FreeBSD" and ansible_os_family != "Darwin"
+  when: ansible_os_family != "FreeBSD"
   tags: [ assh ]
 
 - name: install assh (FreeBSD family)
@@ -66,7 +65,7 @@
 - name: create ControlPath directories (Unix, users)
   file: path={{ item.value.home }}/.ssh/cm state=directory owner={{ item.key }} group={{ item.key }} mode=0755
   with_dict: '{{ conf_users }}'
-  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  when: item.value.state == "enabled"
   tags: [ assh, assh-conf ]
 
 - name: create ~/.ssh/ (root)
@@ -89,5 +88,5 @@
 - name: provision ~/.ssh/assh.yml (Unix, users)
   template: src=home/.ssh/assh.yml.j2 dest={{ item.value.home }}/.ssh/assh.yml mode=0644
   with_dict: '{{ conf_users }}'
-  when: ansible_os_family != "Darwin" and conf_env != "local" and item.value.state == "enabled"
+  when: item.value.state == "enabled"
   tags: [ assh, assh-conf ]
