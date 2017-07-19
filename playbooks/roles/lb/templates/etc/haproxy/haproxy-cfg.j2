@@ -74,17 +74,17 @@ frontend www-frontend
     {{ conf_haproxy_www_redirect }}
 {% endif %}
 
-{% if conf_haproxy_www_acl is defined %}
-    # ACL
-    {{ conf_haproxy_www_acl }}
-{% endif %}
-
 {% if conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true %}
 {% if conf_haproxy_letsencrypt_backend is defined %}
     # ACL Let’s Encrypt
     acl app_letsencrypt path_beg /.well-known/acme-challenge/
     use_backend letsencrypt-backend if app_letsencrypt
 {% endif %}
+{% endif %}
+
+{% if conf_haproxy_www_acl is defined %}
+    # ACL
+    {{ conf_haproxy_www_acl }}
 {% endif %}
 
 {% if conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true %}
