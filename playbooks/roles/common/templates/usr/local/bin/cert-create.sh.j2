@@ -13,7 +13,7 @@ if [ $# -ne 1 ] ; then
     exit 1
 fi
 
-echo "$(date +%c) Generate certificat for ${1}"
+echo "$(date +%c) Generate certificate for ${1}"
 
 ${certbot_bin}  certonly  --domains $1
 if [ $? -eq 0 ]; then
