@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source $HOME/.bashrc
-
 if [ -d /opt/appflow/ ]; then 
     pushd /opt/appflow/ > /dev/null
 else

@@ -30,4 +30,4 @@ if [[ "$DOCKERHOST_OSTYPE" =~ ^cygwin ]]; then
     chmod -x /home/appflow/.appflow/vault/*/*
 fi
 
-su - appflow -m -c "eval \$(ssh-agent) ; ssh-add ; /opt/appflow/appflow $PARAMS"
+su appflow -c "eval \$(ssh-agent) ; ssh-add ; /opt/appflow/appflow $PARAMS"
