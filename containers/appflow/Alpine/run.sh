@@ -19,7 +19,7 @@ mkdir -p /home/appflow/tmp/.ssh/cm
 chown -R appflow:appflow /home/appflow/tmp
 # chown -R appflow:appflow /home/appflow/.ansible
 echo 'alias ssh="assh wrapper ssh"' >> /home/appflow/.bashrc
-echo "PATH=$PATH:"$PATH"" >> /home/appflow/.bashrc
+env >> /home/appflow/.bashrc
 # exec echo appflow "$@"
 # su - appflow -c "appflow $@"
 PARAMS="$@"
