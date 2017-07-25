@@ -18,7 +18,8 @@ AppFlow is a multitenant environment automation tool based on Ansible.
 .. toctree::
    :maxdepth: 1
 
-   intro
+   introduction
+   installation
 
 * :ref:`genindex`
 * :ref:`modindex`
