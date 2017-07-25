@@ -3,24 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-#######
-AppFlow
-#######
+AppFlow Documentation
+=====================
 
-Introduction
-============
+About AppFlow
+`````````````
+
+Welcome to the AppFlow documentation.
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
-Contents
-========
+.. _an_introduction:
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
-Indices and tables
-==================
+   intro
 
 * :ref:`genindex`
 * :ref:`modindex`
