@@ -1,7 +1,8 @@
 Introduction
 ============
 
-Learn how to install AppFlow.
+.. this shim is here to fix the structure in the PDF
+   rendering. without this stub, the elements in the toctree of
+   index.rst show up a level below the README file included
 
-.. toctree::
-   :maxdepth: 1
+# .. include:: ../README.md

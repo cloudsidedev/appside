@@ -1,19 +1,10 @@
+.. include:: global.rst.inc
+.. highlight:: bash
+.. _installation:
+
 Installation
 ============
 
-.. contents:: Topics
+There are different ways to install |project_name|:
 
-
-.. _what_will_be_installed:
-
-Basics
-``````
-
-Every dependency will be shipped via Docker container.
-
-.. requirements:
-
-Requirements
-````````````
-
-Docker.
+TODO.

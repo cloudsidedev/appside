@@ -1,26 +1,20 @@
-.. AppFlow documentation master file, created by
-   sphinx-quickstart on Tue Jul 25 11:51:48 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. include:: global.rst.inc
+.. highlight:: none
 
 AppFlow Documentation
 =====================
 
-About AppFlow
-`````````````
+# .. include:: ../README.md
 
-Welcome to the AppFlow documentation.
-
-AppFlow is a multitenant environment automation tool based on Ansible.
-
-.. _an_introduction:
+.. when you add an element here, do not forget to add it to book.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    introduction
    installation
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   faq
+   support
+   resources
+   development
+   authors
