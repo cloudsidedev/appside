@@ -6,6 +6,8 @@ __*
 *.retry
 nohup.out
 .vagrant
+.vscode
+__pycache__
 Vagrant-Boxes
 Vagrantfile.local.yml
 /vendor/*
