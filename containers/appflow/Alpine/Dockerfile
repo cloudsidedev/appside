@@ -5,7 +5,12 @@ LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 
 # Install my Utils
 RUN apk upgrade --no-cache && \
-    apk add --no-cache git make bash openssh ansible
+    apk add --no-cache git make bash openssh-client ansible
+# 9mb bash
+# 2mb openssh-client
+# <1mb make
+# 88mb ansible'
+#
 
 # Install Appflow
 RUN git clone https://github.com/ttssdev/appflow /opt/appflow && \
