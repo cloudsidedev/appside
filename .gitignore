@@ -1,7 +1,8 @@
 #
 # .gitignore
 #
-
+.vscode
+__*
 *.retry
 nohup.out
 .vagrant
