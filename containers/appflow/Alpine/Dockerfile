@@ -65,11 +65,13 @@ COPY go-wrapper /usr/local/bin/
 
 # Install ASSH
 RUN go get -u github.com/moul/advanced-ssh-config/cmd/assh && \
-    ln -s /go/bin/assh /usr/local/bin/assh
+    mv /go/bin/assh /usr/local/bin/assh
+
+RUN rm -rf /go
 
 # WORKDIR /home/appflow
 # ENV HOME=/home/appflow
-ENV PATH=$PATH:/opt/go/bin:/go/bin
+# ENV PATH=$PATH:/opt/go/bin:/go/bin
 
 # Install Appflow
 RUN git clone https://github.com/ttssdev/appflow /opt/appflow && \
