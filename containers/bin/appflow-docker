@@ -182,8 +182,8 @@ if [[ $? -eq 0 ]]; then
           CFG_DOCKER_VOLUMES="$CFG_DOCKER_VOLUMES -v $RES:/home/appflow/dotfiles"
         fi
 
-        #$CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:alpine $@
-         $CFG_DOCKER run --name appflow --rm -ti --entrypoint bash $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
+        $CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:alpine $@
+        #$CFG_DOCKER run --name appflow --rm -ti --entrypoint bash $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
 
       # fi
     # fi
