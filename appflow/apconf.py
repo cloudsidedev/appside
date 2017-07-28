@@ -64,8 +64,7 @@ class AppFlow(object):
                     print(json.dumps(getFromDict(conf, key),
                                      ensure_ascii=False, indent=4))
                 else:
-                    #print(json.dumps(conf, ensure_ascii=False, indent=4))
-                    print(conf)
+                    print(json.dumps(conf, ensure_ascii=False, indent=4))
 
     def set(self, file, key, value):
         file = file.replace('.', '/', 3)
