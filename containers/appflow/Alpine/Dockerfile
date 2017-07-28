@@ -5,15 +5,16 @@ LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 
 # Install my Utils
 RUN apk upgrade --no-cache && \
-    apk add --no-cache git && \
-    apk add --no-cache make && \
-    apk add --no-cache curl && \
-    apk add --no-cache bash && \
-    apk add --no-cache openssh && \
-    apk add --no-cache ansible
+    apk add --no-cache git make bash openssh ansible
+
 # Install Appflow
 RUN git clone https://github.com/ttssdev/appflow /opt/appflow && \
+    rm -rf /opt/appflow/docs && \
+    rm -rf /opt/appflow/containers && \
+    rm -rf /opt/appflow/.git && \
     ln -s /opt/appflow/appflow /usr/local/bin/appflow
+
+RUN apk del --purge git
 
 COPY run.sh /usr/local/bin/run.sh
 COPY assh /usr/local/bin/assh
