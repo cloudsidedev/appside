@@ -5,7 +5,7 @@ LABEL Description="AppFlow" Vendor="TTSS AG" Version="1.0"
 
 # Install my Utils
 RUN apk upgrade --no-cache && \
-    apk add --no-cache git make bash openssh-client ansible
+    apk add --no-cache git make bash openssh-client ansible diffutils
 # 9mb bash
 # 2mb openssh-client
 # <1mb make
