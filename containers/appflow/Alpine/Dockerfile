@@ -10,6 +10,7 @@ RUN apk upgrade --no-cache && \
     apk add --no-cache curl && \
     apk add --no-cache bash && \
     apk add --no-cache openssh && \
+    apk add --no-cache diffutils && \
     apk add --no-cache ansible
 # Install Appflow
 RUN git clone https://github.com/ttssdev/appflow /opt/appflow && \
