@@ -19,8 +19,6 @@ RUN git clone https://github.com/ttssdev/appflow /opt/appflow && \
     rm -rf /opt/appflow/.git && \
     ln -s /opt/appflow/appflow /usr/local/bin/appflow
 
-RUN apk del --purge git
-
 COPY run.sh /usr/local/bin/run.sh
 COPY assh /usr/local/bin/assh
 
