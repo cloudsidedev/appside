@@ -6,5 +6,3 @@ Introduction
    index.rst show up a level below the README file included
 
 # .. include:: ../README.md
-
-Test-test.
