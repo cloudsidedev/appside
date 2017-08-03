@@ -61,10 +61,10 @@ class AppFlow(object):
                 conf = yaml.safe_load(stream)
                 if (key != 'none'):
                     key = key.split('.')
-                    print(json.dumps(getFromDict(conf, key),
+                    return (json.dumps(getFromDict(conf, key),
                                      ensure_ascii=False, indent=4))
                 else:
-                    print(json.dumps(conf, ensure_ascii=False, indent=4))
+                    return (json.dumps(conf, ensure_ascii=False, indent=4))
 
     def set(self, file, key, value):
         file = file.replace('.', '/', 3)
