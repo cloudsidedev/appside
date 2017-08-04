@@ -163,6 +163,26 @@ function check_dotfiles() {
   echo $RES
 }
 
+function get_name() {
+  NAMES=$(docker ps -a --format 'table {{.Names}}' | tail -n +2)
+  FOUND="false"
+  NAME="appflow"
+  RETURN=$NAME
+  COUNTER=1
+  while [ $FOUND != "true" ]
+  do
+    echo $NAMES | grep $RETURN > /dev/null
+    if (( $? == 1 )); then
+      echo $RETURN
+      FOUND="true"
+    else
+      RETURN=$NAME$COUNTER
+      COUNTER=$[$COUNTER +1]
+      FOUND="false"
+    fi
+  done
+}
+
 check_dirs
 if [[ $? -eq 0 ]]; then
 
@@ -182,8 +202,8 @@ if [[ $? -eq 0 ]]; then
           CFG_DOCKER_VOLUMES="$CFG_DOCKER_VOLUMES -v $RES:/home/appflow/dotfiles"
         fi
 
-        $CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:alpine $@
-        # $CFG_DOCKER run --name appflow --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
+        $CFG_DOCKER run --name $(get_name) --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS ttssdev/appflow:alpine $@
+        # $CFG_DOCKER run --name $(get_name) --rm -t $CFG_DOCKER_VOLUMES $CFG_DOCKER_ENVS appflow $@
 
       # fi
     # fi
