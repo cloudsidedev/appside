@@ -40,17 +40,16 @@ def add_keys(d, l, c=None):
 
 
 class AppFlow(object):
-    def get(self, file, key='none'):
+    def get(self, file, key=None):
         file = file.replace('.', '/', 3)
         if (file != 'config'):
             fileName = os.getenv("HOME") + "/.appflow/tenant/" + file
         else:
             fileName = os.getenv("HOME") + "/.appflow/" + file
         ##
-        print(fileName)
+        # print(fileName)
         if not os.path.exists(fileName):
-            print('No such File or Directory')
-            return
+            return ('No such File or Directory')
         if file.split('/').pop() == 'inventory':
             return
         if (os.path.isdir(fileName)):
@@ -59,7 +58,7 @@ class AppFlow(object):
         else:
             with open(fileName, 'r') as stream:
                 conf = yaml.safe_load(stream)
-                if (key != 'none'):
+                if (key != None and type(key) != 'NoneType'):
                     key = key.split('.')
                     return (json.dumps(getFromDict(conf, key),
                                      ensure_ascii=False, indent=4))
@@ -79,7 +78,7 @@ class AppFlow(object):
         with open(fileName, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False,
                       indent=4, default_style='')
-        print(json.dumps(conf, ensure_ascii=False, indent=4))
+        return json.dumps(conf, ensure_ascii=False, indent=4)
 
     def rm(self, file, key):
         file = file.replace('.', '/', 3)
@@ -94,7 +93,7 @@ class AppFlow(object):
         with open(fileName, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False,
                       indent=4, default_style='')
-        print(json.dumps(conf, ensure_ascii=False, indent=4))
+        return json.dumps(conf, ensure_ascii=False, indent=4)
 
     def add(self, file, key, value):
         file = file.replace('.', '/', 3)
@@ -114,7 +113,7 @@ class AppFlow(object):
         with open(fileName, 'w') as outfile:
             yaml.dump(conf, outfile, default_flow_style=False,
                       indent=4, default_style='')
-        print((json.dumps(conf, ensure_ascii=False, indent=4)))
+        return (json.dumps(conf, ensure_ascii=False, indent=4))
 
 
 if __name__ == '__main__':
