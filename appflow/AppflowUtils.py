@@ -58,3 +58,15 @@ def checkStringInFile(file_name, string):
             if string in line: # Key line: check if `w` is in the line.
                 found = True
         return found
+
+def diffFiles(file1, file2):
+    result = list()
+    with open(file1) as f1:
+        with open(file2) as f2:
+            linesFile1 = f1.readlines()
+            linesFile2= f2.readlines()
+            diff = [ x for x in linesFile1 if x not in linesFile2 ]
+            for x in diff:
+                fileName = x.split('\t')[1].replace('\n','')
+                result.append(fileName)
+            return result
