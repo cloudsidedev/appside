@@ -1,9 +1,9 @@
 import os
 import subprocess
 import appflow.AppflowUtils as utils
+import difflib
 
 # ssh/assh (deploy assh.yml and do the rest)
-# status
 # checkin
 # checkout
 
@@ -43,13 +43,18 @@ def gitStatus(tenant, env):
         process.communicate()
         return False
     else:
-        md5StoreFile = os.getenv(
-            "HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant + "/appflow-" + env + "-md5-new"
+        md5StoreFolder = os.getenv(
+            "HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant
+        md5StoreFile = md5StoreFolder + "/appflow-" + env + "-md5"
+        md5StoreFileNew = md5StoreFolder + "/appflow-" + env + "-md5-new"
         try:
-            os.remove(md5StoreFile)
+            os.remove(md5StoreFileNew)
         except IOError:
             pass
         fileList = utils.getFileList(targetFolder)
         for file in fileList:
-            utils.writeMD5sum(file, md5StoreFile)
-        ## Still have to implement de DIFF part.
+            utils.writeMD5sum(file, md5StoreFileNew)
+        
+        diff = utils.diffFiles(md5StoreFile, md5StoreFileNew)
+        print('Changed files:')
+        print('\n'.join(diff))
