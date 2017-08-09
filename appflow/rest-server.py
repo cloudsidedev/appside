@@ -6,38 +6,36 @@ from flask import request
 
 app = Flask(__name__)
 
+
 @app.route("/appflow/get")
 def get():
-    appflowConfigurator = apyaml.AppFlow()
     file = request.args.get('file')
     key = request.args.get('key')
-    return (appflowConfigurator.get(file, key))
+    return (apyaml.get(file, key))
 
 
 @app.route("/appflow/set")
 def set():
-    appflowConfigurator = apyaml.AppFlow()
     file = request.args.get('file')
     key = request.args.get('key')
     value = request.args.get('value')
-    return (appflowConfigurator.set(file, key, value))
+    return (apyaml.set(file, key, value))
 
 
 @app.route("/appflow/add")
 def add():
-    appflowConfigurator = apyaml.AppFlow()
     file = request.args.get('file')
     key = request.args.get('key')
     value = request.args.get('value')
-    return (appflowConfigurator.add(file, key, value))
+    return (apyaml.add(file, key, value))
 
 
 @app.route("/appflow/rm")
 def rm():
-    appflowConfigurator = apyaml.AppFlow()
     file = request.args.get('file')
     key = request.args.get('key')
-    return (appflowConfigurator.rm(file, key))
+    return (apyaml.rm(file, key))
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
