@@ -1,11 +1,10 @@
 import os
 import subprocess
 import appflow.AppflowUtils as utils
+import appflow.AppflowAnsible as apansible
 import difflib
 
 # ssh/assh (deploy assh.yml and do the rest)
-# checkin
-# checkout
 
 
 def gitReset(tenant, env):
@@ -13,11 +12,10 @@ def gitReset(tenant, env):
     PIPE = subprocess.PIPE
     process = subprocess.Popen(
         ['git', '-C', dir, 'clean -xdf', env], stdout=PIPE, stderr=PIPE)
-    process.communicate()
     process = subprocess.Popen(
         ['git', '-C', dir, 'checkout', env], stdout=PIPE, stderr=PIPE)
-    process.communicate()
-
+    process = subprocess.Popen(
+        ['git', '-C', dir, 'reset --hard'], stdout=PIPE, stderr=PIPE)
     md5StoreFolder = utils.getMD5folder(tenant)
     md5StoreFile = md5StoreFolder + "/appflow-" + env + "-md5"
     utils.safeRemove(md5StoreFile)
@@ -32,7 +30,6 @@ def gitStatus(tenant, env):
         PIPE = subprocess.PIPE
         process = subprocess.Popen(
             ['git', '-C', dir, 'diff-files --name-only -B -R -M', env], stdout=PIPE, stderr=PIPE)
-        process.communicate()
         return False
     else:
         md5StoreFolder = utils.getMD5folder(tenant)
@@ -46,3 +43,39 @@ def gitStatus(tenant, env):
         diff = utils.diffFiles(md5StoreFile, md5StoreFileNew)
         print('Changed files:')
         print('\n'.join(diff))
+        return diff
+
+
+def gitCheckin(tenant, env):
+    dir = utils.getTenantDir(tenant)
+    folder = utils.getTenantEnvDir(tenant, env)
+    file_list = utils.getFileList(folder)
+    Encrypted = True
+    for f in file_list:
+        if (utils.checkStringInFile(f, 'AES256') == False):
+            Encrypted = False
+    diff = gitStatus(tenant, env)
+    if (Encrypted == False):
+        apansible.encrypt(tenant, env)
+
+    PIPE = subprocess.PIPE
+    for f in diff:
+        process = subprocess.Popen(
+            ['git', '-C', dir, 'add', f], stdout=PIPE, stderr=PIPE)
+    commit = "Auto Commit"
+    process = subprocess.Popen(
+        ['git', '-C', dir, 'commit',  '-m', commit], stdout=PIPE, stderr=PIPE)
+    process = subprocess.Popen(
+        ['git', '-C', dir, 'push'], stdout=PIPE, stderr=PIPE)
+    gitReset(tenant, env)
+
+
+def gitCheckOut(tenant, env):
+    query = utils.query_yes_no(
+        'Warning, this process will overwrite any un-pushed work, continue?', 'no')
+    if(query == True):
+        gitReset(tenant, env)
+        dir = utils.getTenantDir(tenant)
+        PIPE = subprocess.PIPE
+        process = subprocess.Popen(
+            ['git', '-C', dir, 'pull'], stdout=PIPE, stderr=PIPE)

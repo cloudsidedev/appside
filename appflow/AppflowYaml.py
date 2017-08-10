@@ -1,7 +1,7 @@
 import json
 import os
 import yaml
-import AppflowUtils as utils
+import appflow.AppflowUtils as utils
 
 
 def get(file, key=None):
