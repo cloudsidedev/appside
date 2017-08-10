@@ -1,15 +1,8 @@
 import operator
 import os
+import sys
 import hashlib
 from functools import reduce
-
-
-def getFileList(dir):
-    fileList = list()
-    for root, subdirs, files in os.walk(dir):
-        for file in files:
-            fileList.append(os.path.join(root, file))
-    return fileList
 
 
 def getMD5sum(file_name):
@@ -55,12 +48,12 @@ def add_keys(d, l, c=None):
 
 
 def checkStringInFile(file_name, string):
+    found = False
     with open(file_name) as f:
-        found = False
         for line in f:
             if string in line:  # Key line: check if `w` is in the line.
                 found = True
-        return found
+    return found
 
 
 def diffFiles(file1, file2):
@@ -83,6 +76,14 @@ def safeRemove(file):
         pass
 
 
+def getFileList(dir):
+    fileList = list()
+    for root, subdirs, files in os.walk(dir):
+        for file in files:
+            fileList.append(os.path.join(root, file))
+    return fileList
+
+
 def getTenantDir(tenant):
     return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/"
 
@@ -97,3 +98,27 @@ def getVaultFile(tenant, env):
 
 def getMD5folder(tenant):
     return os.getenv("HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant
+
+
+def query_yes_no(question, default="yes"):
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
