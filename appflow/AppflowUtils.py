@@ -1,6 +1,8 @@
 import operator
 import os
 import hashlib
+from functools import reduce
+
 
 def getFileList(dir):
     fileList = list()
@@ -51,22 +53,47 @@ def add_keys(d, l, c=None):
     else:
         d[l[0]] = c
 
+
 def checkStringInFile(file_name, string):
     with open(file_name) as f:
         found = False
         for line in f:
-            if string in line: # Key line: check if `w` is in the line.
+            if string in line:  # Key line: check if `w` is in the line.
                 found = True
         return found
+
 
 def diffFiles(file1, file2):
     result = list()
     with open(file1) as f1:
         with open(file2) as f2:
             linesFile1 = f1.readlines()
-            linesFile2= f2.readlines()
-            diff = [ x for x in linesFile1 if x not in linesFile2 ]
+            linesFile2 = f2.readlines()
+            diff = [x for x in linesFile1 if x not in linesFile2]
             for x in diff:
-                fileName = x.split('\t')[1].replace('\n','')
+                fileName = x.split('\t')[1].replace('\n', '')
                 result.append(fileName)
             return result
+
+
+def safeRemove(file):
+    try:
+        os.remove(file)
+    except IOError:
+        pass
+
+
+def getTenantDir(tenant):
+    return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/"
+
+
+def getTenantEnvDir(tenant, env):
+    return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/" + env
+
+
+def getVaultFile(tenant, env):
+    return os.getenv("HOME") + "/.appflow/vault/" + tenant + "/" + env
+
+
+def getMD5folder(tenant):
+    return os.getenv("HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant

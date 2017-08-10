@@ -9,7 +9,7 @@ import appflow.AppflowAnsible as apansible
 
 
 class AppFlow(object):
-    
+
     def reset(self, tenant, env):
         tools.gitReset(tenant, env)
 
