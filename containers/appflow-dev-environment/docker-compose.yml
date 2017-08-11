@@ -1,0 +1,103 @@
+version: '2'
+
+services:
+    # nginx:
+    #     image: nginx:alpine
+    #     ports:
+    #         - "8080:80"
+    #     volumes:
+    #         - ./code:/code
+    #         - ./site.conf:/etc/nginx/conf.d/default.conf
+    #     networks:
+    #         - code-network
+    # php:
+    #     image: php:7-fpm-alpine
+    #     volumes:
+    #         - ./code:/code
+    #     networks:
+    #         - code-network
+    # appflow:
+    #     image: php:7-cli
+    #     volumes:
+    #         - ../../:/usr/local/bin/appflow
+    #     networks:
+    #         - code-network
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    # environment:
+      # - VIRTUAL_HOST=registry
+      # - VIRTUAL_PORT=5000
+      # REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      # REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      # REGISTRY_AUTH: htpasswd
+      # REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      # REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    # volumes:
+    #   - /path/data:/var/lib/registry
+    #   - /path/certs:/certs
+    #   - /path/auth:/auth
+
+  docker-registry-browser:
+    image: klausmeyer/docker-registry-browser
+    ports:
+      - "8081:8080"
+    environment:
+      - VIRTUAL_HOST=registry
+      - VIRTUAL_PORT=8081
+      - "DOCKER_REGISTRY_URL=http://registry:5000"
+
+  # jenkins:
+  #   restart: always
+  #   image: jenkins
+  #   ports:
+  #     - 8080:8080
+  #     - 50000:50000
+  #   environment:
+  #     - VIRTUAL_HOST=jenkins
+  #     - VIRTUAL_PORT=8080
+
+  gitea:
+    image: gitea/gitea
+    restart: always
+    ports:
+      - "3000:3000"
+      - "443:443"
+      - "2222:22"
+    volumes:
+      - /data/containers/gitea/data:/data
+    environment:
+      - VIRTUAL_HOST=git
+      - VIRTUAL_PORT=3000
+      # - GITLAB_OMNIBUS_CONFIG: |
+      #   external_url 'http://git'
+      #   # Add any other gitlab.rb configuration here, each on its own line
+    # volumes:
+    #   - '/srv/gitlab/config:/etc/gitlab'
+    #   - '/srv/gitlab/logs:/var/log/gitlab'
+    #   - '/srv/gitlab/data:/var/opt/gitlab'
+
+# Only required if we need to share data between containers
+# service1:
+# ....
+#  volumes:
+#   - shared-folder:/home.local/vusers
+#
+# service2:
+#  ....
+#  volumes:
+#   - shared-folder:/home.local/vusers
+#
+# volumes:
+#  shared-folder:
