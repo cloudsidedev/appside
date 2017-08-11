@@ -3,8 +3,6 @@ import appflow.AppflowUtils as utils
 
 
 def provision(tenant, env, *args):
-    print("Provisioning:", tenant, "Environment:", env)
-
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     playbook = '/opt/appflow/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
@@ -20,7 +18,6 @@ def provision(tenant, env, *args):
 
 
 def tags(tenant, env):
-    print("Tags:", tenant, "Environment:", env)
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     playbook = '/opt/appflow/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
@@ -30,8 +27,6 @@ def tags(tenant, env):
 
 
 def encrypt(tenant, env):
-    print("Encrypting:", tenant, "Environment:", env)
-
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
     flie_list = utils.get_file_list(target_folder)
@@ -41,8 +36,6 @@ def encrypt(tenant, env):
 
 
 def decrypt(tenant, env):
-    print("Decrypting:", tenant, "Environment:", env)
-
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
 
