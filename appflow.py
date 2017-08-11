@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Reuirements
-# fire, yaml, json
+# fire, yaml, json, flask
 
 import fire
 import appflow.AppflowTools as tools
@@ -14,19 +14,19 @@ class AppFlow(object):
         tools.initialize(tenant, env)
 
     def ssh(self, tenant, env):
-        tools.setupSsh(tenant, env)
+        tools.setup_ssh(tenant, env)
 
     def reset(self, tenant, env):
-        tools.gitReset(tenant, env)
+        tools.git_reset(tenant, env)
 
     def status(self, tenant, env):
-        tools.gitStatus(tenant, env)
+        tools.git_status(tenant, env)
 
     def checkout(self, tenant, env):
-        tools.gitCheckOut(tenant, env)
+        tools.git_checkOut(tenant, env)
 
     def checkin(self, tenant, env):
-        tools.gitCheckin(tenant, env)
+        tools.git_checkin(tenant, env)
 
     def decrypt(self, tenant, env):
         apansible.decrypt(tenant, env)

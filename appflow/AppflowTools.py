@@ -13,33 +13,33 @@ def initialize(tenant, env):
 
     conf = {'defaults': {'ControlMaster': 'auto', 'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock', 'ControlPersist': True,
                          'ForwardAgent': True}, 'includes': ['~/.ssh/assh.d/*/*.yml', '~/.ssh/assh_personal.yml']}
-    fileName = os.getenv('HOME') + "/.ssh/assh.yml"
-    utils.safeRemove(fileName)
-    with open(fileName, 'w') as outfile:
+    file_name = os.getenv('HOME') + "/.ssh/assh.yml"
+    utils.safe_remove(file_name)
+    with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
 
 
-def setupSsh(tenant, env):
+def setup_ssh(tenant, env):
     initialize(tenant, env)
-    dir = utils.getTenantDir(tenant)
-    targetFolder = dir + env
-    destFolder = os.getenv('HOME') + '/.ssh/assh.d/' + tenant
-    destFile = destFolder + '/' + env + '.yml'
+    dir = utils.get_tenant_dir(tenant)
+    target_folder = dir + env
+    dest_folder = os.getenv('HOME') + '/.ssh/assh.d/' + tenant
+    dest_file = dest_folder + '/' + env + '.yml'
 
     Enc = False
-    if(utils.checkStringInFile(targetFolder + "/inventory", 'AES256')):
+    if(utils.check_string_in_file(target_folder + "/inventory", 'AES256')):
         apansible.decrypt(tenant, env)
         Enc = True
 
-    shutil.copy2(targetFolder + "/assh.yml", destFile)
+    shutil.copy2(target_folder + "/assh.yml", dest_file)
 
     if (Enc == True):
-        gitReset(tenant, env)
+        git_reset(tenant, env)
 
 
-def gitReset(tenant, env):
-    dir = utils.getTenantDir(tenant)
+def git_reset(tenant, env):
+    dir = utils.get_tenant_dir(tenant)
     PIPE = subprocess.PIPE
     process = subprocess.Popen(
         ['git', '-C', dir, 'clean -xdf', env], stdout=PIPE, stderr=PIPE)
@@ -47,45 +47,45 @@ def gitReset(tenant, env):
         ['git', '-C', dir, 'checkout', env], stdout=PIPE, stderr=PIPE)
     process = subprocess.Popen(
         ['git', '-C', dir, 'reset --hard'], stdout=PIPE, stderr=PIPE)
-    md5StoreFolder = utils.getMD5folder(tenant)
-    md5StoreFile = md5StoreFolder + "/appflow-" + env + "-md5"
-    utils.safeRemove(md5StoreFile)
-    utils.safeRemove(md5StoreFile + "-new")
+    md5_store_folder = utils.get_md5_folder(tenant)
+    md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
+    utils.safe_remove(md5_store_file)
+    utils.safe_remove(md5_store_file + "-new")
 
 
-def gitStatus(tenant, env):
-    dir = utils.getTenantDir(tenant)
-    targetFolder = dir + env
-    if(utils.checkStringInFile(targetFolder + "/inventory", 'AES256')):
+def git_status(tenant, env):
+    dir = utils.get_tenant_dir(tenant)
+    target_folder = dir + env
+    if(utils.check_string_in_file(target_folder + "/inventory", 'AES256')):
         print('Files Already Encrypted')
         PIPE = subprocess.PIPE
         process = subprocess.Popen(
             ['git', '-C', dir, 'diff-files --name-only -B -R -M', env], stdout=PIPE, stderr=PIPE)
         return False
     else:
-        md5StoreFolder = utils.getMD5folder(tenant)
-        md5StoreFile = md5StoreFolder + "/appflow-" + env + "-md5"
-        md5StoreFileNew = md5StoreFolder + "/appflow-" + env + "-md5-new"
-        utils.safeRemove(md5StoreFileNew)
-        fileList = utils.getFileList(targetFolder)
-        for file in fileList:
-            utils.writeMD5sum(file, md5StoreFileNew)
+        md5_store_folder = utils.get_md5_folder(tenant)
+        md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
+        md5_store_file_new = md5_store_folder + "/appflow-" + env + "-md5-new"
+        utils.safe_remove(md5_store_file_new)
+        file_list = utils.get_file_list(target_folder)
+        for f in file_list:
+            utils.write_md5_sum(f, md5_store_file_new)
 
-        diff = utils.diffFiles(md5StoreFile, md5StoreFileNew)
+        diff = utils.diff_files(md5_store_file, md5_store_file_new)
         print('Changed files:')
         print('\n'.join(diff))
         return diff
 
 
-def gitCheckin(tenant, env):
-    dir = utils.getTenantDir(tenant)
-    folder = utils.getTenantEnvDir(tenant, env)
-    file_list = utils.getFileList(folder)
+def git_checkin(tenant, env):
+    dir = utils.get_tenant_dir(tenant)
+    folder = utils.get_tenant_env_dir(tenant, env)
+    file_list = utils.get_file_list(folder)
     Encrypted = True
     for f in file_list:
-        if (utils.checkStringInFile(f, 'AES256') == False):
+        if (utils.check_string_in_file(f, 'AES256') == False):
             Encrypted = False
-    diff = gitStatus(tenant, env)
+    diff = git_status(tenant, env)
     if (Encrypted == False):
         apansible.encrypt(tenant, env)
 
@@ -98,15 +98,15 @@ def gitCheckin(tenant, env):
         ['git', '-C', dir, 'commit',  '-m', commit], stdout=PIPE, stderr=PIPE)
     process = subprocess.Popen(
         ['git', '-C', dir, 'push'], stdout=PIPE, stderr=PIPE)
-    gitReset(tenant, env)
+    git_reset(tenant, env)
 
 
-def gitCheckOut(tenant, env):
+def git_checkOut(tenant, env):
     query = utils.query_yes_no(
         'Warning, this process will overwrite any un-pushed work, continue?', 'no')
     if(query == True):
-        gitReset(tenant, env)
-        dir = utils.getTenantDir(tenant)
+        git_reset(tenant, env)
+        dir = utils.get_tenant_dir(tenant)
         PIPE = subprocess.PIPE
         process = subprocess.Popen(
             ['git', '-C', dir, 'pull'], stdout=PIPE, stderr=PIPE)
