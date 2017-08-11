@@ -19,7 +19,7 @@ def provision(tenant, env, *args):
               inventory + ' ' + playbook + ' --vault-password-file ' + passwordFile)
 
 
-def tags(tenant, env, *args):
+def tags(tenant, env):
     print("Tags:", tenant, "Environment:", env)
     inventory = utils.getTenantDir(tenant) + env + "/inventory"
     playbook = '/opt/appflow/playbooks/generic.yml'
@@ -29,7 +29,7 @@ def tags(tenant, env, *args):
               ' ' + playbook + ' --vault-password-file ' + passwordFile)
 
 
-def encrypt(tenant, env, *args):
+def encrypt(tenant, env):
     print("Encrypting:", tenant, "Environment:", env)
 
     targetFolder = utils.getTenantEnvDir(tenant, env)
@@ -40,7 +40,7 @@ def encrypt(tenant, env, *args):
                   ' --vault-password-file ' + passwordFile)
 
 
-def decrypt(tenant, env, *args):
+def decrypt(tenant, env):
     print("Decrypting:", tenant, "Environment:", env)
 
     targetFolder = utils.getTenantEnvDir(tenant, env)
