@@ -2,9 +2,40 @@ import os
 import subprocess
 import appflow.AppflowUtils as utils
 import appflow.AppflowAnsible as apansible
-import difflib
+import yaml
+import shutil
 
-# ssh/assh (deploy assh.yml and do the rest)
+def initialize(tenant, env):
+    dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
+
+    for d in dirs:
+        os.makedirs(os.getenv('HOME') + d, exist_ok=True)
+
+    conf = {'defaults': {'ControlMaster': 'auto', 'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock', 'ControlPersist': True,
+                         'ForwardAgent': True}, 'includes': ['~/.ssh/assh.d/*/*.yml', '~/.ssh/assh_personal.yml']}
+    fileName = os.getenv('HOME') + "/.ssh/assh.yml"
+    utils.safeRemove(fileName)
+    with open(fileName, 'w') as outfile:
+        yaml.dump(conf, outfile, default_flow_style=False,
+                  indent=4)
+
+
+def setupSsh(tenant, env):
+    initialize(tenant, env)
+    dir = utils.getTenantDir(tenant)
+    targetFolder = dir + env
+    destFolder = os.getenv('HOME') + '/.ssh/assh.d/' + tenant
+    destFile = destFolder + '/' + env + '.yml'
+
+    Enc = False
+    if(utils.checkStringInFile(targetFolder + "/inventory", 'AES256')):
+        apansible.decrypt(tenant, env)
+        Enc = True
+
+    shutil.copy2(targetFolder + "/assh.yml", destFile)
+
+    if (Enc == True):
+        gitReset(tenant, env)
 
 
 def gitReset(tenant, env):
