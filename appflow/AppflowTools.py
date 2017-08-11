@@ -57,7 +57,6 @@ def git_status(tenant, env):
     dir = utils.get_tenant_dir(tenant)
     target_folder = dir + env
     if(utils.check_string_in_file(target_folder + "/inventory", 'AES256')):
-        print('Files Already Encrypted')
         PIPE = subprocess.PIPE
         process = subprocess.Popen(
             ['git', '-C', dir, 'diff-files --name-only -B -R -M', env], stdout=PIPE, stderr=PIPE)
@@ -72,8 +71,6 @@ def git_status(tenant, env):
             utils.write_md5_sum(f, md5_store_file_new)
 
         diff = utils.diff_files(md5_store_file, md5_store_file_new)
-        print('Changed files:')
-        print('\n'.join(diff))
         return diff
 
 

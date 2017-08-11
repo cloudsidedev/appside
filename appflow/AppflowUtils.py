@@ -84,6 +84,31 @@ def get_file_list(dir):
     return file_list
 
 
+RED = '\033[01;31m'
+GREEN = '\033[01;32m'
+YELLOW = '\033[01;33m'
+BLUE = '\033[01;34m'
+PURPLE = '\033[01;35m'
+CYAN = '\033[01;36m'
+WHITE = '\033[01;37m'
+NIL = '\033[00m'
+CLEAR = '\033[00m'
+
+
+def get_provision_color_string(command, tenant, env):
+    return '[' + CYAN + command + CLEAR + '][' + \
+        WHITE + tenant + CLEAR + ']' + get_env_color_string(env)
+
+
+def get_env_color_string(env):
+    return {
+        'development': '[' + GREEN + env + CLEAR + ']',
+        'testing': '[' + BLUE + env + CLEAR + ']',
+        'staging': '[' + YELLOW + env + CLEAR + ']',
+        'production': '[' + RED + env + CLEAR + ']'
+    }.get(env, 'development')
+
+
 def get_tenant_dir(tenant):
     return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/"
 
