@@ -5,32 +5,32 @@ import hashlib
 from functools import reduce
 
 
-def getMD5sum(file_name):
+def get_md5_sum(file_name):
     with open(file_name, 'rb') as file_to_check:
         data = file_to_check.read()
         return hashlib.md5(data).hexdigest() + '\t' + file_name + '\n'
 
 
-def writeMD5sum(file_name, md5StoreFile):
-    os.makedirs(os.path.dirname(md5StoreFile), exist_ok=True)
-    line = getMD5sum(file_name)
-    if (os.path.exists(md5StoreFile)):
-        open(md5StoreFile, 'a').write(line)
+def write_md5_sum(file_name, md5_store_file):
+    os.makedirs(os.path.dirname(md5_store_file), exist_ok=True)
+    line = get_md5_sum(file_name)
+    if (os.path.exists(md5_store_file)):
+        open(md5_store_file, 'a').write(line)
     else:
-        open(md5StoreFile, 'w+').write(line)
+        open(md5_store_file, 'w+').write(line)
 
 
-def getFromDict(dataDict, mapList):
-    return reduce(operator.getitem, mapList, dataDict)
+def get_from_dict(data_dict, map_list):
+    return reduce(operator.getitem, map_list, data_dict)
 
 
-def setInDict(dataDict, mapList, value):
-    getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
+def set_in_dict(data_dict, map_list, value):
+    get_from_dict(data_dict, map_list[:-1])[map_list[-1]] = value
 
 
-def rmInDict(branch, keys):
+def rm_in_dict(branch, keys):
     if len(keys) > 1:
-        empty = rmInDict(branch[keys[0]], keys[1:])
+        empty = rm_in_dict(branch[keys[0]], keys[1:])
         if empty:
             del branch[keys[0]]
     else:
@@ -47,7 +47,7 @@ def add_keys(d, l, c=None):
         d[l[0]] = c
 
 
-def checkStringInFile(file_name, string):
+def check_string_in_file(file_name, string):
     found = False
     with open(file_name) as f:
         for line in f:
@@ -56,47 +56,47 @@ def checkStringInFile(file_name, string):
     return found
 
 
-def diffFiles(file1, file2):
+def diff_files(file1, file2):
     result = list()
     with open(file1) as f1:
         with open(file2) as f2:
-            linesFile1 = f1.readlines()
-            linesFile2 = f2.readlines()
-            diff = [x for x in linesFile1 if x not in linesFile2]
+            lines_file_1 = f1.readlines()
+            lines_file_2 = f2.readlines()
+            diff = [x for x in lines_file_1 if x not in lines_file_2]
             for x in diff:
-                fileName = x.split('\t')[1].replace('\n', '')
-                result.append(fileName)
+                file_name = x.split('\t')[1].replace('\n', '')
+                result.append(file_name)
             return result
 
 
-def safeRemove(file):
+def safe_remove(file_name):
     try:
-        os.remove(file)
+        os.remove(file_name)
     except IOError:
         pass
 
 
-def getFileList(dir):
-    fileList = list()
+def get_file_list(dir):
+    file_list = list()
     for root, subdirs, files in os.walk(dir):
-        for file in files:
-            fileList.append(os.path.join(root, file))
-    return fileList
+        for f in files:
+            file_list.append(os.path.join(root, f))
+    return file_list
 
 
-def getTenantDir(tenant):
+def get_tenant_dir(tenant):
     return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/"
 
 
-def getTenantEnvDir(tenant, env):
+def get_tenant_env_dir(tenant, env):
     return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/" + env
 
 
-def getVaultFile(tenant, env):
+def get_vault_file(tenant, env):
     return os.getenv("HOME") + "/.appflow/vault/" + tenant + "/" + env
 
 
-def getMD5folder(tenant):
+def get_md5_folder(tenant):
     return os.getenv("HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant
 
 

@@ -5,9 +5,9 @@ import appflow.AppflowUtils as utils
 def provision(tenant, env, *args):
     print("Provisioning:", tenant, "Environment:", env)
 
-    inventory = utils.getTenantDir(tenant) + env + "/inventory"
+    inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     playbook = '/opt/appflow/playbooks/generic.yml'
-    passwordFile = utils.getVaultFile(tenant, env)
+    password_file = utils.get_vault_file(tenant, env)
 
     # Convert tags=xyz to --tags xyz
     tags = list(args)
@@ -16,42 +16,42 @@ def provision(tenant, env, *args):
             tags[i].split('=')[0] + ' ' + tags[i].split('=')[1]
 
     os.system('ansible-playbook -b ' + ' '.join(tags) + ' -i ' +
-              inventory + ' ' + playbook + ' --vault-password-file ' + passwordFile)
+              inventory + ' ' + playbook + ' --vault-password-file ' + password_file)
 
 
 def tags(tenant, env):
     print("Tags:", tenant, "Environment:", env)
-    inventory = utils.getTenantDir(tenant) + env + "/inventory"
+    inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     playbook = '/opt/appflow/playbooks/generic.yml'
-    passwordFile = utils.getVaultFile(tenant, env)
+    password_file = utils.get_vault_file(tenant, env)
 
     os.system('ansible-playbook --list-tags -i ' + inventory +
-              ' ' + playbook + ' --vault-password-file ' + passwordFile)
+              ' ' + playbook + ' --vault-password-file ' + password_file)
 
 
 def encrypt(tenant, env):
     print("Encrypting:", tenant, "Environment:", env)
 
-    targetFolder = utils.getTenantEnvDir(tenant, env)
-    passwordFile = utils.getVaultFile(tenant, env)
-    fileList = utils.getFileList(targetFolder)
-    for file in fileList:
-        os.system('ansible-vault encrypt ' + file +
-                  ' --vault-password-file ' + passwordFile)
+    target_folder = utils.get_tenant_env_dir(tenant, env)
+    password_file = utils.get_vault_file(tenant, env)
+    flie_list = utils.get_file_list(target_folder)
+    for f in flie_list:
+        os.system('ansible-vault encrypt ' + f +
+                  ' --vault-password-file ' + password_file)
 
 
 def decrypt(tenant, env):
     print("Decrypting:", tenant, "Environment:", env)
 
-    targetFolder = utils.getTenantEnvDir(tenant, env)
-    passwordFile = utils.getVaultFile(tenant, env)
+    target_folder = utils.get_tenant_env_dir(tenant, env)
+    password_file = utils.get_vault_file(tenant, env)
 
-    md5StoreFolder = utils.getMD5folder(tenant)
-    md5StoreFile = md5StoreFolder + "/appflow-" + env + "-md5"
+    md5_store_folder = utils.get_md5_folder(tenant)
+    md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
 
-    utils.safeRemove(md5StoreFile)
-    fileList = utils.getFileList(targetFolder)
-    for file in fileList:
-        os.system('ansible-vault decrypt ' + file +
-                  ' --vault-password-file ' + passwordFile)
-        utils.writeMD5sum(file, md5StoreFile)
+    utils.safe_remove(md5_store_file)
+    flie_list = utils.get_file_list(target_folder)
+    for f in flie_list:
+        os.system('ansible-vault decrypt ' + f +
+                  ' --vault-password-file ' + password_file)
+        utils.write_md5_sum(f, md5_store_file)
