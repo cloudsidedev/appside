@@ -2,9 +2,14 @@ import json
 import os
 import yaml
 import appflow.AppflowUtils as utils
-
+import re
 
 def get(my_file, key=None):
+    pattern = re.compile("^[a-zA-Z\._-]*$")
+    if not (pattern.match(my_file)):
+        return 'Error: Bad Syntax'
+    if not (pattern.match(key)):
+        return 'Error: Bad Syntax'
     my_file = my_file.replace('.', '/', 3)
     if (my_file != 'config'):
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
@@ -12,12 +17,12 @@ def get(my_file, key=None):
         file_name = os.getenv("HOME") + "/.appflow/" + my_file
 
     if not os.path.exists(file_name):
-        return ('No such File or Directory')
+        return ('Error: No such File or Directory')
     if my_file.split('/').pop() == 'inventory':
-        return
+        return ('Error: Invalid Request')
     if (os.path.isdir(file_name)):
         for subfile in os.listdir(file_name):
-            self.get(my_file.replace('/', '.', 3) + '.' + subfile)
+            get(my_file.replace('/', '.', 3) + '.' + subfile)
     else:
         with open(file_name, 'r') as stream:
             conf = yaml.safe_load(stream)
@@ -30,12 +35,21 @@ def get(my_file, key=None):
 
 
 def set(my_file, key, value):
+    pattern = re.compile("^[a-zA-Z\._-]*$")
+    if not (pattern.match(my_file)):
+        return 'Error: Bad Syntax'
+    if not (pattern.match(key)):
+        return 'Error: Bad Syntax'
     my_file = my_file.replace('.', '/', 3)
     key = key.split('.')
     if (my_file != 'config'):
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
     else:
         file_name = os.getenv("HOME") + "/.appflow/" + my_file
+    if not os.path.exists(file_name):
+        return ('Error: No such File or Directory')
+    if my_file.split('/').pop() == 'inventory':
+        return ('Error: Invalid Request')
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
         utils.set_in_dict(conf, key, value)
@@ -46,12 +60,21 @@ def set(my_file, key, value):
 
 
 def rm(my_file, key):
+    pattern = re.compile("^[a-zA-Z\._-]*$")
+    if not (pattern.match(my_file)):
+        return 'Error: Bad Syntax'
+    if not (pattern.match(key)):
+        return 'Error: Bad Syntax'
     my_file = my_file.replace('.', '/', 3)
     key = key.split('.')
     if (my_file != 'config'):
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
     else:
         file_name = os.getenv("HOME") + "/.appflow/" + my_file
+    if not os.path.exists(file_name):
+        return ('Error: No such File or Directory')
+    if my_file.split('/').pop() == 'inventory':
+        return ('Error: Invalid Request')
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
         utils.rm_in_dict(conf, key)
@@ -62,12 +85,21 @@ def rm(my_file, key):
 
 
 def add(my_file, key, value):
+    pattern = re.compile("^[a-zA-Z\._-]*$")
+    if not (pattern.match(my_file)):
+        return 'Error: Bad Syntax'
+    if not (pattern.match(key)):
+        return 'Error: Bad Syntax'
     my_file = my_file.replace('.', '/', 3)
     key = key.split('.')
     if (my_file != 'config'):
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
     else:
         file_name = os.getenv("HOME") + "/.appflow/" + my_file
+    if not os.path.exists(file_name):
+        return ('Error: No such File or Directory')
+    if my_file.split('/').pop() == 'inventory':
+        return ('Error: Invalid Request')
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
     d = {}

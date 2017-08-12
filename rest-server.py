@@ -2,8 +2,11 @@
 
 import appflow.AppflowYaml as apyaml
 import appflow.AppflowAnsible as apansible
+import appflow.AppflowTools as tools
+import appflow.AppflowUtils as utils
 from flask import Flask
 from flask import request
+from flask import make_response
 
 app = Flask(__name__)
 
@@ -13,60 +16,135 @@ app = Flask(__name__)
 # PATCH -> set
 # DELETE -> rm
 
-# 204 NO CONTENT – [DELETE]
-# 304 NOT MODIFIED
-# 400 INVALID REQUEST – [POST/PUT/PATCH]
-# 401 UNAUTHORIZED
-# 403 FORBIDDEN
-# 404 NOT FOUND
+# 204 NO CONTENT – [DELETE/POST/PUT/PATCH]
+# 400 INVALID REQUEST – [DELETE/POST/PUT/PATCH]
+# 401 UNAUTHORIZED -> Maybe if we use api tokens???
+# 403 FORBIDDEN -> Maybe if we use api tokens???
+# 404 NOT FOUND -> Invalid Command or syntax
+# 405 METHOD NOT ALLOWED -> Invalid Command or syntax
 # 500 INTERNAL SERVER ERROR
 
 
 @app.route("/appflow/get", methods=['GET'])
 def get():
-    file_name = request.args.get('file')
-    key = request.args.get('key')
-    return (apyaml.get(file_name, key))
+    try:
+        file_name = request.args.get('file')
+        key = request.args.get('key')
+
+        response = apyaml.get(file_name, key)
+        if 'Error' in response:
+            if 'Invalid' in response:
+                status_code = 400
+            elif 'Bad Syntax' in response:
+                status_code = 404
+            elif 'Not Found' in response:
+                status_code = 204
+            else:
+                status_code = 500
+        else:
+            status_code = 200
+        return make_response(response, status_code)
+    except Exception as e:
+        return make_response(str(e), 500)
 
 
 @app.route("/appflow/set", methods=['PATCH'])
 def set():
-    file_name = request.args.get('file')
-    key = request.args.get('key')
-    value = request.args.get('value')
-    return (apyaml.set(file_name, key, value))
+    try:
+        file_name = request.args.get('file')
+        key = request.args.get('key')
+        value = request.args.get('value')
+        response = apyaml.set(file_name, key, value)
+        if 'Error' in response:
+            if 'Invalid' in response:
+                status_code = 400
+            elif 'Bad Syntax' in response:
+                status_code = 404
+            elif 'Not Found' in response:
+                status_code = 204
+            else:
+                status_code = 500
+        else:
+            status_code = 200
+        return make_response(response, status_code)
+
+    except Exception as e:
+        return make_response(str(e), 500)
 
 
 @app.route("/appflow/add",  methods=['PUT'])
 def add():
-    file_name = request.args.get('file')
-    key = request.args.get('key')
-    value = request.args.get('value')
-    return (apyaml.add(file_name, key, value))
+    try:
+        file_name = request.args.get('file')
+        key = request.args.get('key')
+        value = request.args.get('value')
+        response = apyaml.add(file_name, key, value)
+        if 'Error' in response:
+            if 'Invalid' in response:
+                status_code = 400
+            elif 'Bad Syntax' in response:
+                status_code = 404
+            elif 'Not Found' in response:
+                status_code = 204
+            else:
+                status_code = 500
+        else:
+            status_code = 200
+        return make_response(response, status_code)
+
+    except Exception as e:
+        return make_response(str(e), 500)
 
 
 @app.route("/appflow/rm",  methods=['DELETE'])
 def rm():
-    file_name = request.args.get('file')
-    key = request.args.get('key')
-    return (apyaml.rm(file_name, key))
+    try:
+        file_name = request.args.get('file')
+        key = request.args.get('key')
+        response = apyaml.rm(file_name, key)
+        if 'Error' in response:
+            if 'Invalid' in response:
+                status_code = 400
+            elif 'Bad Syntax' in response:
+                status_code = 404
+            elif 'Not Found' in response:
+                status_code = 204
+            else:
+                status_code = 500
+        else:
+            status_code = 200
+        return make_response(response, status_code)
+
+    except Exception as e:
+        return make_response(str(e), 500)
 
 
 @app.route("/appflow",  methods=['POST'])
 def command():
-    command = request.args.get('command', default='', type=str)
-    tenant = request.args.get('tenant', default='', type=str)
-    env = request.args.get('env', default='', type=str)
-    tags = 'tags=' + request.args.get('tags', default='', type=str)
-    skip_tags = 'skip_tags=' + \
-        request.args.get('skip_tags', default='', type=str)
-    limit = 'limit=' + request.args.get('limit', default='', type=str)
-    ask_sudo_pass = 'ask_sudo_pass=' + \
-        request.args.get('ask_sudo_pass', default='', type=str)
-    user = 'user=' + request.args.get('user', default='', type=str)
+    try:
+        command = request.args.get('command', default='', type=str)
+        tenant = request.args.get('tenant', default='', type=str)
+        env = request.args.get('env', default='', type=str)
+        tags = 'tags=' + request.args.get('tags', default='', type=str)
+        skip_tags = 'skip_tags=' + \
+            request.args.get('skip_tags', default='', type=str)
+        limit = 'limit=' + request.args.get('limit', default='', type=str)
+        ask_sudo_pass = 'ask_sudo_pass=' + \
+            request.args.get('ask_sudo_pass', default='', type=str)
+        user = 'user=' + request.args.get('user', default='', type=str)
 
-    # apansible.provision(tenant, env, tags, skip_tags, limit, ask_sudo_pass, user)
-    return 'Test'
+        return {
+            'reset': tools.git_reset(tenant, env),
+            'status': tools.git_status(tenant, env),
+            'checkin': tools.git_checkin(tenant, env),
+            'checkout': tools.git_checkOut(tenant, env),
+            'encrypt': apansible.encrypt(tenant, env),
+            'decrypt': apansible.decrypt(tenant, env),
+            'tags': apansible.tags(tenant, env),
+            'provision': apansible.provision(tenant, env, tags, skip_tags, limit, ask_sudo_pass, user)
+        }.get(env, 'development')
+    except Exception as e:
+        return make_response(str(e), 500)
 
 
 if __name__ == "__main__":
