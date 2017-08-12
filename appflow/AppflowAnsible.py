@@ -9,9 +9,13 @@ def provision(tenant, env, *args):
 
     # Convert tags=xyz to --tags xyz
     tags = list(args)
+    for a in tags[:]:
+        if (a.split('=')[1] == ''):
+            tags.remove(a)
     for i, a in enumerate(tags):
         tags[i] = '--' + \
-            tags[i].split('=')[0] + ' ' + tags[i].split('=')[1]
+            tags[i].split('=')[0].replace('_', '-') + \
+            ' ' + tags[i].split('=')[1]
 
     os.system('ansible-playbook -b ' + ' '.join(tags) + ' -i ' +
               inventory + ' ' + playbook + ' --vault-password-file ' + password_file)
