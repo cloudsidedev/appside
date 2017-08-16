@@ -38,13 +38,13 @@ def rm_in_dict(branch, keys):
     return len(branch) == 0
 
 
-def add_keys(d, l, c=None):
-    if len(l) > 1:
-        d[l[0]] = _d = {}
-        d[l[0]] = d.get(l[0], {})
-        add_keys(d[l[0]], l[1:], c)
+def add_keys(d, key, value=None):
+    if len(key) > 1:
+        d[key[0]] = _d = {}
+        d[key[0]] = d.get(key[0], {})
+        add_keys(d[key[0]], key[1:], value)
     else:
-        d[l[0]] = c
+        d[key[0]] = value
 
 
 def check_string_in_file(file_name, string):
@@ -62,9 +62,9 @@ def diff_files(file1, file2):
         with open(file2) as f2:
             lines_file_1 = f1.readlines()
             lines_file_2 = f2.readlines()
-            diff = [x for x in lines_file_1 if x not in lines_file_2]
-            for x in diff:
-                file_name = x.split('\t')[1].replace('\n', '')
+            diff = [line for line in lines_file_1 if line not in lines_file_2]
+            for line in diff:
+                file_name = line.split('\t')[1].replace('\n', '')
                 result.append(file_name)
             return result
 
@@ -88,10 +88,8 @@ RED = '\033[01;31m'
 GREEN = '\033[01;32m'
 YELLOW = '\033[01;33m'
 BLUE = '\033[01;34m'
-PURPLE = '\033[01;35m'
 CYAN = '\033[01;36m'
 WHITE = '\033[01;37m'
-NIL = '\033[00m'
 CLEAR = '\033[00m'
 
 
