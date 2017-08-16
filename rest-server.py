@@ -44,8 +44,8 @@ def get():
         else:
             status_code = 200
         return make_response(response, status_code)
-    except Exception as e:
-        return make_response(str(e), 500)
+    except Exception as exception:
+        return make_response(str(exception), 500)
 
 
 @app.route("/appflow/set", methods=['PATCH'])
@@ -68,8 +68,8 @@ def set():
             status_code = 200
         return make_response(response, status_code)
 
-    except Exception as e:
-        return make_response(str(e), 500)
+    except Exception as exception:
+        return make_response(str(exception), 500)
 
 
 @app.route("/appflow/add",  methods=['PUT'])
@@ -92,8 +92,8 @@ def add():
             status_code = 200
         return make_response(response, status_code)
 
-    except Exception as e:
-        return make_response(str(e), 500)
+    except Exception as exception:
+        return make_response(str(exception), 500)
 
 
 @app.route("/appflow/rm",  methods=['DELETE'])
@@ -115,8 +115,8 @@ def rm():
             status_code = 200
         return make_response(response, status_code)
 
-    except Exception as e:
-        return make_response(str(e), 500)
+    except Exception as exception:
+        return make_response(str(exception), 500)
 
 
 @app.route("/appflow",  methods=['POST'])
@@ -143,8 +143,8 @@ def command():
             'tags': apansible.tags(tenant, env),
             'provision': apansible.provision(tenant, env, tags, skip_tags, limit, ask_sudo_pass, user)
         }.get(env, 'development')
-    except Exception as e:
-        return make_response(str(e), 500)
+    except Exception as exception:
+        return make_response(str(exception), 500)
 
 
 if __name__ == "__main__":
