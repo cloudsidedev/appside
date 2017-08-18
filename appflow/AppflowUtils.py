@@ -278,3 +278,25 @@ def sql_update(data):
     finally:
         connection.close()
     return success
+
+def sql_remove(field, search):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='db',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+            DELETE FROM `users`
+            WHERE """ + field + "=%s"
+            cursor.execute(sql, search)
+        connection.commit()
+        success = True
+    except Exception as exception:
+        success = False
+        print(exception)
+    finally:
+        connection.close()
+    return success
