@@ -1,8 +1,13 @@
+import base64
+import hashlib
 import operator
 import os
 import sys
-import hashlib
 from functools import reduce
+
+import pymysql.cursors
+
+from Crypto.Cipher import AES
 
 
 def get_md5_sum(file_name):
@@ -145,3 +150,131 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
+
+def aes_encrypt(string, password):
+    block_size = 32
+    padded_string = string + (block_size - len(string) %
+                              block_size) * chr(block_size - len(string) % block_size)
+    iv = os.urandom(AES.block_size)
+    cipher = AES.new(password, AES.MODE_CBC, iv)
+    return base64.b64encode(iv + cipher.encrypt(padded_string))
+
+
+def aes_decrypt(enc, password):
+    enc = base64.b64decode(enc)
+    iv = enc[:AES.block_size]
+    cipher = AES.new(password, AES.MODE_CBC, iv)
+    result = cipher.decrypt(enc[AES.block_size:])
+    result = result[:-ord(result[len(result) - 1:])]
+    return result.decode('utf-8')
+
+
+def get_salt():
+    result = base64.b64encode(os.urandom(32)).decode()
+    while sql_check_if_present('salt', result):
+        result = base64.b64encode(os.urandom(32)).decode()
+    return result
+
+
+def get_api_token():
+    result = base64.urlsafe_b64encode(os.urandom(50)).decode()
+    while sql_check_if_present('api_key', result):
+        result = base64.urlsafe_b64encode(os.urandom(50)).decode()
+    return result
+
+
+def hash_string(plaintext):
+    hashx = hashlib.sha512()
+    hashx.update((plaintext).encode())
+    return hashx.hexdigest()
+
+
+# CREATE TABLE users(user VARCHAR(100), email VARCHAR(100), password VARCHAR(100), salt VARCHAR(100), tenant VARCHAR(100), api_key VARCHAR(100), api_quota INT);
+
+
+def sql_check_if_present(field, search):
+    return sql_query(field, search) != None
+
+
+def sql_query(field, search):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='db',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+    result = ''
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+            SELECT `user`, `email`, `password` , `salt`, `tenant`, `api_key`, `api_quota`
+            FROM `users` 
+            WHERE `""" + field + "`=%s"
+            cursor.execute(sql, (search,))
+            result = cursor.fetchone()
+
+    except Exception as exception:
+        print(exception)
+    finally:
+        connection.close()
+    return result
+
+
+def sql_write(data):
+    if sql_check_if_present('user', data[0]):
+        # Entry exists, update only
+        sql_update(data)
+    else:
+        # Entry does not exist; create it
+        sql_insert(data)
+
+
+def sql_insert(data):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='db',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+            INSERT INTO `users` (`user`, `email`, `password` , `salt`, `tenant`, `api_key`, `api_quota`) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, data)
+        connection.commit()
+        success = True
+    except Exception as exception:
+        success = False
+        print(exception)
+    finally:
+        connection.close()
+    return success
+
+
+def sql_update(data):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='db',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+    try:
+        with connection.cursor() as cursor:
+            sql = """
+                UPDATE `users`
+                SET `user`=%s, `email`=%s, `password`=%s , `salt`=%s, `tenant`=%s, `api_key`=%s, `api_quota`=%s
+                WHERE user=%s
+                """
+            cursor.execute(sql, (*data, data[0]))
+
+        connection.commit()
+        success = True
+    except Exception as exception:
+        success = False
+        print(exception)
+    finally:
+        connection.close()
+    return success
