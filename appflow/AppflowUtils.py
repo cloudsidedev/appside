@@ -190,8 +190,7 @@ def hash_string(plaintext):
     return hashx.hexdigest()
 
 
-# CREATE TABLE users(user VARCHAR(100), email VARCHAR(100), password VARCHAR(100), salt VARCHAR(100), tenant VARCHAR(100), api_key VARCHAR(100), api_quota INT);
-
+# CREATE TABLE users(username VARCHAR(100), mail VARCHAR(100), password VARCHAR(100), salt VARCHAR(100), tenant VARCHAR(100), api_key VARCHAR(100), api_quota INT);
 
 def sql_check_if_present(field, search):
     return sql_query(field, search) != None
@@ -204,17 +203,16 @@ def sql_query(field, search):
                                  db='db',
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
-    result = ''
     try:
         with connection.cursor() as cursor:
             sql = """
-            SELECT `user`, `email`, `password` , `salt`, `tenant`, `api_key`, `api_quota`
+            SELECT `username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`
             FROM `users` 
             WHERE `""" + field + "`=%s"
             cursor.execute(sql, (search,))
             result = cursor.fetchone()
-
     except Exception as exception:
+        result = None
         print(exception)
     finally:
         connection.close()
@@ -222,11 +220,9 @@ def sql_query(field, search):
 
 
 def sql_write(data):
-    if sql_check_if_present('user', data[0]):
-        # Entry exists, update only
+    if sql_check_if_present('username', data[0]):   # Entry exists, update only
         sql_update(data)
-    else:
-        # Entry does not exist; create it
+    else:                                           # Entry does not exist; create it
         sql_insert(data)
 
 
@@ -240,7 +236,7 @@ def sql_insert(data):
     try:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO `users` (`user`, `email`, `password` , `salt`, `tenant`, `api_key`, `api_quota`) 
+            INSERT INTO `users` (`username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`) 
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, data)
@@ -265,11 +261,10 @@ def sql_update(data):
         with connection.cursor() as cursor:
             sql = """
                 UPDATE `users`
-                SET `user`=%s, `email`=%s, `password`=%s , `salt`=%s, `tenant`=%s, `api_key`=%s, `api_quota`=%s
+                SET `username`=%s, `mail`=%s, `password`=%s , `salt`=%s, `tenant`=%s, `api_key`=%s, `api_quota`=%s
                 WHERE user=%s
                 """
             cursor.execute(sql, (*data, data[0]))
-
         connection.commit()
         success = True
     except Exception as exception:
@@ -278,6 +273,7 @@ def sql_update(data):
     finally:
         connection.close()
     return success
+
 
 def sql_remove(field, search):
     connection = pymysql.connect(host='localhost',
