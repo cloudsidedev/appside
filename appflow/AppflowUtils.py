@@ -196,6 +196,13 @@ def sql_check_if_present(field, search):
     return sql_query(field, search) != None
 
 
+def sql_write(data):
+    if sql_check_if_present('username', data[0]):   # Entry exists, update only
+        sql_update(data)
+    else:                                           # Entry does not exist; create it
+        sql_insert(data)
+
+
 def sql_query(field, search):
     connection = pymysql.connect(host='localhost',
                                  user='root',
@@ -217,13 +224,6 @@ def sql_query(field, search):
     finally:
         connection.close()
     return result
-
-
-def sql_write(data):
-    if sql_check_if_present('username', data[0]):   # Entry exists, update only
-        sql_update(data)
-    else:                                           # Entry does not exist; create it
-        sql_insert(data)
 
 
 def sql_insert(data):
