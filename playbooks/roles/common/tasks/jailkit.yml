@@ -1,0 +1,14 @@
+---
+
+# file: playbooks/roles/common/tasks/jailkit.yml
+
+#
+# This installs jailkit and sets up defined jails.
+#
+
+- name: Check if jailkit is installed
+  shell: ls /usr/sbin/jk_init
+  register: jailkit_installed
+  failed_when: false
+  changed_when: false
+  tags: [ jailkit ]
