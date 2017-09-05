@@ -63,7 +63,7 @@
   tags: [ common ]
 
 - include: jailkit.yml
-  when: and conf_jailkit_enable is defined and conf_jailkit_enable == true
+  when: conf_jailkit_enable is defined and conf_jailkit_enable == true
   tags: [ common, jailkit, jails ]
 
 - include: users.yml

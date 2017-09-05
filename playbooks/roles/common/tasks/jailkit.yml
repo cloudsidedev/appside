@@ -1,14 +1,29 @@
 ---
 
-# file: playbooks/roles/common/tasks/jailkit.yml
+# file: playbooks/roles/common/tasks/jailkit_installedyml
 
 #
 # This installs jailkit and sets up defined jails.
+# wget -c https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2
 #
 
-- name: Check if jailkit is installed
-  shell: ls /usr/sbin/jk_init
+- name: check if jailkit is installed
+  # shell: ls /usr/sbin/jk_init
+  stat: path=/usr/sbin/jk_inits
   register: jailkit_installed
   failed_when: false
   changed_when: false
+  tags: [ jailkit ]
+
+- name: create /tmp/jailkit
+  file: path=/tmp/jailkit state=directory mode=0750
+  when: not jailkit_installed.stat.exists
+  tags: [ jailkit ]
+
+- name: download and unarchive Jailkit
+  unarchive:
+    src: "{{ conf_jailkit_url }}"
+    dest: /tmp/jailkit
+    remote_src: true
+  when: not jailkit_installed.stat.exists
   tags: [ jailkit ]
