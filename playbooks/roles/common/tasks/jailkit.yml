@@ -8,8 +8,7 @@
 #
 
 - name: check if jailkit is installed
-  # shell: ls /usr/sbin/jk_init
-  stat: path=/usr/sbin/jk_inits
+  stat: path=/usr/sbin/jk_init
   register: jailkit_installed
   failed_when: false
   changed_when: false
@@ -25,5 +24,15 @@
     src: "{{ conf_jailkit_url }}"
     dest: /tmp/jailkit
     remote_src: true
+    extra_opts: ['--strip-components=1']
+  when: not jailkit_installed.stat.exists
+  tags: [ jailkit ]
+
+- name: "compile Jailkit"
+  shell: "{{ item }} chdir=/tmp/jailkit"
+  with_items:
+    - ./configure
+    - make
+    - make install
   when: not jailkit_installed.stat.exists
   tags: [ jailkit ]
