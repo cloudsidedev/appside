@@ -7,6 +7,9 @@
 # wget -c https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2
 #
 
+#
+# Basic
+#
 - name: check if jailkit is installed
   stat: path=/usr/sbin/jk_init
   register: jailkit_installed
@@ -36,3 +39,32 @@
     - make install
   when: not jailkit_installed.stat.exists
   tags: [ jailkit ]
+
+- block:
+  - name: create chroot dirtree if applicable
+    file:
+      path: "{{ item.value.path }}"
+      owner: "{{ item.value.owner }}"
+      group: "{{ item.value.group }}"
+      mode: "{{ item.value.mode }}"
+      recurse: yes
+      state: directory
+    with_dict: "{{ conf_jails }}"
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  - name: execute jk_init if applicable
+    shell:
+      # jk_init {{ item.value.path }} {{ item.value.profile }}
+      jk_init {{ item.value.path }} {{ item.value.section }}
+    with_dict: "{{ conf_jails }}"
+    when:
+      - item.value.path is defined
+      # - item.value.profile is defined
+    tags: [ jailkit, jails ]
+    # when: conf_jails is defined
