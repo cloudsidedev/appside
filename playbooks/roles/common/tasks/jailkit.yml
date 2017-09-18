@@ -8,6 +8,24 @@
 #
 
 #
+# one jail per user
+#
+# /var/chroot/required
+# ├── home
+# |   └── ironman
+# |   └── superman
+# ├── var
+# │   └── www
+# │       └── vhosts
+# │           └── foo            (bind mount)
+# ├── mnt
+#     └── glusterfs
+#         └── gvol0
+#             └── brick1
+#                 └── uploads
+#                     └── foo    (bind mount)
+
+#
 # Basic
 #
 - name: check if jailkit is installed
@@ -40,6 +58,9 @@
   when: not jailkit_installed.stat.exists
   tags: [ jailkit ]
 
+#
+# Jails
+#
 - block:
   - name: create chroot dirtree if applicable
     file:
@@ -68,3 +89,33 @@
       # - item.value.profile is defined
     tags: [ jailkit, jails ]
     # when: conf_jails is defined
+
+  - name: check if user is jailed
+    shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
+    with_dict: '{{ conf_users }}'
+    register: jk_jailuser_check
+    when:
+      - item.value.state == "enabled"
+      - item.value.is_jailed is defined
+      - item.value.is_jailed == True
+    ignore_errors: true
+    # failed_when: jk_jailuser_check.rc != 0
+    changed_when: jk_jailuser_check.rc != 0
+    tags: [ jailkit, jail-users ]
+
+  - name: jail user
+    shell: jk_jailuser -m -j {{ conf_jails[item.item.value.jail].path }} {{ item.item.value.home.split('/')[2] }}
+    with_items: '{{ jk_jailuser_check.results }}'
+    register: jk_jailuser_jail
+    when:
+      - item.rc is defined
+      - item.rc == 1
+    tags: [ jailkit, jail-users ]
+
+  - name: provision shell user groups if enabled
+    group: name={{ item.key }} state=present
+    when:
+      - item.value.state == "enabled"
+      - item.value.is_jailed is defined or item.value.is_jailed == True
+    with_dict: '{{ conf_users }}'
+    tags: [ jailkit, jail-users ]
