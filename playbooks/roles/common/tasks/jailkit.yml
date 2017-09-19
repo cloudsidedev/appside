@@ -40,6 +40,14 @@
   when: not jailkit_installed.stat.exists
   tags: [ jailkit ]
 
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - jailkit/jk_init.ini
+  when:
+    - conf_jailkit_enable is defined and conf_jailkit_enable == true
+  tags: [ jailkit, jailkit-conf ]
+
 #
 # Jails
 #
