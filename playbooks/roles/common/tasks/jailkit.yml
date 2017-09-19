@@ -73,13 +73,41 @@
       - item.value.state == "enabled"
     tags: [ jailkit, jails ]
 
+  - name: "ensure tmp directory"
+    file:
+      path='{{ item.value.path }}/tmp'
+      state='directory'
+      owner='root'
+      group='root'
+      mode='1777'
+    with_dict: "{{ conf_jails }}"
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  # NOTE: This sets permissions on /home to root.
   - name: execute jk_init if applicable
     shell:
       jk_init {{ item.value.path }} {{ item.value.section }}
     with_dict: "{{ conf_jails }}"
     when:
       - item.value.path is defined
-    tags: [ jailkit, jails ]
+    tags: [ jailkit, jailkit-conf, jails ]
+
+  - name: jail chmod
+    shell: "chmod {{ item.1.0 }} {{ item.0.path }}{{ item.1.1 }}"
+    with_subelements:
+      - "{{ conf_jails }}"
+      - chmod
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails, foo ]
 
 - name: check if user is jailed
   shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
@@ -164,3 +192,11 @@
     - item.value.state == "enabled"
     - item.value.is_jailed is defined or item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: set user home permissions
+  shell: chown -R {{ item.key }}:{{ item.key }} {{ conf_jails[item.value.jail].path }}/home/{{ item.key }}
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users ]
