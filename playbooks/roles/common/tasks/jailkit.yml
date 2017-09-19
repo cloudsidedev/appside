@@ -9,7 +9,7 @@
 
 #
 # Bind mounts: https://github.com/cw-ansible/playbooks/blob/master/pb_ansible-bootstrap-chroot.yml
-#
+# SSH agent: https://lists.nongnu.org/archive/html/jailkit-users/2007-08/msg00018.html
 
 #
 # Basic
@@ -47,7 +47,9 @@
 - name: provision configs
   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
   with_items:
-      - jailkit/jk_init.ini
+    - jailkit/jk_init.ini
+    - jailkit/jk_chrootsh.ini
+    - jailkit/jk_check.ini
   when:
     - conf_jailkit_enable is defined and conf_jailkit_enable == true
   tags: [ jailkit, jailkit-conf ]
@@ -65,6 +67,7 @@
       recurse: yes
       state: directory
     with_dict: "{{ conf_jails }}"
+    ignore_errors: true
     when:
       - item.value.path is defined
       - item.value.owner is defined
@@ -92,7 +95,7 @@
   # NOTE: This sets permissions on /home to root.
   - name: execute jk_init if applicable
     shell:
-      jk_init {{ item.value.path }} {{ item.value.section }}
+      jk_init -k {{ item.value.path }} {{ item.value.section }}
     with_dict: "{{ conf_jails }}"
     when:
       - item.value.path is defined
@@ -186,7 +189,6 @@
   tags: [ jailkit, jail-users ]
 
 - name: provision shell users if enabled
-  # user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ conf_jails[item.item.value.jail].path }}/./home/{{ item.item.key }}" append=yes shell="/usr/sbin/jk_chrootsh" state=present
   user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ item.item.value.home }}" append=yes shell="{{ item.item.value.shell }}" state=present
   with_items: '{{ jk_jailuser_check.results }}'
   when:
@@ -206,6 +208,14 @@
   failed_when: jk_jailuser_jail.rc != 0
   changed_when: jk_jailuser_jail.rc != 0
   tags: [ jailkit, jail-users ]
+
+- name: set shell
+  replace: dest={{ conf_jails[item.value.jail].path }}{{ conf_local_etc_path }}/passwd regexp="\/home\/{{ item.key }}:\/usr\/sbin\/jk_lsh" replace="/home/{{ item.key }}:/usr{{ item.value.shell }}"
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: provision ssh key if enabled
   authorized_key: user={{ item.key }} key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.ssh/authorized_keys" manage_dir=no state=present
