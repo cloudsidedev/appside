@@ -8,6 +8,10 @@
 #
 
 #
+# Bind mounts: https://github.com/cw-ansible/playbooks/blob/master/pb_ansible-bootstrap-chroot.yml
+#
+
+#
 # Basic
 #
 - name: check if jailkit is installed
@@ -77,17 +81,17 @@
       - item.value.path is defined
     tags: [ jailkit, jails ]
 
-  - name: check if user is jailed
-    shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
-    with_dict: '{{ conf_users }}'
-    register: jk_jailuser_check
-    when:
-      - item.value.state == "enabled"
-      - item.value.is_jailed is defined
-      - item.value.is_jailed == True
-    ignore_errors: true
-    changed_when: jk_jailuser_check.rc != 0
-    tags: [ jailkit, jail-users ]
+- name: check if user is jailed
+  shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
+  with_dict: '{{ conf_users }}'
+  register: jk_jailuser_check
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined
+    - item.value.is_jailed == True
+  ignore_errors: true
+  changed_when: jk_jailuser_check.rc != 0
+  tags: [ jailkit, jail-users ]
 
 #
 # User exists on the system, wants to be jailed, is not yet jailed.
@@ -106,22 +110,57 @@
 #
 # User does not yet exist on the system, wants to be jailed, is not yet jailed.
 #
+#   - Create the user
+#   - Jail it
+#
+- name: check if user is jailed
+  shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
+  with_dict: '{{ conf_users }}'
+  register: jk_jailuser_check
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined
+    - item.value.is_jailed == True
+  ignore_errors: true
+  changed_when: jk_jailuser_check.rc != 0
+  tags: [ jailkit, jail-users ]
+
 - name: provision shell user groups if enabled
   group: name={{ item.item.key }} state=present
   with_items: '{{ jk_jailuser_check.results }}'
   when:
     - item.rc is defined
-    - item.rc == 1
+    - item.rc != 0
     - item.item.value.state == "enabled"
     - item.item.value.is_jailed is defined or item.value.is_jailed == True
   tags: [ jailkit, jail-users ]
 
 - name: provision shell users if enabled
-  user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ conf_jails[item.item.value.jail].path }}" append=yes shell="/usr/sbin/jk_chrootsh" state=present
+  # user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ conf_jails[item.item.value.jail].path }}/./home/{{ item.item.key }}" append=yes shell="/usr/sbin/jk_chrootsh" state=present
+  user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ item.item.value.home }}" append=yes shell="{{ item.item.value.shell }}" state=present
   with_items: '{{ jk_jailuser_check.results }}'
   when:
     - item.rc is defined
-    - item.rc == 1
+    - item.rc != 0
     - item.item.value.state == "enabled"
     - item.item.value.is_jailed is defined or item.value.is_jailed == True
   tags: [ jailkit, jail-users ]
+
+- name: jail user
+  shell: jk_jailuser -m -j {{ conf_jails[item.item.value.jail].path }} {{ item.item.value.home.split('/')[2] }}
+  with_items: '{{ jk_jailuser_check.results }}'
+  register: jk_jailuser_jail
+  when:
+    - item.rc is defined
+    - item.rc != 0
+  failed_when: jk_jailuser_jail.rc != 0
+  changed_when: jk_jailuser_jail.rc != 0
+  tags: [ jailkit, jail-users ]
+
+- name: provision ssh key if enabled
+  authorized_key: user={{ item.key }} key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.ssh/authorized_keys" manage_dir=no state=present
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
