@@ -107,7 +107,29 @@
         skip_missing: True
     when:
       - item.1 is defined
-    tags: [ jailkit, jailkit-conf, jails, foo ]
+    tags: [ jailkit, jailkit-conf, jails ]
+
+  - name: create mountpoints
+    file: path={{ item.0.path }}{{ item.1.mountpoint }} owner={{ item.1.owner }} group={{ item.1.group }} mode={{ item.1.mode }} state=directory
+    with_subelements:
+      - "{{ conf_jails }}"
+      - mount
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails]
+
+  - name: mount
+    mount: name={{ item.0.path }}{{ item.1.mountpoint }} src={{ item.1.mountpoint }} fstype={{ item.1.fstype }} opts={{ item.1.opts }} dump={{ item.1.dump }} passno={{ item.1.passno }} state={{ item.1.state }}
+    with_subelements:
+      - "{{ conf_jails }}"
+      - mount
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails ]
 
 - name: check if user is jailed
   shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
