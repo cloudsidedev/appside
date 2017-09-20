@@ -199,7 +199,7 @@
     - item.rc is defined
     - item.rc != 0
     - item.item.value.state == "enabled"
-    - item.item.value.is_jailed is defined or item.value.is_jailed == True
+    - item.item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
 
 - name: provision shell users if enabled
@@ -209,7 +209,7 @@
     - item.rc is defined
     - item.rc != 0
     - item.item.value.state == "enabled"
-    - item.item.value.is_jailed is defined or item.value.is_jailed == True
+    - item.item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
 
 - name: jail user
@@ -228,7 +228,7 @@
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
-    - item.value.is_jailed is defined or item.value.is_jailed == true
+    - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: provision ssh key if enabled
@@ -236,7 +236,7 @@
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
-    - item.value.is_jailed is defined or item.value.is_jailed == true
+    - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: set user home permissions
@@ -244,5 +244,5 @@
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
-    - item.value.is_jailed is defined or item.value.is_jailed == true
+    - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
