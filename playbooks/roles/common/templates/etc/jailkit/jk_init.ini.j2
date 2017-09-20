@@ -64,6 +64,11 @@ paths = ssh
 includesections = netbasics, uidbasics
 devices = /dev/urandom, /dev/tty, /dev/null
 
+[extendedssh]
+comment = ssh secure shell including things like ssh-add, ssh-agent
+paths = ssh-add, ssh-agent
+includesections = ssh
+
 [rsync]
 paths = rsync
 includesections = netbasics, uidbasics
@@ -79,6 +84,20 @@ paths = /bin/sh, bash, ls, cat, chmod, mkdir, cp, cpio, date, dd, echo, egrep, f
 users = root
 groups = root
 includesections = uidbasics
+
+[zsh]
+comment = zsh shell
+paths = /usr/bin/zsh, /etc/zsh, /usr/lib/x86_64-linux-gnu/zsh, /usr/share/zsh, dircolors
+paths_w_owner = /dev/null
+users = root
+groups = root
+includesections = basicshell
+devices = /dev/null
+
+[htop]
+comment = Interactive process viewer
+paths = htop
+includesections = basicshell, terminfo
 
 [midnightcommander]
 comment = Midnight Commander

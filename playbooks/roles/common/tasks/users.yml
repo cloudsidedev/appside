@@ -25,36 +25,48 @@
 
 - name: provision shell user groups if enabled
   group: name={{ item.key }} state=present
-  when: item.value.state == "enabled"
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is not defined or item.value.is_jailed != true
   with_dict: '{{ conf_users }}'
   tags: [ shell-users, users, shell, groups ]
 
 - name: delete shell users if absent
   user: name={{ item.key }} state=absent remove=yes force=yes
-  when: item.value.state == "absent"
+  when:
+    - item.value.state == "absent"
+    - item.value.is_jailed is not defined or item.value.is_jailed != true
   with_dict: '{{ conf_users }}'
   tags: [ shell-users, users, shell ]
 
 - name: provision shell users if enabled
   user: name={{ item.key }} group={{ item.key }} groups={{ item.value.groups }} comment="{{ item.value.name }}" home="{{ item.value.home }}" append=yes shell={{ item.value.shell }} state=present
-  when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is not defined or item.value.is_jailed != true
   ignore_errors: yes
   tags: [ shell-users, users, shell ]
 
 - name: provision ssh key if enabled
   authorized_key: user={{ item.key }} key="{{ item.value.public_key }}" state=present
-  when: item.value.state == "enabled"
   with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is not defined or item.value.is_jailed != true
   tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
 - name: provision ssh key to deploy user if enabled
   authorized_key: user=deploy key="{{ item.value.public_key }}" state=present
-  when: item.value.state == "enabled" and item.value.is_deployer == True
   with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_deployer == True
+    - item.value.is_jailed is not defined or item.value.is_jailed != true
   tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
 - name: provision private key for deploy user (development)
   copy: content="{{ conf_users.deploy.private_key }}" dest=/home/deploy/.ssh/id_rsa owner=deploy group=deploy mode=600 backup=no
-  when: conf_env == "development"
+  when:
+    - conf_env == "development"
   tags: [ shell-users, users, ssh, shell, ssh-keys ]

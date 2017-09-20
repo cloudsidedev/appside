@@ -1,0 +1,24 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+[/home/testchroot]
+# jk_check does not run any tests in this directory (useful for proc filesystem)
+# be careful!! there is I repeat NO SINGLE TEST in this directory
+#ignorepatheverywhere =
+
+# jk_check compares files if they are equal to their counterparts in the real system,
+# using md5sum(). In the specified directories it will not test if files are equal
+# it will still test for world writable directories and setuid files
+ignorepathoncompare = /home/testchroot/home, /home/testchroot/etc
+
+# jk_check tests directory permissions, if you deliberately made some directories writable
+# for group or others, or you don't care, specify them here
+ignorewritableforgroup = /home/testchroot/home
+ignorewritableforothers = /home/testchroot/home/tmp
+
+# jk_check tests for setuid root and setgid root files
+# if you deliberately have such files specify them here
+ignoresetuidexecuteforuser = /home/testchroot/usr/bin/smbmnt, /home/testchroot/usr/bin/smbumount
+ignoresetuidexecuteforgroup = /home/testchroot/usr/bin/smbmnt, /home/testchroot/usr/bin/smbumount
+ignoresetuidexecuteforothers =
