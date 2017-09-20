@@ -62,6 +62,10 @@
 - include: lvm.yml
   tags: [ common ]
 
+- include: jailkit.yml
+  when: conf_jailkit_enable is defined and conf_jailkit_enable == true
+  tags: [ common, jailkit, jails ]
+
 - include: users.yml
   tags: [ common ]
 

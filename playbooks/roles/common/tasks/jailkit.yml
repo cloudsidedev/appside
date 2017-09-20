@@ -1,0 +1,248 @@
+---
+
+# file: playbooks/roles/common/tasks/jailkit.yml
+
+#
+# This installs jailkit and sets up defined jails.
+# wget -c https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2
+#
+
+#
+# Bind mounts: https://github.com/cw-ansible/playbooks/blob/master/pb_ansible-bootstrap-chroot.yml
+# SSH agent: https://lists.nongnu.org/archive/html/jailkit-users/2007-08/msg00018.html
+# sections: https://gitlab.lakedrops.com/ansible-roles/jailkit/blob/master/templates/jk_init.ini
+#
+
+#
+# Basic
+#
+- name: check if jailkit is installed
+  stat: path=/usr/sbin/jk_init
+  register: jailkit_installed
+  failed_when: false
+  changed_when: false
+  tags: [ jailkit ]
+
+- name: create /tmp/jailkit
+  file: path=/tmp/jailkit state=directory mode=0750
+  when: not jailkit_installed.stat.exists
+  tags: [ jailkit ]
+
+- name: download and unarchive Jailkit
+  unarchive:
+    src: "{{ conf_jailkit_url }}"
+    dest: /tmp/jailkit
+    remote_src: true
+    extra_opts: ['--strip-components=1']
+  when: not jailkit_installed.stat.exists
+  tags: [ jailkit ]
+
+- name: "compile Jailkit"
+  shell: "{{ item }} chdir=/tmp/jailkit"
+  with_items:
+    - ./configure
+    - make
+    - make install
+  when: not jailkit_installed.stat.exists
+  tags: [ jailkit ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - jailkit/jk_init.ini
+    - jailkit/jk_chrootsh.ini
+    - jailkit/jk_check.ini
+  when:
+    - conf_jailkit_enable is defined and conf_jailkit_enable == true
+  tags: [ jailkit, jailkit-conf ]
+
+#
+# Jails
+#
+- block:
+  - name: create chroot dirtree if applicable
+    file:
+      path: "{{ item.value.path }}"
+      owner: "{{ item.value.owner }}"
+      group: "{{ item.value.group }}"
+      mode: "{{ item.value.mode }}"
+      recurse: yes
+      state: directory
+    with_dict: "{{ conf_jails }}"
+    ignore_errors: true
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  - name: "ensure tmp directory"
+    file:
+      path='{{ item.value.path }}/tmp'
+      state='directory'
+      owner='root'
+      group='root'
+      mode='1777'
+    with_dict: "{{ conf_jails }}"
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  # NOTE: This sets permissions on /home to root.
+  - name: execute jk_init if applicable
+    shell:
+      jk_init -k {{ item.value.path }} {{ item.value.section }}
+    with_dict: "{{ conf_jails }}"
+    when:
+      - item.value.path is defined
+    tags: [ jailkit, jailkit-conf, jails ]
+
+  # if issues see: "mount vhosts"
+  - name: jail chmod
+    shell: "chmod {{ item.1.0 }} {{ item.0.path }}{{ item.1.1 }}"
+    with_subelements:
+      - "{{ conf_jails }}"
+      - chmod
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails ]
+
+  - name: create mountpoints
+    file: path={{ item.0.path }}{{ item.1.mountpoint }} owner={{ item.1.owner }} group={{ item.1.group }} mode={{ item.1.mode }} state=directory
+    with_subelements:
+      - "{{ conf_jails }}"
+      - mount
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails]
+
+  - name: mount
+    mount: name={{ item.0.path }}{{ item.1.mountpoint }} src={{ item.1.mountpoint }} fstype={{ item.1.fstype }} opts={{ item.1.opts }} dump={{ item.1.dump }} passno={{ item.1.passno }} state={{ item.1.state }}
+    with_subelements:
+      - "{{ conf_jails }}"
+      - mount
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails ]
+
+  - name: mount vhosts
+    mount: name={{ item.0.path }}/var/www/vhosts/{{ item.1 }} src=/var/www/vhosts/{{ item.1 }} fstype=none opts=nosuid,noexec,nodev,bind dump=0 passno=0 state=mounted
+    with_subelements:
+      - "{{ conf_jails }}"
+      - vhosts
+      - flags:
+        skip_missing: True
+    when:
+      - item.1 is defined
+    tags: [ jailkit, jailkit-conf, jails, foo ]
+
+- name: check if user is jailed
+  shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
+  with_dict: '{{ conf_users }}'
+  register: jk_jailuser_check
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined
+    - item.value.is_jailed == True
+  ignore_errors: true
+  changed_when: jk_jailuser_check.rc != 0
+  tags: [ jailkit, jail-users ]
+
+#
+# User exists on the system, wants to be jailed, is not yet jailed.
+#
+- name: jail user
+  shell: jk_jailuser -m -j {{ conf_jails[item.item.value.jail].path }} {{ item.item.value.home.split('/')[2] }}
+  with_items: '{{ jk_jailuser_check.results }}'
+  register: jk_jailuser_jail
+  when:
+    - item.rc is defined
+    - item.rc == 1
+  failed_when: jk_jailuser_jail.rc != 0
+  changed_when: jk_jailuser_jail.rc != 0
+  tags: [ jailkit, jail-users ]
+
+#
+# User does not yet exist on the system, wants to be jailed, is not yet jailed.
+#
+#   - Create the user
+#   - Jail it
+#
+- name: check if user is jailed
+  shell: echo ~{{ item.value.home.split('/')[2] }} | grep '{{ conf_jails[item.value.jail].path }}'
+  with_dict: '{{ conf_users }}'
+  register: jk_jailuser_check
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined
+    - item.value.is_jailed == True
+  ignore_errors: true
+  changed_when: jk_jailuser_check.rc != 0
+  tags: [ jailkit, jail-users ]
+
+- name: provision shell user groups if enabled
+  group: name={{ item.item.key }} state=present
+  with_items: '{{ jk_jailuser_check.results }}'
+  when:
+    - item.rc is defined
+    - item.rc != 0
+    - item.item.value.state == "enabled"
+    - item.item.value.is_jailed is defined or item.value.is_jailed == True
+  tags: [ jailkit, jail-users ]
+
+- name: provision shell users if enabled
+  user: name={{ item.item.key }} group={{ item.item.key }} groups={{ item.item.value.groups }} comment="{{ item.item.value.name }}" home="{{ item.item.value.home }}" append=yes shell="{{ item.item.value.shell }}" state=present
+  with_items: '{{ jk_jailuser_check.results }}'
+  when:
+    - item.rc is defined
+    - item.rc != 0
+    - item.item.value.state == "enabled"
+    - item.item.value.is_jailed is defined or item.value.is_jailed == True
+  tags: [ jailkit, jail-users ]
+
+- name: jail user
+  shell: jk_jailuser -m -j {{ conf_jails[item.item.value.jail].path }} {{ item.item.value.home.split('/')[2] }}
+  with_items: '{{ jk_jailuser_check.results }}'
+  register: jk_jailuser_jail
+  when:
+    - item.rc is defined
+    - item.rc != 0
+  failed_when: jk_jailuser_jail.rc != 0
+  changed_when: jk_jailuser_jail.rc != 0
+  tags: [ jailkit, jail-users ]
+
+- name: set shell
+  replace: dest={{ conf_jails[item.value.jail].path }}{{ conf_local_etc_path }}/passwd regexp="\/home\/{{ item.key }}:\/usr\/sbin\/jk_lsh" replace="/home/{{ item.key }}:/usr{{ item.value.shell }}"
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: provision ssh key if enabled
+  authorized_key: user={{ item.key }} key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.ssh/authorized_keys" manage_dir=no state=present
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: set user home permissions
+  shell: chown -R {{ item.key }}:{{ item.key }} {{ conf_jails[item.value.jail].path }}/home/{{ item.key }}
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_jailed is defined or item.value.is_jailed == true
+  tags: [ jailkit, jail-users ]
