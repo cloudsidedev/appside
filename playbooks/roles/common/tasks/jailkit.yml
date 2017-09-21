@@ -138,7 +138,7 @@
     tags: [ jailkit, jailkit-conf, jails ]
 
   - name: mount vhosts
-    mount: name={{ item.0.path }}/var/www/vhosts/{{ item.1 }} src=/var/www/vhosts/{{ item.1 }} fstype=none opts=nosuid,noexec,nodev,bind dump=0 passno=0 state=mounted
+    mount: name={{ item.0.path }}/var/www/vhosts/{{ item.1 }} src=/var/www/vhosts/{{ item.1 }} fstype=none opts=nobootwait,nosuid,noexec,nodev,bind dump=0 passno=0 state=mounted
     with_subelements:
       - "{{ conf_jails }}"
       - vhosts
