@@ -5,6 +5,7 @@ import pymysql.cursors
 
 from Crypto.Cipher import AES
 
+# Temporary solution
 AES_PASSWORD = "C+sh5HgO2AzWCDWnGiqj0P3nJqRvqNvt"
 
 
