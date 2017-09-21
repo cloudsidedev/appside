@@ -199,7 +199,7 @@
     - item.rc is defined
     - item.rc != 0
     - item.item.value.state == "enabled"
-    - item.item.value.is_jailed is defined and item.value.is_jailed == true
+    - item.item.value.is_jailed is defined and item.item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
 
 - name: provision shell users if enabled
@@ -209,7 +209,7 @@
     - item.rc is defined
     - item.rc != 0
     - item.item.value.state == "enabled"
-    - item.item.value.is_jailed is defined and item.value.is_jailed == true
+    - item.item.value.is_jailed is defined and item.item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
 
 - name: jail user
