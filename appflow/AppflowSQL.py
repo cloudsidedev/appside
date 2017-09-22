@@ -1,105 +1,23 @@
 import base64
 import hashlib
 import os
+import stat
 import pymysql.cursors
 
 from Crypto.Cipher import AES
 
-# Temporary solution
-AES_PASSWORD = "C+sh5HgO2AzWCDWnGiqj0P3nJqRvqNvt"
 
-
-def sqlWrite(username, mail, password, tenant):
-    username_recover = aes_encrypt(username, AES_PASSWORD)
-    username = hash_string(username)
-    mail = hash_string(mail)
-    salt = get_salt()
-    api_key = get_api_token()
-    api_key_recover = api_key
-    api_key = hash_string(api_key)
-    password = hash_string(password + salt)
-    crypted_password = aes_encrypt(password, AES_PASSWORD)
-    tenant = hash_string(tenant)
-    sql_write((username, mail, crypted_password,
-               salt, tenant, api_key, 0, username_recover, api_key_recover))
-    return (api_key_recover)
-
-
-def sqlUpdate(username, field, search):
-    sql_data = sql_query('username', hash_string(username))
-    accepted_strings = {"username", "mail", "tenant"}
-    if (field in accepted_strings):
-        search = hash_string(search)
-        sql_data[field] = search
-    elif (field == 'password'):
-        salt = sql_data["salt"]
-        password = hash_string(search + salt)
-        crypted_password = aes_encrypt(password, AES_PASSWORD)
-        sql_data['password'] = crypted_password
-    elif (field == 'api_quota'):
-        sql_data['api_quota'] = search
-    sql_update((sql_data["username"],
-                sql_data["mail"],
-                sql_data["password"],
-                sql_data["salt"],
-                sql_data["tenant"],
-                sql_data["api_key"],
-                sql_data["api_quota"],
-                sql_data["user_recover"],
-                sql_data["api_key_recover"]))
-
-
-def sqlAuth(query, search, password, tenant):
-    search = hash_string(search)
-    tenant = hash_string(tenant)
-    if (sql_check_if_present(query, search)):
-        sql_pass = sql_query(query, search)["password"]
-        sql_pass = aes_decrypt(sql_pass, AES_PASSWORD)
-        salt = sql_query(query, search)["salt"]
-        password = hash_string(password + salt)
-        if(sql_pass == password):
-            sql_tenant = sql_query(query, search)["tenant"]
-            if(sql_tenant == tenant):
-                print("Authenticated")
-                return True
-            else:
-                print("Auth failed tenant")
-                return False
-        else:
-            print("Auth failed pass")
-            return False
-
-
-def sqlRecoverUsername(mail, password, tenant):
-    if sqlAuth('mail', mail, password, tenant):
-        mail = hash_string(mail)
-        sql_user_recover = sql_query('mail', mail)["user_recover"]
-        sql_user_recover = aes_decrypt(
-            sql_user_recover, AES_PASSWORD)
-        print(sql_user_recover)
-
-
-def sqlRecoverApiKey(username, password, tenant):
-    if sqlAuth('username', username, password, tenant):
-        username = hash_string(username)
-        sql_api_key_recover = sql_query('username', username)[
-            "api_key_recover"]
-        print(sql_api_key_recover)
-
-
-def sqlChangePass(username, old_password, new_password, tenant):
-    if sqlAuth('username', username, old_password, tenant):
-        sqlUpdate(username, 'password', new_password)
-
-
-def sqlRead(field, search):
-    search = hash_string(search)
-    print(sql_query(field, search))
-
-
-def sqlRemove(field, search):
-    search = hash_string(search)
-    sql_remove(field, search)
+def get_aes_password():
+    file_name = "/etc/default/.appflow-key"
+    if (os.path.exists(file_name)):
+        with open(file_name, 'r') as pass_file:
+            return pass_file.read().replace('\n', '')
+    else:
+        password = base64.b64encode(os.urandom(32)).decode()
+        with open(file_name, "w") as pass_file:
+            pass_file.write(password)
+            os.chmod(file_name, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+            return password
 
 
 def aes_encrypt(string, password):
@@ -139,10 +57,6 @@ def hash_string(plaintext):
     hashx.update((plaintext).encode())
     return hashx.hexdigest()
 
-# use db;
-# select * from users \G;
-# CREATE TABLE users(username TEXT, mail TEXT, password TEXT, salt TEXT, tenant TEXT, api_key TEXT, api_quota INT, user_recover TEXT, api_key_recover TEXT);
-
 
 def sql_check_if_present(field, search):
     return sql_query(field, search) != None
@@ -150,9 +64,9 @@ def sql_check_if_present(field, search):
 
 def sql_write(data):
     if sql_check_if_present('username', data[0]):   # Entry exists, update only
-        sql_update(data)
+        return sql_update(data)
     else:                                           # Entry does not exist; create it
-        sql_insert(data)
+        return sql_insert(data)
 
 
 def sql_query(field, search):
@@ -165,7 +79,7 @@ def sql_query(field, search):
     try:
         with connection.cursor() as cursor:
             sql = """
-            SELECT `username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_recover`, `api_key_recover`
+            SELECT `username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_enc`, `mail_enc` , `api_key_enc`
             FROM `users` 
             WHERE `""" + field + "`=%s"
             cursor.execute(sql, (search,))
@@ -188,8 +102,8 @@ def sql_insert(data):
     try:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO `users` (`username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_recover`, `api_key_recover`) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO `users` (`username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_enc`, `mail_enc`, `api_key_enc`) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, data)
         connection.commit()
@@ -213,7 +127,7 @@ def sql_update(data):
         with connection.cursor() as cursor:
             sql = """
                 UPDATE `users`
-                SET `username`=%s, `mail`=%s, `password`=%s , `salt`=%s, `tenant`=%s, `api_key`=%s, `api_quota`=%s , `user_recover`=%s, `api_key_recover`=%s
+                SET `username`=%s, `mail`=%s, `password`=%s , `salt`=%s, `tenant`=%s, `api_key`=%s, `api_quota`=%s , `user_enc`=%s, `mail_enc`=%s, `api_key_enc`=%s
                 WHERE username=%s
                 """
             cursor.execute(sql, (*data, data[0]))
@@ -248,3 +162,152 @@ def sql_remove(field, search):
     finally:
         connection.close()
     return success
+
+
+def sql_util_register(username, mail, password, tenant):
+    user_enc = aes_encrypt(username, get_aes_password())
+    username = hash_string(username)
+    mail_enc = aes_encrypt(mail, get_aes_password())
+    mail = hash_string(mail)
+    salt = get_salt()
+    api_key = get_api_token()
+    api_key_enc = api_key
+    api_key = hash_string(api_key)
+    password = hash_string(password + salt)
+    crypted_password = aes_encrypt(password, get_aes_password())
+    tenant = hash_string(tenant)
+    return sql_write((username, mail, crypted_password,
+                      salt, tenant, api_key, 0, user_enc, mail_enc, api_key_enc))
+
+
+def sql_util_auth_username(username, password, tenant):
+    username = hash_string(username)
+    tenant = hash_string(tenant)
+    if (sql_check_if_present("username", username)):
+        sql_pass = sql_query("username", username)["password"]
+        sql_pass = aes_decrypt(sql_pass, get_aes_password())
+        salt = sql_query("username", username)["salt"]
+        password = hash_string(password + salt)
+        if(sql_pass == password):
+            sql_tenant = sql_query("username", username)["tenant"]
+            if(sql_tenant == tenant):
+                print("Authenticated")
+                return True
+            else:
+                print("Auth failed tenant")
+                return False
+        else:
+            print("Auth failed pass")
+            return False
+
+
+def sql_util_auth_mail(mail, password, tenant):
+    mail = hash_string(mail)
+    tenant = hash_string(tenant)
+    if (sql_check_if_present("mail", mail)):
+        sql_pass = sql_query("mail", mail)["password"]
+        sql_pass = aes_decrypt(sql_pass, get_aes_password())
+        salt = sql_query("mail", mail)["salt"]
+        password = hash_string(password + salt)
+        if(sql_pass == password):
+            sql_tenant = sql_query("mail", mail)["tenant"]
+            if(sql_tenant == tenant):
+                print("Authenticated")
+                return True
+            else:
+                print("Auth failed tenant")
+                return False
+        else:
+            print("Auth failed pass")
+            return False
+
+
+def sql_util_auth_api(api_key):
+    api_key = hash_string(api_key)
+    if (sql_check_if_present('api_key', api_key)):
+        print("Auth passed")
+        return True
+    else:
+        print("Auth failed pass")
+        return False
+
+
+def sql_util_recover_username(mail, password, tenant):
+    if sql_util_auth_mail(mail, password, tenant):
+        mail = hash_string(mail)
+        sql_user_enc = sql_query('mail', mail)["user_enc"]
+        sql_user_enc = aes_decrypt(
+            sql_user_enc, get_aes_password())
+        return sql_user_enc
+
+
+def sql_util_recover_mail(username, password, tenant):
+    if sql_util_auth_username(username, password, tenant):
+        username = hash_string(username)
+        sql_mail_enc = sql_query('mail', username)["mail_enc"]
+        sql_mail_enc = aes_decrypt(
+            sql_mail_enc, get_aes_password())
+        return sql_mail_enc
+
+
+def sql_util_recover_api_key(username, password, tenant):
+    if sql_util_auth_username(username, password, tenant):
+        username = hash_string(username)
+        sql_api_key_enc = sql_query('username', username)[
+            "api_key_enc"]
+        sql_api_key_enc = aes_decrypt(sql_api_key_enc, get_aes_password())
+        return sql_api_key_enc
+
+
+def sql_util_change_pass(username, old_password, tenant, new_password):
+    if sql_util_auth_username(username, old_password, tenant):
+        sql_data = sql_query('username', hash_string(username))
+        salt = sql_data["salt"]
+        password = hash_string(new_password + salt)
+        crypted_password = aes_encrypt(password, get_aes_password())
+        sql_data['password'] = crypted_password
+        return sql_update((sql_data["username"],
+                           sql_data["mail"],
+                           sql_data["password"],
+                           sql_data["salt"],
+                           sql_data["tenant"],
+                           sql_data["api_key"],
+                           sql_data["api_quota"],
+                           sql_data["user_enc"],
+                           sql_data["mail_enc"],
+                           sql_data["api_key_enc"]))
+
+
+def sql_util_change_mail(username, password, tenant, new_mail):
+    if sql_util_auth_username(username, password, tenant):
+        sql_data = sql_query('username', hash_string(username))
+        mail_enc = aes_encrypt(new_mail, get_aes_password())
+        mail = hash_string(new_mail)
+        sql_data["mail"] = mail
+        sql_data["mail_enc"] = mail_enc
+        return sql_update((sql_data["username"],
+                           sql_data["mail"],
+                           sql_data["password"],
+                           sql_data["salt"],
+                           sql_data["tenant"],
+                           sql_data["api_key"],
+                           sql_data["api_quota"],
+                           sql_data["user_enc"],
+                           sql_data["mail_enc"],
+                           sql_data["api_key_enc"]))
+
+
+def sql_util_update_api_quota(username, password, tenant, quota):
+    if sql_util_auth_username(username, password, tenant):
+        sql_data = sql_query('username', hash_string(username))
+        sql_data["api_quota"] = quota
+        return sql_update((sql_data["username"],
+                           sql_data["mail"],
+                           sql_data["password"],
+                           sql_data["salt"],
+                           sql_data["tenant"],
+                           sql_data["api_key"],
+                           sql_data["api_quota"],
+                           sql_data["user_enc"],
+                           sql_data["mail_enc"],
+                           sql_data["api_key_enc"]))
