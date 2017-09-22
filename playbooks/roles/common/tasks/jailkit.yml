@@ -13,6 +13,12 @@
 # sections: https://gitlab.lakedrops.com/ansible-roles/jailkit/blob/master/templates/jk_init.ini
 #
 
+###
+# by default we will create a "deploy-<jail>" user for each jail.
+# the public ssh keys of the jailed users which have the flag "is_deployer"
+# will be added to "deploy-<jail>". The vhosts will be bind mounted with that uid.
+###
+
 #
 # Basic
 #
@@ -237,6 +243,15 @@
   when:
     - item.value.state == "enabled"
     - item.value.is_jailed is defined and item.value.is_jailed == true
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: provision ssh key to deploy user if enabled
+  authorized_key: user=deploy key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/deploy-{{ item.value.jail }}/.ssh/authorized_keys" manage_dir=no state=present
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_deployer == True
+    - item.value.is_jailed is defined or item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: set user home permissions
