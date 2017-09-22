@@ -8,9 +8,10 @@
 #
 
 #
-# Bind mounts: https://github.com/cw-ansible/playbooks/blob/master/pb_ansible-bootstrap-chroot.yml
+# Composer: https://github.com/composer/composer/issues/2867
 # SSH agent: https://lists.nongnu.org/archive/html/jailkit-users/2007-08/msg00018.html
 # sections: https://gitlab.lakedrops.com/ansible-roles/jailkit/blob/master/templates/jk_init.ini
+# MySQL https://www.howtoforge.com/community/threads/mysql-under-jailkit-invalid-cross-device-link-when-linking-mysqld-sock.51096/
 #
 
 ###
