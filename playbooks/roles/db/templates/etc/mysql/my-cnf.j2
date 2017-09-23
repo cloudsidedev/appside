@@ -168,6 +168,7 @@ innodb_autoinc_lock_mode = 2
 wsrep_cluster_name = {{ conf_wsrep_cluster_name }}
 wsrep_sst_method = xtrabackup-v2
 wsrep_sst_auth = "{{ conf_mysql_replication_user }}:{{ conf_mysql_replication_password }}"
+open_files_limit = 256000
 {% endif %}
 
 [mysqldump]
