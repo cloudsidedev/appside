@@ -4,6 +4,7 @@ import appflow.AppflowYaml as apyaml
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
+import appflow.AppflowSQL as sql
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -18,12 +19,21 @@ app = Flask(__name__)
 
 # 204 NO CONTENT – [DELETE/POST/PUT/PATCH]
 # 400 INVALID REQUEST – [DELETE/POST/PUT/PATCH]
+# 400 MISSING ARGUMENTS [maybe for the registration/signin]
 # 401 UNAUTHORIZED -> Maybe if we use api tokens???
 # 403 FORBIDDEN -> Maybe if we use api tokens???
 # 404 NOT FOUND -> Invalid Command or syntax
 # 405 METHOD NOT ALLOWED -> Invalid Command or syntax
 # 500 INTERNAL SERVER ERROR
 
+# use db;
+# select * from users \G;
+# CREATE TABLE users(username TEXT, mail TEXT, password TEXT, salt TEXT, tenant TEXT, api_key TEXT, api_quota INT, user_enc TEXT, mail_enc TEXT, api_key_enc TEXT);
+
+# https://blog.miguelgrinberg.com/post/restful-authentication-with-flask
+# https://github.com/miguelgrinberg/REST-auth
+# https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask --> Securing a RESTful web service
+# https://www.owasp.org/index.php/REST_Security_Cheat_Sheet#Access_Control
 
 @app.route("/appflow/get", methods=['GET'])
 def get():
@@ -147,5 +157,12 @@ def command():
         return make_response(str(exception), 500)
 
 
+@app.route("/appflow/signin",  methods=['POST'])
+@app.route("/appflow/signup/get/get_user_data",  methods=['POST'])
+@app.route("/appflow/signin/get/recover_mail",  methods=['POST'])
+@app.route("/appflow/signin/get/recover_username",  methods=['POST'])
+@app.route("/appflow/signin/get/recover_api_key",  methods=['POST'])
+@app.route("/appflow/signin/change_pass",  methods=['POST'])
+@app.route("/appflow/signin/change_mail",  methods=['POST'])
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
