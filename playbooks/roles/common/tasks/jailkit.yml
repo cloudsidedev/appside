@@ -12,6 +12,7 @@
 # SSH agent: https://lists.nongnu.org/archive/html/jailkit-users/2007-08/msg00018.html
 # sections: https://gitlab.lakedrops.com/ansible-roles/jailkit/blob/master/templates/jk_init.ini
 # MySQL https://www.howtoforge.com/community/threads/mysql-under-jailkit-invalid-cross-device-link-when-linking-mysqld-sock.51096/
+#       mount --bind /var/run/mysqld /var/chroot/required/var/run/mysqld
 #
 
 ###
@@ -262,6 +263,15 @@
     - item.value.is_deployer == True
     - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: deploy my.cnf to enabled mysql admins
+  template: src=../../db/templates/etc/mysql/my.cnf-users.j2 dest={{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.my.cnf owner={{ item.key }} group={{ item.key }} mode=0600
+  with_dict: '{{ conf_users }}'
+  when:
+    - item.value.state == "enabled"
+    - item.value.is_mysql_admin == True
+    - item.value.is_jailed is defined and item.value.is_jailed == true
+  tags: [ jailkit, jail-users, mysql, users, mysql-users ]
 
 - name: set user home permissions
   shell: chown -R {{ item.key }}:{{ item.key }} {{ conf_jails[item.value.jail].path }}/home/{{ item.key }}
