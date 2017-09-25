@@ -271,7 +271,7 @@
     - item.value.state == "enabled"
     - item.value.is_mysql_admin == True
     - item.value.is_jailed is defined and item.value.is_jailed == true
-  tags: [ jailkit, jail-users, mysql, users, mysql-users ]
+  tags: [ jailkit, jail-users ]
 
 - name: set user home permissions
   shell: chown -R {{ item.key }}:{{ item.key }} {{ conf_jails[item.value.jail].path }}/home/{{ item.key }}
