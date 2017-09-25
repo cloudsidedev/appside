@@ -162,6 +162,7 @@
         skip_missing: True
     when:
       - item.1 is defined
+    ignore_errors: true
     tags: [ jailkit, jailkit-conf, jails ]
 
 - name: check if user is jailed
