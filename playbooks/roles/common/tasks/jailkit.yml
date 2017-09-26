@@ -25,7 +25,7 @@
 # Basic
 #
 - name: bindfs packages (Debian family)
-  apt: pkg={{ item }} update_cache=yes state=latest
+  package: name={{ item }} state=present
   with_items:
     - bindfs
   when:
@@ -130,6 +130,16 @@
     when:
       - item.1 is defined
     tags: [ jailkit, jailkit-conf, jails ]
+
+  # from outisde jail we'll see contents of the host
+  - name: symlink /var/run -> /run
+    file: src=/run dest={{ item.value.path }}/var/run state=link
+    with_dict: "{{ conf_jails }}"
+    ignore_errors: true
+    when:
+      - item.value.path is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jailkit-conf, jails, foo ]
 
   - name: create mountpoints
     file: path={{ item.0.path }}{{ item.1.mountpoint }} owner={{ item.1.owner }} group={{ item.1.group }} mode={{ item.1.mode }} state=directory
