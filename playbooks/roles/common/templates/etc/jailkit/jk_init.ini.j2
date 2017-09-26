@@ -105,6 +105,23 @@ executables = /usr/bin/mysql
 # regularfiles = /var/run
 # regularfiles = /etc/mysql/my.cnf
 
+[env]
+comment = environment variables
+executables = /usr/bin/env, /usr/bin/printenv
+
+[php]
+comment = the php interpreter and libraries
+executables = /usr/bin/php
+directories = /usr/lib/php*, /usr/share/php*, /etc/php*, /usr/share/zoneinfo
+paths = php
+includesections = env
+
+[composer]
+comment = Dependency Manager for PHP
+executables = /usr/local/bin/composer
+directories = /usr/share/composer
+includesections = php
+
 [midnightcommander]
 comment = Midnight Commander
 paths = mc, mcedit, mcview, /usr/share/mc

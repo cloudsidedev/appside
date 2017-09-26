@@ -139,7 +139,7 @@
     when:
       - item.value.path is defined
       - item.value.state == "enabled"
-    tags: [ jailkit, jailkit-conf, jails, foo ]
+    tags: [ jailkit, jailkit-conf, jails ]
 
   - name: create mountpoints
     file: path={{ item.0.path }}{{ item.1.mountpoint }} owner={{ item.1.owner }} group={{ item.1.group }} mode={{ item.1.mode }} state=directory
