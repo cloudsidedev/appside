@@ -44,6 +44,10 @@
   when: conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
+- include: rc_local.yml
+  when: conf_rc_local_enable is defined and conf_rc_local_enable == true
+  tags: [ common, rc-local, rc-local-conf ]
+
 - include: firewall.yml
   when: conf_firewall_enable is defined and conf_firewall_enable == true
   tags: [ common, firewall ]
