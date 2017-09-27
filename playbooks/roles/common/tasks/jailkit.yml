@@ -76,14 +76,60 @@
 # Jails
 #
 - block:
-  - name: create chroot dirtree if applicable
+
+  # TODO: Needs to be rewritten, exclude all mounts like /tmp and vhosts.
+  # find foo -type d ! -name hosshop -exec ls -lad {} \;
+  # - name: create chroot dirtree if applicable
+  #   file:
+  #     path: "{{ item.value.path }}"
+  #     owner: "{{ item.value.owner }}"
+  #     group: "{{ item.value.group }}"
+  #     mode: "{{ item.value.mode }}"
+  #     recurse: yes
+  #     state: directory
+  #   with_dict: "{{ conf_jails }}"
+  #   ignore_errors: true
+  #   when:
+  #     - item.value.path is defined
+  #     - item.value.owner is defined
+  #     - item.value.group is defined
+  #     - item.value.mode is defined
+  #     - item.value.state == "enabled"
+  #   tags: [ jailkit, jails ]
+
+  - name: create chroot root if applicable
     file:
       path: "{{ item.value.path }}"
       owner: "{{ item.value.owner }}"
       group: "{{ item.value.group }}"
       mode: "{{ item.value.mode }}"
-      recurse: yes
       state: directory
+    with_dict: "{{ conf_jails }}"
+    ignore_errors: true
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  # exclude /tmp, /proc, /home, /var/www/vhosts
+  - name: recursively chown chroot
+    shell: find {{ item.value.path }} -xdev -type d -not \( -path {{ item.value.path }}/tmp -prune -o -path {{ item.value.path }}/proc -prune -o -path {{ item.value.path }}/var/www/vhosts -prune -o -path {{ item.value.path }}/home -prune \) -exec chown {{ item.value.owner }}:{{ item.value.group }} {} \;
+    with_dict: "{{ conf_jails }}"
+    ignore_errors: true
+    when:
+      - item.value.path is defined
+      - item.value.owner is defined
+      - item.value.group is defined
+      - item.value.mode is defined
+      - item.value.state == "enabled"
+    tags: [ jailkit, jails ]
+
+  # exclude /tmp, /proc, /home, /var/www/vhosts
+  - name: recursively chmod chroot
+    shell: find {{ item.value.path }} -xdev -type d -not \( -path {{ item.value.path }}/tmp -prune -o -path {{ item.value.path }}/proc -prune -o -path {{ item.value.path }}/var/www/vhosts -prune -o -path {{ item.value.path }}/home -prune \) -exec chmod {{ item.value.mode }} {} \;
     with_dict: "{{ conf_jails }}"
     ignore_errors: true
     when:
