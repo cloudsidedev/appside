@@ -312,13 +312,29 @@
     - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
-- name: provision ssh key to deploy user if enabled
-  authorized_key: user=deploy-{{ item.value.jail }} key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/deploy-{{ item.value.jail }}/.ssh/authorized_keys" manage_dir=no state=present
-  with_dict: '{{ conf_users }}'
+- name: provision ssh key of jailed users to jailed deploy user if enabled
+  authorized_key: user=deploy-{{ item.1.jail }} key="{{ item.1.public_key }}" path="{{ conf_jails[item.1.jail].path }}/home/deploy-{{ item.1.jail }}/.ssh/authorized_keys" manage_dir=no state=present
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
   when:
-    - item.value.state == "enabled"
-    - item.value.is_deployer == True
-    - item.value.is_jailed is defined and item.value.is_jailed == true
+    - item.1.state == "enabled"
+    - item.1.is_deployer == True
+    - item.1.is_jailed is defined and item.1.is_jailed == true
+    - item.1.jail is defined and item.1.jail == item.2
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
+
+- name: provision ssh key of non-jailed users to jailed deploy user if enabled
+  authorized_key: user=deploy-{{ item.2 }} key="{{ item.1.public_key }}" path="{{ conf_jails[item.2].path }}/home/deploy-{{ item.2 }}/.ssh/authorized_keys" manage_dir=no state=present
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
+  when:
+    - item.1.state == "enabled"
+    - item.1.is_deployer == True
+    - item.1.is_jailed is not defined
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: deploy my.cnf to enabled mysql admins
