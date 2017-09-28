@@ -313,7 +313,7 @@
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: provision ssh key to deploy user if enabled
-  authorized_key: user=deploy key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/deploy-{{ item.value.jail }}/.ssh/authorized_keys" manage_dir=no state=present
+  authorized_key: user=deploy-{{ item.value.jail }} key="{{ item.value.public_key }}" path="{{ conf_jails[item.value.jail].path }}/home/deploy-{{ item.value.jail }}/.ssh/authorized_keys" manage_dir=no state=present
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
