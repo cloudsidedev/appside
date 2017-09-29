@@ -9,6 +9,12 @@
   ignore_errors: yes
 
 #
+# ruby
+#
+- include: ruby.yml
+  when: ansible_distribution == "Ubuntu"
+
+#
 # nodejs
 #
 - include: nodejs.yml

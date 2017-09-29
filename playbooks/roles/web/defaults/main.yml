@@ -3,6 +3,11 @@
 # file: playbooks/roles/web/defaults/main.yml
 
 #
+# ruby
+#
+conf_ruby_version_debian_family: 2.4
+
+#
 # PHP
 #
 conf_php_version_debian_family: 5.6

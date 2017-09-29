@@ -110,12 +110,28 @@ executables = /usr/bin/mysql
 # regularfiles = /var/run
 # regularfiles = /etc/mysql/my.cnf
 
+[openssl]
+comment = The openssl libraries and programms. [excluded: /etc/ssl/private, /usr/lib/ssl/private]
+paths = /etc/ssl/openssl.cnf, /usr/bin/c_rehash, /usr/bin/openssl, /usr/lib/ssl/certs, /usr/lib/ssl/misc, /usr/lib/ssl/openssl.cnf, /usr/share/doc/openssl, /usr/share/man/man*/*ssl.gz
+includesections = perl
+
 [ruby]
 comment = interpreter of object-oriented scripting language Ruby
-executables = /usr/bin/ruby, /usr/bin/gem
-# /usr/bin/testrb, /usr/bin/rake, /usr/bin/ri, /usr/bin/irb, /usr/bin/rdoc, /usr/bin/erb
-directories = /usr/lib/ruby*
-paths = ruby
+executables = /usr/bin/ruby*, /usr/bin/gem*, /usr/bin/testrb*, /usr/bin/rake*, /usr/bin/ri*, /usr/bin/irb*, /usr/bin/rdoc*, /usr/bin/erb*
+directories = /usr/lib/ruby*, /usr/lib/x86_64-linux-gnu/ruby*, /usr/share/rubygems-integration, /var/lib/gems, /etc/environment, /etc/ssl/certs, /usr/lib/x86_64-linux-gnu/openssl-*
+regularfiles = /etc/ssl/openssl.cnf, /etc/ca-certificates.conf
+paths = ruby*, gem*, testrb*, rake*, ri*, irb*, rdoc*, erb*
+includesections = openssl
+
+[capistrano]
+comment = easy deployment with Ruby over SSH
+executables = /usr/local/bin/cap*
+includesections = ruby
+
+[bundle]
+comment = Ruby Dependency Management
+executables = /usr/local/bin/bundle*
+includesections = ruby
 
 [env]
 comment = environment variables
@@ -123,7 +139,7 @@ executables = /usr/bin/env, /usr/bin/printenv
 
 [php]
 comment = the php interpreter and libraries
-executables = /usr/bin/php
+executables = /usr/bin/php*
 directories = /usr/lib/php*, /usr/share/php*, /etc/php*, /usr/share/zoneinfo
 paths = php
 includesections = env
@@ -141,7 +157,7 @@ includesections = basicshell, terminfo
 
 [extendedshell]
 comment = bash shell including things like awk, bzip, tail, less
-paths = awk, bzip2, bunzip2, ldd, less, clear, cut, du, find, head, less, md5sum, nice, sort, tac, tail, tr, sort, wc, watch, whoami
+paths = awk, bzip2, bunzip2, ldd, less, clear, cut, du, find, head, less, md5sum, nice, sort, tac, tail, tr, sort, wc, watch, whoami, make
 includesections = basicshell, midnightcommander, editors
 
 [terminfo]
