@@ -11,3 +11,59 @@ conf_ruby_version_debian_family: 2.4
 # PHP
 #
 conf_php_version_debian_family: 5.6
+
+#
+# rbenv
+#
+rbenv:
+  env: system
+  version: v1.0.0
+  default_ruby: 2.3.3
+  rubies:
+    - version: 2.3.3
+
+rbenv_clean_up: false
+
+rbenv_repo: "https://github.com/rbenv/rbenv.git"
+
+rbenv_plugins:
+  - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "v1.2.0" }
+  - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
+  - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "ead67889c91c53ad967f85f5a89d986fdb98f6fb" }
+  - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "bc21e7055dcc8f5f9bc66ce0c78cc9ae0c28cd7a" }
+  - { name: "rbenv-update",       repo: "https://github.com/rkh/rbenv-update.git",         version: "1961fa180280bb50b64cbbffe6a5df7cf70f5e50" }
+  - { name: "rbenv-whatis",       repo: "https://github.com/rkh/rbenv-whatis.git",         version: "v1.0.0" }
+  - { name: "rbenv-use",          repo: "https://github.com/rkh/rbenv-use.git",            version: "v1.0.0" }
+
+rbenv_root: "{% if rbenv.env == 'system' %}/usr/local/rbenv{% else %}~/.rbenv{% endif %}"
+
+rbenv_users: []
+
+rbenv_extra_depends: []
+rbenv_apt_packages:
+- build-essential
+- git
+- libcurl4-openssl-dev
+- libffi-dev
+- libreadline-dev
+- libssl-dev
+- libxml2-dev
+- libxslt1-dev
+- zlib1g-dev
+rbenv_dnf_packages:
+- gcc
+- openssl-devel
+- libyaml-devel
+- readline-devel
+- zlib-devel
+- libffi-devel
+- git
+rbenv_yum_packages:
+- bzip2
+- gcc
+- git
+- libffi-devel
+- libyaml-devel
+- openssl-devel
+- readline-devel
+- zlib-devel

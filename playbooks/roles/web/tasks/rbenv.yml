@@ -1,0 +1,244 @@
+---
+
+# file: playbooks/roles/web/tasks/rbenv.yml
+
+# - name: rbenv PPA (Ubuntu)
+#   apt_repository: repo='ppa:brightbox/rbenv-ng' update_cache=yes
+#   when: ansible_distribution == "Ubuntu"
+#   ignore_errors: yes
+#   tags: [ rbenv, update ]
+
+# - name: be sure rbenv{{ conf_rbenv_version_debian_family }} packages packages are installed (Ubuntu)
+#   apt: pkg={{ item }} state=latest force=yes
+#   with_items:
+#     - librbenv{{ conf_rbenv_version_debian_family }}
+#     - rbenv{{ conf_rbenv_version_debian_family }}
+#   when: ansible_distribution == "Ubuntu"
+#   ignore_errors: yes
+#   tags: [ rbenv ]
+
+# - name: include env vars
+#   include_vars: "{{ rbenv.env }}.yml"
+
+- name: install build depends
+  package: name={{ item }} state=installed
+  with_items:
+  - "{{ rbenv_apt_packages }}"
+  - "{{ rbenv_extra_depends }}"
+  become: true
+  tags: [ rbenv ]
+
+- name: Create the list of ruby versions.
+  set_fact:
+    rbenv_ruby_versions: "{{ rbenv_ruby_versions | default([]) }} + {{ [item.version] }}"
+  with_items:
+  - "{{ rbenv.rubies }}"
+  tags: [ rbenv ]
+
+# - name: Install packages required to build Ruby 1.8.7
+#   apt:
+#     name: "{{ item }}"
+#     state: present
+#   with_items:
+#     - bison
+#     - autoconf
+#     - subversion
+#   when: "'1.8.7' in rbenv_ruby_versions"
+
+- name: set rbenv_owner
+  set_fact: 'rbenv_owner={{ rbenv_owner | default("root", true) }}'
+  tags: [ rbenv ]
+
+- name: set tmp directory path
+  set_fact: rbenv_tmpdir="{{ ansible_env.TMPDIR | default('/tmp') }}"
+  when: rbenv_tmpdir is undefined
+  tags: [ rbenv ]
+
+#
+# when: rbenv.env == "user"
+#
+- name: checkout rbenv_repo for selected users
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=yes
+    force=yes
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  ignore_errors: yes
+  when: rbenv.env == "user"
+  tags: [ rbenv ]
+
+- name: create plugins directory for selected users
+  file: state=directory path={{ rbenv_root }}/plugins
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  ignore_errors: yes
+  when: rbenv.env == "user"
+  tags: [ rbenv ]
+
+- name: install plugins for selected users
+  git: >
+    repo={{ item[1].repo }}
+    dest={{ rbenv_root }}/plugins/{{ item[1].name }}
+    version={{ item[1].version }}
+    accept_hostkey=yes
+    force=yes
+  with_nested:
+    - "{{ rbenv_users }}"
+    - "{{ rbenv_plugins }}"
+  become: yes
+  become_user: "{{ item[0] }}"
+  ignore_errors: yes
+  when: rbenv.env == "user"
+  tags: [ rbenv ]
+
+- name: add rbenv initialization to profile system-wide
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+    - profile.d/rbenv_user.sh
+  when:
+    - rbenv.env == "user"
+    - ansible_os_family != 'OpenBSD' and ansible_os_family != 'Darwin'
+  tags: [ rbenv ]
+
+# - name: add rbenv initialization to profile system-wide
+#   blockinfile: block="{{ lookup('template', 'rbenv_user.sh.j2') }}" dest=/etc/profile
+#   become: yes
+#   when:
+#     - ansible_os_family == 'Darwin'
+
+- name: set default-gems for select users
+  template: src=rbenv/default-gems.j2 dest={{ rbenv_root }}/default-gems mode=0644
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when:
+    - rbenv.env == "user"
+    - default_gems_file is not defined
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+# - name: set custom default-gems for select users
+#   copy: src={{ default_gems_file }} dest={{ rbenv_root }}/default-gems
+#   with_items: "{{ rbenv_users }}"
+#   become: yes
+#   become_user: "{{ item }}"
+#   when:
+#     - default_gems_file is defined
+#   ignore_errors: yes
+#   tags: [ rbenv ]
+
+- name: set gemrc for select users
+  template: src=rbenv/gemrc.j2 dest=~/.gemrc mode=0644
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when: rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: set vars for select users
+  template: src=rbenv/vars.j2 dest={{ rbenv_root }}/vars mode=0644
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when: rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: check ruby versions installed for select users
+  # shell: '{{ rbenv_root }}/bin/rbenv versions --bare"
+  shell: "{{ rbenv_root }}/bin/rbenv versions --bare"
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  register: rbenv_versions
+  changed_when: false
+  when: rbenv.env == "user"
+  ignore_errors: yes
+  failed_when: false
+  check_mode: no
+  tags: [ rbenv ]
+
+- name: install ruby {{ item[2].version }} for select users
+  # shell: '{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}"
+  shell: '{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}'
+  become: yes
+  become_user: "{{ item[1] }}"
+  with_nested:
+    - "{{ rbenv_versions.results }}"
+    - "{{ rbenv_users }}"
+    - "{{ rbenv.rubies }}"
+  when:
+    - rbenv.env == "user"
+    - item[0].rc == 0
+    - item[0].item == item[1]
+    - item[2].version not in item[0].stdout_lines
+  ignore_errors: yes
+  environment: "{{ item[2].env | default({}) | combine({ 'TMPDIR': rbenv_tmpdir }) }}"
+  tags: [ rbenv ]
+
+- name: check which old rubies to remove for select users
+  set_fact:
+    drop_ruby:
+      - "{{ item[1] }}"
+      - "{{ '{'+item[0].stdout_lines|list|difference(item[2])|join(',')+'}'}}"
+  become: yes
+  become_user: "{{ item[1] }}"
+  with_nested:
+    - "{{ ruby_installed.results }}"
+    - "{{ rbenv_users }}"
+    - "{{ rbenv.rubies|map(attribute='version')|list }}"
+  when:
+    - rbenv.env == "user"
+    - rbenv_clean_up
+    - item[0].item[0] == item[1]
+    - item[0].stdout_lines|list != item[2]
+  register: removable_rubies
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: remove old rubies
+  shell: 'rm -rf {{ rbenv_root }}/versions/{{ item.ansible_facts.drop_ruby[1] }}'
+  changed_when: false
+  become: yes
+  become_user: "{{ item.ansible_facts.drop_ruby[0] }}"
+  with_items: "{{ removable_rubies.results }}"
+  when:
+    - rbenv_clean_up
+    - rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: check if user ruby version is {{ rbenv.default_ruby }}
+  shell: "{{ rbenv_root }}/bin/rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
+  become: yes
+  become_user: "{{ item }}"
+  with_items: "{{ rbenv_users }}"
+  register: ruby_selected
+  changed_when: false
+  ignore_errors: yes
+  failed_when: false
+  check_mode: no
+  tags: [ rbenv ]
+
+- name: set ruby {{ rbenv.default_ruby }} for select users
+  shell: '{{ rbenv_root }}/bin/rbenv global {{ rbenv.default_ruby }} && {{ rbenv_root }}/bin/rbenv rehash'
+  become: yes
+  become_user: "{{ item[1] }}"
+  with_together:
+    - "{{ ruby_selected.results }}"
+    - "{{ rbenv_users }}"
+  when:
+    - rbenv.env == "user"
+    - item[0].rc != 0
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+#
+# when: rbenv.env == "system  "
+#

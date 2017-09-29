@@ -13,3 +13,6 @@
 
 - name: handle_reload_varnish
   service: name=varnish state=reloaded
+
+- name: rehash rbenv
+  shell: RBENV_ROOT={{ rbenv_root }} rbenv rehash
