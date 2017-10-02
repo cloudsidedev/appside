@@ -20,6 +20,10 @@
 # - name: include env vars
 #   include_vars: "{{ rbenv.env }}.yml"
 
+- name: Add zsh helpers to profile
+  lineinfile: dest=/etc/zsh/zprofile backup=no line='. /etc/profile' regexp='. /etc/profile' 
+  tags: [ rbenv ]
+
 - name: install build depends
   package: name={{ item }} state=installed
   with_items:
@@ -97,7 +101,7 @@
   tags: [ rbenv ]
 
 - name: add rbenv initialization to profile system-wide
-  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
   with_items:
     - profile.d/rbenv_user.sh
   when:
@@ -151,8 +155,8 @@
   tags: [ rbenv ]
 
 - name: check ruby versions installed for select users
-  # shell: '{{ rbenv_root }}/bin/rbenv versions --bare"
-  shell: "{{ rbenv_root }}/bin/rbenv versions --bare"
+  # shell: $SHELL -lc "rbenv versions --bare"
+  shell: $SHELL -lc "rbenv versions --bare"
   with_items: "{{ rbenv_users }}"
   become: yes
   become_user: "{{ item }}"
@@ -165,8 +169,8 @@
   tags: [ rbenv ]
 
 - name: install ruby {{ item[2].version }} for select users
-  # shell: '{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}"
-  shell: '{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}'
+  # shell: $SHELL -lc "rbenv install {{ item[2].version }}"
+  shell: $SHELL -lc "rbenv install {{ item[2].version }}"
   become: yes
   become_user: "{{ item[1] }}"
   with_nested:
@@ -215,7 +219,7 @@
   tags: [ rbenv ]
 
 - name: check if user ruby version is {{ rbenv.default_ruby }}
-  shell: "{{ rbenv_root }}/bin/rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
+  shell: $SHELL -lc "rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
   become: yes
   become_user: "{{ item }}"
   with_items: "{{ rbenv_users }}"
@@ -227,7 +231,7 @@
   tags: [ rbenv ]
 
 - name: set ruby {{ rbenv.default_ruby }} for select users
-  shell: '{{ rbenv_root }}/bin/rbenv global {{ rbenv.default_ruby }} && {{ rbenv_root }}/bin/rbenv rehash'
+  shell: $SHELL -lc "rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
   become: yes
   become_user: "{{ item[1] }}"
   with_together:
@@ -242,3 +246,147 @@
 #
 # when: rbenv.env == "system  "
 #
+
+- name: checkout rbenv_repo for system
+  become: yes
+  become_user: '{{ rbenv_owner }}'
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=yes
+    force=yes
+  when:
+    - rbenv.env == "system"
+  tags: [ rbenv ]
+
+- name: create plugins directory for system
+  become: yes
+  become_user: '{{ rbenv_owner }}'
+  file: state=directory path={{ rbenv_root }}/plugins
+  when:
+    - rbenv.env == "system"
+  tags: [ rbenv ]
+
+- name: install plugins for system
+  become: yes
+  become_user: '{{ rbenv_owner }}'
+  git: >
+    repo={{ item.repo }}
+    dest={{ rbenv_root }}/plugins/{{ item.name }}
+    version={{ item.version }}
+    accept_hostkey=yes
+    force=yes
+  with_items: "{{ rbenv_plugins }}"
+  when:
+    - rbenv.env == "system"
+  tags: [ rbenv ]
+
+- name: add rbenv initialization to profile system-wide
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - profile.d/rbenv_system.sh
+  when:
+    - rbenv.env == "system"
+    - ansible_os_family != 'OpenBSD' and ansible_os_family != 'Darwin'
+  tags: [ rbenv ]
+
+- name: Set group ownership of content under rbenv_root
+  shell:
+    find '{{ rbenv_root }}'
+      \( -iname ".git" -prune \) -o
+      ! -group '{{ item }}'
+      -exec chgrp -v '{{ item }}' {} + | head -n 1
+  become: yes
+  with_items: '{{ rbenv_group | default([]) }}'
+  when:
+    - rbenv.env == "system"
+    - rbenv_group is defined
+    - rbenv_group != None
+  register: rbenv_chgrp
+  changed_when: '"changed group" in rbenv_chgrp.stdout'
+  tags: [ rbenv ]
+
+- name: Set group permissions of content under rbenv_root
+  shell:
+    find '{{ rbenv_root }}'
+      \( -iname ".git" -prune \) -o
+      -type d ! -perm -g+s
+      -exec chmod -v g+rwxs {} + | head -n 1
+  become: yes
+  when:
+    - rbenv.env == "system"
+    - rbenv_group is defined
+    - rbenv_group != None
+  register: rbenv_chmod
+  changed_when: '"changed from" in rbenv_chmod.stdout'
+  tags: [ rbenv ]
+
+- name: check ruby versions installed for system
+  shell: $SHELL -lc "rbenv versions --bare"
+  register: rbenv_versions
+  with_items: rbenv.rubies
+  changed_when: false
+  ignore_errors: yes
+  failed_when: false
+  check_mode: no
+  when:
+    - rbenv.env == "system"
+  tags: [ rbenv ]
+
+- name: install ruby versions for system
+  shell: $SHELL -lc "rbenv install {{ item[1].version }}"
+  become: yes
+  with_nested:
+    - '{{ rbenv_versions.results }}'
+    - '{{ rbenv.rubies }}'
+  when:
+    - rbenv.env == "system"
+    - item[0].rc == 0
+    - item[1].version not in item[0].stdout_lines
+  environment: "{{ item[1].env | default({}) | combine({ 'TMPDIR': rbenv_tmpdir }) }}"
+  tags: [ rbenv ]
+
+- name: check which old rubies to remove for system
+  set_fact:
+    drop_ruby: "{{ '{'+item[0].stdout_lines|list|difference(item[1])|join(',')+'}'}}"
+  become: yes
+  with_nested:
+    - "{{ rbenv_versions.results }}"
+    - "{{ rbenv.rubies|map(attribute='version')|list }}"
+  when:
+    - rbenv.env == "system"
+    - rbenv_clean_up
+    - item[0].stdout_lines|list != item[1]
+  register: removable_rubies
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: remove old rubies
+  shell: rm -rf {{ rbenv_root }}/versions/{{ ansible_facts.drop_ruby }}
+  changed_when: false
+  become: yes
+  when:
+    - rbenv.env == "system"
+    - rbenv_clean_up
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: check if current system ruby version is {{ rbenv.default_ruby }}
+  shell: $SHELL -lc "rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
+  register: ruby_selected
+  changed_when: false
+  ignore_errors: yes
+  failed_when: false
+  check_mode: no
+  when:
+    - rbenv.env == "system"
+  tags: [ rbenv ]
+
+- name: set ruby {{ rbenv.default_ruby }} for system
+  become: yes
+  shell: $SHELL -lc "rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
+  when:
+    - rbenv.env == "system"
+    - ruby_selected.rc != 0
+  tags: [ rbenv ]

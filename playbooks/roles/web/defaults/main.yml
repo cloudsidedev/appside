@@ -26,8 +26,11 @@ rbenv_clean_up: false
 
 rbenv_repo: "https://github.com/rbenv/rbenv.git"
 
+rbenv_owner: 'root'
+rbenv_group: 'root'
+
 rbenv_plugins:
-  - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "v1.2.0" }
+  # - { name: "rbenv-vars",         repo: "https://github.com/rbenv/rbenv-vars.git",         version: "v1.2.0" }
   - { name: "ruby-build",         repo: "https://github.com/rbenv/ruby-build.git",         version: "master" }
   - { name: "rbenv-default-gems", repo: "https://github.com/rbenv/rbenv-default-gems.git", version: "ead67889c91c53ad967f85f5a89d986fdb98f6fb" }
   - { name: "rbenv-installer",    repo: "https://github.com/rbenv/rbenv-installer.git",    version: "bc21e7055dcc8f5f9bc66ce0c78cc9ae0c28cd7a" }
