@@ -118,8 +118,8 @@ includesections = perl
 [ruby]
 comment = interpreter of object-oriented scripting language Ruby
 executables = /usr/bin/ruby*, /usr/bin/gem*, /usr/bin/testrb*, /usr/bin/rake*, /usr/bin/ri*, /usr/bin/irb*, /usr/bin/rdoc*, /usr/bin/erb*
-directories = /usr/lib/ruby*, /usr/lib/x86_64-linux-gnu/ruby*, /usr/share/rubygems-integration, /var/lib/gems, /etc/environment, /etc/ssl/certs, /usr/lib/x86_64-linux-gnu/openssl-*
-regularfiles = /etc/ssl/openssl.cnf, /etc/ca-certificates.conf
+directories = /usr/lib/ruby*, /usr/lib/x86_64-linux-gnu/ruby*, /usr/share/rubygems-integration, /var/lib/gems, /etc/environment, /etc/ssl/certs, /usr/lib/x86_64-linux-gnu/openssl-*, /etc/profile.d, /usr/local/rbenv
+regularfiles = /etc/ssl/openssl.cnf, /etc/ca-certificates.conf, /etc/zsh/zprofile
 paths = ruby*, gem*, testrb*, rake*, ri*, irb*, rdoc*, erb*
 includesections = openssl
 
@@ -157,7 +157,7 @@ includesections = basicshell, terminfo
 
 [extendedshell]
 comment = bash shell including things like awk, bzip, tail, less
-paths = awk, bzip2, bunzip2, ldd, less, clear, cut, du, find, head, less, md5sum, nice, sort, tac, tail, tr, sort, wc, watch, whoami, make
+paths = awk, bzip2, bunzip2, ldd, less, clear, cut, du, find, head, less, md5sum, nice, sort, tac, tail, tr, sort, wc, watch, whoami, make, tput, readlink, gawk, uniq
 includesections = basicshell, midnightcommander, editors
 
 [terminfo]
@@ -171,7 +171,7 @@ paths = joe, nano, vi, vim, /etc/vimrc, /etc/joe, /usr/share/vim
 
 [netutils]
 comment = several internet utilities like wget, ftp, rsync, scp, ssh
-paths = wget, lynx, ftp, host, rsync, smbclient
+paths = wget, lynx, ftp, host, rsync, smbclient, curl
 includesections = netbasics, ssh, sftp, scp
 
 [apacheutils]
