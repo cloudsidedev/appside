@@ -346,6 +346,74 @@
     - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
 
+################################# ZSH
+
+- name: source ~/.zshrc.local >> ~/.zshrc
+  lineinfile: dest=~/.zshrc line='source ~/.zshrc.local' state=present insertafter=EOF create=yes
+  become: yes
+  become_user: "{{ item.0 }}"
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
+  when:
+    - item.1.state == "enabled"
+    # - item.1.is_deployer == True
+    - item.1.is_jailed is defined and item.1.is_jailed == true
+    - item.1.jail is defined and item.1.jail == item.2
+    - item.0 == "deploy-{{ item.1.jail }}"
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+
+- name: export PATH="$HOME/bin:$PATH" >> ~/.zshrc.local
+  lineinfile: dest=~/.zshrc.local line='export PATH="$HOME/bin:$PATH"' state=present insertafter=EOF create=yes
+  become: yes
+  become_user: "{{ item.0 }}"
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
+  when:
+    - item.1.state == "enabled"
+    # - item.1.is_deployer == True
+    - item.1.is_jailed is defined and item.1.is_jailed == true
+    - item.1.jail is defined and item.1.jail == item.2
+    - item.0 == "deploy-{{ item.1.jail }}"
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+
+- name: create ~/bin
+  file: path=~/bin state=directory mode=0750
+  become: yes
+  become_user: "{{ item.0 }}"
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
+  when:
+    - item.1.state == "enabled"
+    # - item.1.is_deployer == True
+    - item.1.is_jailed is defined and item.1.is_jailed == true
+    - item.1.jail is defined and item.1.jail == item.2
+    - item.0 == "deploy-{{ item.1.jail }}"
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+
+- name: provision ~/bin/bundle
+  template: src=home/bin/bundle.j2 dest=~/bin/bundle mode=0755
+  become: yes
+  become_user: "{{ item.0 }}"
+  with_nested:
+    - "{{ conf_users | dictsort }}"
+    - "{{ conf_jails }}"
+  ignore_errors: true
+  when:
+    - item.1.state == "enabled"
+    # - item.1.is_deployer == True
+    - item.1.is_jailed is defined and item.1.is_jailed == true
+    - item.1.jail is defined and item.1.jail == item.2
+    - item.0 == "deploy-{{ item.1.jail }}"
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+
+################################# ZSH
+
 - name: set user home permissions
   shell: chown -R {{ item.key }}:{{ item.key }} {{ conf_jails[item.value.jail].path }}/home/{{ item.key }}
   with_dict: '{{ conf_users }}'
