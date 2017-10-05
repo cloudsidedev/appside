@@ -337,13 +337,25 @@
     - item.1.is_jailed is not defined
   tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
-- name: deploy my.cnf to enabled mysql admins
-  template: src=../../db/templates/etc/mysql/my.cnf-users.j2 dest={{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.my.cnf owner={{ item.key }} group={{ item.key }} mode=0600
+# - name: deploy my.cnf to enabled mysql admins
+#   template: src=../../db/templates/etc/mysql/my.cnf-users.j2 dest={{ conf_jails[item.value.jail].path }}/home/{{ item.key }}/.my.cnf owner={{ item.key }} group={{ item.key }} mode=0600
+#   with_dict: '{{ conf_users }}'
+#   when:
+#     - item.value.state == "enabled"
+#     - item.value.is_mysql_admin == True
+#     - item.value.is_jailed is defined and item.value.is_jailed == true
+#   tags: [ jailkit, jail-users ]
+
+- name: deploy jailed my.cnf to enabled mysql admins
+  template: src=../../db/templates/etc/mysql/my.cnf-jailed_users.j2 dest=~/.my.cnf mode=0600
+  become: yes
+  become_user: "{{ item.key }}"
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
     - item.value.is_mysql_admin == True
     - item.value.is_jailed is defined and item.value.is_jailed == true
+    - conf_jails[item.value.jail].vhosts.0 is defined
   tags: [ jailkit, jail-users ]
 
 ################################# ZSH
@@ -362,7 +374,7 @@
     - item.1.is_jailed is defined and item.1.is_jailed == true
     - item.1.jail is defined and item.1.jail == item.2
     - item.0 == "deploy-{{ item.1.jail }}"
-  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: export PATH="$HOME/bin:$PATH" >> ~/.zshrc.local
   lineinfile: dest=~/.zshrc.local line='export PATH="$HOME/bin:$PATH"' state=present insertafter=EOF create=yes
@@ -378,7 +390,7 @@
     - item.1.is_jailed is defined and item.1.is_jailed == true
     - item.1.jail is defined and item.1.jail == item.2
     - item.0 == "deploy-{{ item.1.jail }}"
-  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: create ~/bin
   file: path=~/bin state=directory mode=0750
@@ -394,7 +406,7 @@
     - item.1.is_jailed is defined and item.1.is_jailed == true
     - item.1.jail is defined and item.1.jail == item.2
     - item.0 == "deploy-{{ item.1.jail }}"
-  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 - name: provision ~/bin/bundle
   template: src=home/bin/bundle.j2 dest=~/bin/bundle mode=0755
@@ -410,7 +422,7 @@
     - item.1.is_jailed is defined and item.1.is_jailed == true
     - item.1.jail is defined and item.1.jail == item.2
     - item.0 == "deploy-{{ item.1.jail }}"
-  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys, foo ]
+  tags: [ jailkit, jail-users, users, ssh, shell, ssh-keys ]
 
 ################################# ZSH
 
