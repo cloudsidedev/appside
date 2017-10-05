@@ -433,3 +433,7 @@
     - item.value.state == "enabled"
     - item.value.is_jailed is defined and item.value.is_jailed == true
   tags: [ jailkit, jail-users ]
+
+- name: check permissions on /run/mysqld
+  file: path=/run/mysqld owner=mysql group=root state=directory
+  tags: [ jailkit, jail-users ]
