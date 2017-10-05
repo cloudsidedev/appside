@@ -8,7 +8,6 @@
 user = {{ conf_vhosts_common[item].db_user }}
 password = {{ conf_vhosts_common[item].db_password }}
 database = {{ conf_vhosts_common[item].db_name }}
-# host = {{ conf_vhosts_common[item].db_server }}
 host = localhost
 
 {% endfor %}
