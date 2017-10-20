@@ -109,7 +109,7 @@
 #   tags: [ woodwing ]
 
 - name: rsync EnterpriseServer
-  shell: rsync --exclude=config/config.php --exclude=config/configserver.php /tmp/EnterpriseServer/Enterprise/ /var/www/vhosts/{{ item.key }}/enterprise/
+  shell: rsync -a --exclude=config/config.php --exclude=config/configserver.php /tmp/EnterpriseServer/Enterprise/ /var/www/vhosts/{{ item.key }}/enterprise/
   with_dict: '{{ conf_vhosts_common }}'
   delegate_to: "{{ inventory_hostname }}"
   when: item.value.state == "enabled" and item.value.type == "woodwing"
