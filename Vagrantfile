@@ -66,6 +66,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
+  ###################
+  # ATLANTIS.CENTOS #
+  ###################
   config.vm.define "atlantis.centos" do |atlantiscentos|
     atlantiscentos.vm.box = "atlantis.centos"
     atlantiscentos.vm.hostname = "atlantis.centos"
@@ -80,14 +83,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
+  ###########
+  # TESTING #
+  ###########
   config.vm.define "testing" do |testing|
     testing.vm.box = "testing"
     testing.vm.hostname = "testing"
-    testing.vm.box_url = "Vagrant-Boxes/ubuntu-ttss.box"
+    testing.vm.box_url = "Vagrant-Boxes/xenial64.box"
     testing.vm.network :private_network, ip: "192.168.90.2"
     testing.vm.boot_timeout = 400 # defaults 300
-    # testing.vm.synced_folder "~/Documents/webdev/development", "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
-    # testing.vm.synced_folder "~/Documents/webdev/appflow", "/var/appflow", owner: "deploy", group: "www-data", :mount_options => ['dmode=0775,fmode=0775']
+    atlantis.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type, smb_username: atlantis_synced_folder_smb_username, smb_password: atlantis_synced_folder_smb_password
+    atlantis.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type
 
     testing.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 1, "--memory", 512, "--name", "vagrant-testing", "--natdnshostresolver1", "on"]
@@ -108,6 +114,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
+  ##################
+  # TESTING.CENTOS #
+  ##################
   config.vm.define "testing.centos" do |testingcentos|
     testingcentos.vm.box = "testing.centos"
     testingcentos.vm.hostname = "testing.centos"
