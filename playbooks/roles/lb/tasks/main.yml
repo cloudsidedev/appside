@@ -13,3 +13,7 @@
 # - include: confd.yml
 #   when: conf_confd_enable is defined and conf_confd_enable == true
 #   tags: [ haproxy, confd, confd-conf ]
+
+- include: etcd.yml
+  when: conf_etcd_enable is defined and conf_etcd_enable == true
+  tags: [ etcd, etcd-conf ]

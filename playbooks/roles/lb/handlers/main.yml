@@ -22,3 +22,9 @@
 
 - name: handle_reload_sysctl
   shell: "sysctl -p"
+
+- name: handle_reload_systemd
+  command: systemctl daemon-reload
+
+- name: handle_restart_etcd
+  service: name=etcd state=restarted enabled=yes
