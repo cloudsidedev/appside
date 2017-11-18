@@ -21,7 +21,7 @@
 #
 # percona
 #
-- include: percona-centos.yml
+- import_tasks: percona-centos.yml
 
 ################################# MAYBE GOOD MAYBE NOT #################################
 #- name: deploy /etc/my.cnf (RedHat family)
@@ -107,4 +107,4 @@
 #
 # db enabled
 #
-# - include: db-enabled.yml
+# - import_tasks: db-enabled.yml

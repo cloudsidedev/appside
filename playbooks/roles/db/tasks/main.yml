@@ -62,7 +62,7 @@
   template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
   tags: [ mysql, percona ]
 
-- include: percona.yml
+- import_tasks: percona.yml
 
 - name: create DB clustercheck user
   mysql_user: check_implicit_admin=yes name={{ conf_mysql_clustercheck_user }} password={{ conf_mysql_clustercheck_password }} host=% priv="*.*:PROCESS" state=present
@@ -167,4 +167,4 @@
 #
 # db enabled
 #
-- include: db-enabled.yml
+- import_tasks: db-enabled.yml

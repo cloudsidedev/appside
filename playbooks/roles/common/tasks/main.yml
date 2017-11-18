@@ -2,24 +2,24 @@
 
 # file: playbooks/roles/common/tasks/main.yml
 
-# - include: net.yml
+# - import_tasks: net.yml
 #   tags: [ common ]
 
 - name: set root shell
   user: name=root shell={{ conf_root_shell }}
   tags: [ common, users, shell ]
 
-- include: fail2ban.yml
+- import_tasks: fail2ban.yml
   when: conf_fail2ban_enable is defined and conf_fail2ban_enable == true
   tags: [ common, fail2ban ]
 
-- include: ssh.yml
+- import_tasks: ssh.yml
   tags: [ common, ssh, sshd  ]
 
-- include: sudo.yml
+- import_tasks: sudo.yml
   tags: [ common, users, sudo ]
 
-- include: cloud.yml
+- import_tasks: cloud.yml
   when: conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]
 
@@ -35,7 +35,7 @@
     - conf_http_proxy is defined
   tags: [ base_packages, yum_proxy, environment ]
 
-- include: centos-epel.yml
+- import_tasks: centos-epel.yml
   when: ansible_os_family == "RedHat" 
   tags: [ common, apt, base_packages ]
 
@@ -44,33 +44,33 @@
   when: conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
-- include: rc_local.yml
+- import_tasks: rc_local.yml
   when: conf_rc_local_enable is defined and conf_rc_local_enable == true
   tags: [ common, rc-local, rc-local-conf ]
 
-- include: firewall.yml
+- import_tasks: firewall.yml
   when: conf_firewall_enable is defined and conf_firewall_enable == true
   tags: [ common, firewall ]
 
-- include: etckeeper.yml
+- import_tasks: etckeeper.yml
   when: conf_etckeeper_webhook_url is defined
   tags: [ common ]
 
-- include: timezone.yml
+- import_tasks: timezone.yml
   tags: [ common ]
 
-- include: rsyslog.yml
+- import_tasks: rsyslog.yml
   when: conf_rsyslog_enable is defined and conf_rsyslog_enable == true
   tags: [ common, rsyslog ]
 
-- include: lvm.yml
+- import_tasks: lvm.yml
   tags: [ common ]
 
-- include: jailkit.yml
+- import_tasks: jailkit.yml
   when: conf_jailkit_enable is defined and conf_jailkit_enable == true
   tags: [ common, jailkit, jails ]
 
-- include: users.yml
+- import_tasks: users.yml
   tags: [ common ]
 
 - name: remove deb-src (Debian family)
@@ -78,29 +78,29 @@
   when: ansible_os_family == "Debian"
   tags: [ common ]
 
-- include: base_packages.yml
+- import_tasks: base_packages.yml
   tags: [ common, apt, base_packages ]
 
-- include: docker.yml
+- import_tasks: docker.yml
   when: conf_docker_enable is defined and conf_docker_enable == true
   tags: [ common, docker ]
 
-- include: ansible.yml
+- import_tasks: ansible.yml
 
-- include: assh.yml
+- import_tasks: assh.yml
   # tags: [ common, assh, assh-conf, base_packages ]
 
-- include: autossh.yml
+- import_tasks: autossh.yml
 
-- include: nullmailer.yml
+- import_tasks: nullmailer.yml
   when: conf_nullmailer_enable == true
   tags: [ common, nullmailer ]
 
-- include: snmpd.yml
+- import_tasks: snmpd.yml
   when: and conf_snmpd_enable is defined and conf_snmpd_enable == true
   tags: [ common, snmpd ]
 
-- include: nfs.yml
+- import_tasks: nfs.yml
   # when: conf_nfs_enable is defined and conf_nfs_enable == true
   tags: [ common, nfs ]
 
@@ -109,32 +109,32 @@
 #   when: ansible_os_family == "Debian"
 #  tags: [ common, prompt ]
 
-- include: motd.yml
+- import_tasks: motd.yml
   tags: [ common, motd ]
 
-- include: apticron.yml
+- import_tasks: apticron.yml
   when: ansible_os_family == "Debian"
   tags: [ common ]
 
-# - include: vpn.yml
+# - import_tasks: vpn.yml
 #   when: conf_vpn_netname is defined
 #   tags: [ common ]
 
-- include: letsencrypt.yml
+- import_tasks: letsencrypt.yml
   # when:
   #   - conf_letsencrypt_enable is defined and conf_letsencrypt_enable == true
   #   - conf_letsencrypt_master is defined and conf_letsencrypt_master == true
   #   - conf_letsencrypt_cron_master is defined and conf_letsencrypt_cron_master == true
   tags: [ common, letsencrypt ]
 
-- include: icinga.yml
+- import_tasks: icinga.yml
   when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
   tags: [ common ]
 
-- include: munin.yml
+- import_tasks: munin.yml
   when: conf_munin_master is defined or conf_munin_client is defined
   tags: [ common ]
 
-- include: borg.yml
+- import_tasks: borg.yml
   when: conf_backup_client == true
   tags: [ common ]

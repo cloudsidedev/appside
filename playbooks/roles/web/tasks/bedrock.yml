@@ -168,4 +168,4 @@
   with_dict: '{{ conf_vhosts_common }}'
   tags: [ vhosts ]
 
-# - include: w3_total_cache.yml
+# - import_tasks: w3_total_cache.yml

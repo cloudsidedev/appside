@@ -46,7 +46,7 @@
   service: name=firewall state=started enabled=yes
   tags: [ firewall ]
 
-# - include: disable-other-firewalls.yml
+# - import_tasks: disable-other-firewalls.yml
 #   when: conf_firewall_disable_firewalld or conf_firewall_disable_ufw
 #   tags: [ firewall ]
 

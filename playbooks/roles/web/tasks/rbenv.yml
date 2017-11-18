@@ -58,9 +58,9 @@
   when: rbenv_tmpdir is undefined
   tags: [ rbenv ]
 
-#
-# when: rbenv.env == "user"
-#
+#############################
+# when: rbenv.env == "user" #
+#############################
 - name: checkout rbenv_repo for selected users
   git: >
     repo={{ rbenv_repo }}
@@ -100,20 +100,64 @@
   when: rbenv.env == "user"
   tags: [ rbenv ]
 
-- name: add rbenv initialization to profile system-wide
-  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
-  with_items:
-    - profile.d/rbenv_user.sh
-  when:
-    - rbenv.env == "user"
-    - ansible_os_family != 'OpenBSD' and ansible_os_family != 'Darwin'
-  tags: [ rbenv ]
+# - name: add rbenv initialization to profile system-wide
+#   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+#   with_items:
+#     - profile.d/rbenv_user.sh
+#   when:
+#     - rbenv.env == "user"
+#     - ansible_os_family != 'OpenBSD' and ansible_os_family != 'Darwin'
+#   tags: [ rbenv ]
 
 # - name: add rbenv initialization to profile system-wide
 #   blockinfile: block="{{ lookup('template', 'rbenv_user.sh.j2') }}" dest=/etc/profile
 #   become: yes
 #   when:
 #     - ansible_os_family == 'Darwin'
+
+############### ~/.zshrc.local START
+
+- name: source ~/.zshrc.local >> ~/.zshrc
+  lineinfile: dest=~/.zshrc line='source ~/.zshrc.local' state=present insertafter=EOF create=yes
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when:
+    - rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: export PATH="$HOME/.rbenv/bin:$PATH >> ~/.zshrc.local
+  lineinfile: dest=~/.zshrc.local line='export PATH="$HOME/.rbenv/bin:$PATH"' state=present insertafter=EOF create=yes
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when:
+    - rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: export RBENV_ROOT="$HOME/.rbenv" >> ~/.zshrc.local
+  lineinfile: dest=~/.zshrc.local line='export RBENV_ROOT="$HOME/.rbenv"' state=present insertafter=EOF create=yes
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when:
+    - rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+- name: eval "$(rbenv init -)" >> ~/.zshrc.local
+  lineinfile: dest=~/.zshrc.local line='eval "$(rbenv init -)"' state=present insertafter=EOF create=yes
+  with_items: "{{ rbenv_users }}"
+  become: yes
+  become_user: "{{ item }}"
+  when:
+    - rbenv.env == "user"
+  ignore_errors: yes
+  tags: [ rbenv ]
+
+############### ~/.zshrc.local END
 
 - name: set default-gems for select users
   template: src=rbenv/default-gems.j2 dest={{ rbenv_root }}/default-gems mode=0644
@@ -155,8 +199,8 @@
   tags: [ rbenv ]
 
 - name: check ruby versions installed for select users
-  # shell: $SHELL -lc "rbenv versions --bare"
-  shell: $SHELL -lc "rbenv versions --bare"
+  # shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv versions --bare"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv versions --bare"
   with_items: "{{ rbenv_users }}"
   become: yes
   become_user: "{{ item }}"
@@ -168,9 +212,9 @@
   check_mode: no
   tags: [ rbenv ]
 
-- name: install ruby {{ item[2].version }} for select users
-  # shell: $SHELL -lc "rbenv install {{ item[2].version }}"
-  shell: $SHELL -lc "rbenv install {{ item[2].version }}"
+- name: "install ruby {{ item[2].version }} for select users"
+  # shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}"
+  shell: '$SHELL -lc "{{ rbenv_root }}/bin/rbenv install {{ item[2].version }}"'
   become: yes
   become_user: "{{ item[1] }}"
   with_nested:
@@ -219,7 +263,7 @@
   tags: [ rbenv ]
 
 - name: check if user ruby version is {{ rbenv.default_ruby }}
-  shell: $SHELL -lc "rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
   become: yes
   become_user: "{{ item }}"
   with_items: "{{ rbenv_users }}"
@@ -231,7 +275,7 @@
   tags: [ rbenv ]
 
 - name: set ruby {{ rbenv.default_ruby }} for select users
-  shell: $SHELL -lc "rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
   become: yes
   become_user: "{{ item[1] }}"
   with_together:
@@ -243,9 +287,9 @@
   ignore_errors: yes
   tags: [ rbenv ]
 
-#
-# when: rbenv.env == "system  "
-#
+###############################
+# when: rbenv.env == "system" #
+###############################
 
 - name: checkout rbenv_repo for system
   become: yes
@@ -323,7 +367,7 @@
   tags: [ rbenv ]
 
 - name: check ruby versions installed for system
-  shell: $SHELL -lc "rbenv versions --bare"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv versions --bare"
   register: rbenv_versions
   with_items: rbenv.rubies
   changed_when: false
@@ -335,7 +379,7 @@
   tags: [ rbenv ]
 
 - name: install ruby versions for system
-  shell: $SHELL -lc "rbenv install {{ item[1].version }}"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv install {{ item[1].version }}"
   become: yes
   with_nested:
     - '{{ rbenv_versions.results }}'
@@ -373,7 +417,7 @@
   tags: [ rbenv ]
 
 - name: check if current system ruby version is {{ rbenv.default_ruby }}
-  shell: $SHELL -lc "rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv version | cut -d ' ' -f 1 | grep -Fx '{{ rbenv.default_ruby }}'"
   register: ruby_selected
   changed_when: false
   ignore_errors: yes
@@ -385,7 +429,7 @@
 
 - name: set ruby {{ rbenv.default_ruby }} for system
   become: yes
-  shell: $SHELL -lc "rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
+  shell: $SHELL -lc "{{ rbenv_root }}/bin/rbenv global {{ rbenv.default_ruby }} && rbenv rehash"
   when:
     - rbenv.env == "system"
     - ruby_selected.rc != 0

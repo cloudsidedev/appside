@@ -109,3 +109,11 @@ conf_haproxy_errors_path: "/etc/haproxy/errors"
 #
 conf_etckeeper_lowlevel_package_manager: "dpkg"
 conf_etckeeper_highlevel_package_manager: "apt"
+
+#
+# etcd
+#
+conf_etcd_config_only: False
+conf_etcd_install_dependencies:
+  - rsync
+  - openssh-server

@@ -2,18 +2,18 @@
 
 # file: playbooks/roles/lb/tasks/main.yml
 
-- include: keepalived.yml
+- import_tasks: keepalived.yml
   when: conf_keepalived_enable == true
   tags: [ haproxy, keepalived, keepalived-conf ]
 
-- include: haproxy.yml
+- import_tasks: haproxy.yml
   when: conf_lbtier_enable == true
   tags: [ haproxy, haproxy-conf ]
 
-# - include: confd.yml
+# - import_tasks: confd.yml
 #   when: conf_confd_enable is defined and conf_confd_enable == true
 #   tags: [ haproxy, confd, confd-conf ]
 
-- include: etcd.yml
+- import_tasks: etcd.yml
   when: conf_etcd_enable is defined and conf_etcd_enable == true
   tags: [ etcd, etcd-conf ]

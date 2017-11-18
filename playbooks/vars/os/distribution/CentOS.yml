@@ -97,3 +97,13 @@ conf_haproxy_errors_path: "/usr/share/haproxy"
 #
 conf_etckeeper_lowlevel_package_manager: "rpm"
 conf_etckeeper_highlevel_package_manager: "yum"
+
+#
+# etcd
+#
+conf_etcd_config_only: False
+conf_etcd_install_dependencies:
+  - rsync
+  - openssh-clients
+  - openssh-server
+
