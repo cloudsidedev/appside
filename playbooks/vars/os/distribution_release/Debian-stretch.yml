@@ -1,0 +1,6 @@
+---
+
+# file: playbooks/vars/os/distribution/Debian-stretch.yml
+
+var_package_php_apc: php-apcu
+var_package_git: git
