@@ -8,17 +8,18 @@ def provision(tenant, env, *args):
     password_file = utils.get_vault_file(tenant, env)
 
     # Convert tags=xyz to --tags xyz
-    tags = list(args)
-    for a in tags[:]:
-        if (a.split('=')[1] == ''):
-            tags.remove(a)
-    for i, a in enumerate(tags):
-        tags[i] = '--' + \
-            tags[i].split('=')[0].replace('_', '-') + \
-            ' ' + tags[i].split('=')[1]
+    tags_argument = list(args)
+    for tag in tags_argument[:]:
+        if tag.split('=')[1] == '':
+            tags_argument.remove(tag)
+    for i, tag in enumerate(tags_argument):
+        tags_argument[i] = '--' + \
+            tags_argument[i].split('=')[0].replace('_', '-') + \
+            ' ' + tags_argument[i].split('=')[1]
 
-    os.system('ansible-playbook -b ' + ' '.join(tags) + ' -i ' +
-              inventory + ' ' + playbook + ' --vault-password-file ' + password_file)
+    os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
+              inventory + ' ' + playbook +
+              ' --vault-password-file ' + password_file)
 
 
 def tags(tenant, env):
@@ -34,8 +35,8 @@ def encrypt(tenant, env):
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
     flie_list = utils.get_file_list(target_folder)
-    for f in flie_list:
-        os.system('ansible-vault encrypt ' + f +
+    for file in flie_list:
+        os.system('ansible-vault encrypt ' + file +
                   ' --vault-password-file ' + password_file)
 
 
@@ -48,7 +49,7 @@ def decrypt(tenant, env):
 
     utils.safe_remove(md5_store_file)
     flie_list = utils.get_file_list(target_folder)
-    for f in flie_list:
-        os.system('ansible-vault decrypt ' + f +
+    for file in flie_list:
+        os.system('ansible-vault decrypt ' + file +
                   ' --vault-password-file ' + password_file)
-        utils.write_md5_sum(f, md5_store_file)
+        utils.write_md5_sum(file, md5_store_file)

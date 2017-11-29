@@ -15,7 +15,7 @@ def get_md5_sum(file_name):
 def write_md5_sum(file_name, md5_store_file):
     os.makedirs(os.path.dirname(md5_store_file), exist_ok=True)
     line = get_md5_sum(file_name)
-    if (os.path.exists(md5_store_file)):
+    if os.path.exists(md5_store_file):
         open(md5_store_file, 'a').write(line)
     else:
         open(md5_store_file, 'w+').write(line)
@@ -39,19 +39,19 @@ def rm_in_dict(branch, keys):
     return len(branch) == 0
 
 
-def add_keys(d, key, value=None):
+def add_keys(dictionary, key, value=None):
     if len(key) > 1:
-        d[key[0]] = _d = {}
-        d[key[0]] = d.get(key[0], {})
-        add_keys(d[key[0]], key[1:], value)
+        dictionary[key[0]] = {}
+        dictionary[key[0]] = dictionary.get(key[0], {})
+        add_keys(dictionary[key[0]], key[1:], value)
     else:
-        d[key[0]] = value
+        dictionary[key[0]] = value
 
 
 def check_string_in_file(file_name, string):
     found = False
-    with open(file_name) as f:
-        for line in f:
+    with open(file_name) as file:
+        for line in file:
             if string in line:  # Key line: check if `w` is in the line.
                 found = True
     return found
@@ -59,10 +59,10 @@ def check_string_in_file(file_name, string):
 
 def diff_files(file1, file2):
     result = list()
-    with open(file1) as f1:
-        with open(file2) as f2:
-            lines_file_1 = f1.readlines()
-            lines_file_2 = f2.readlines()
+    with open(file1) as file_1:
+        with open(file2) as file_2:
+            lines_file_1 = file_1.readlines()
+            lines_file_2 = file_2.readlines()
             diff = [line for line in lines_file_1 if line not in lines_file_2]
             for line in diff:
                 file_name = line.split('\t')[1].replace('\n', '')
@@ -77,11 +77,11 @@ def safe_remove(file_name):
         pass
 
 
-def get_file_list(dir):
+def get_file_list(_dir):
     file_list = list()
-    for root, subdirs, files in os.walk(dir):
-        for f in files:
-            file_list.append(os.path.join(root, f))
+    for root, subdirs, files in os.walk(_dir):
+        for file in files:
+            file_list.append(os.path.join(root, file))
     return file_list
 
 

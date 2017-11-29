@@ -2,14 +2,14 @@ import base64
 import hashlib
 import os
 import stat
-import pymysql.cursors
 
+import pymysql.cursors
 from Crypto.Cipher import AES
 
 
 def get_aes_password():
     file_name = "/etc/default/.appflow-key"
-    if (os.path.exists(file_name)):
+    if os.path.exists(file_name):
         with open(file_name, 'r') as pass_file:
             return pass_file.read().replace('\n', '')
     else:
@@ -23,16 +23,17 @@ def get_aes_password():
 def aes_encrypt(string, password):
     block_size = 32
     padded_string = string + (block_size - len(string) %
-                              block_size) * chr(block_size - len(string) % block_size)
-    iv = os.urandom(AES.block_size)
-    cipher = AES.new(password, AES.MODE_CBC, iv)
-    return base64.b64encode(iv + cipher.encrypt(padded_string))
+                              block_size) * chr(block_size - len(string)
+                                                % block_size)
+    _iv = os.urandom(AES.block_size)
+    cipher = AES.new(password, AES.MODE_CBC, _iv)
+    return base64.b64encode(_iv + cipher.encrypt(padded_string))
 
 
 def aes_decrypt(enc, password):
     enc = base64.b64decode(enc)
-    iv = enc[:AES.block_size]
-    cipher = AES.new(password, AES.MODE_CBC, iv)
+    _iv = enc[:AES.block_size]
+    cipher = AES.new(password, AES.MODE_CBC, _iv)
     result = cipher.decrypt(enc[AES.block_size:])
     result = result[:-ord(result[len(result) - 1:])]
     return result.decode('utf-8')
@@ -59,13 +60,13 @@ def hash_string(plaintext):
 
 
 def sql_check_if_present(field, search):
-    return sql_query(field, search) != None
+    return sql_query(field, search) is not None
 
 
 def sql_write(data):
     if sql_check_if_present('username', data[0]):   # Entry exists, update only
         return sql_update(data)
-    else:                                           # Entry does not exist; create it
+    else:                                     # Entry does not exist; create it
         return sql_insert(data)
 
 
@@ -80,7 +81,7 @@ def sql_query(field, search):
         with connection.cursor() as cursor:
             sql = """
             SELECT `username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_enc`, `mail_enc` , `api_key_enc`
-            FROM `users` 
+            FROM `users`
             WHERE `""" + field + "`=%s"
             cursor.execute(sql, (search,))
             result = cursor.fetchone()
@@ -102,7 +103,7 @@ def sql_insert(data):
     try:
         with connection.cursor() as cursor:
             sql = """
-            INSERT INTO `users` (`username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_enc`, `mail_enc`, `api_key_enc`) 
+            INSERT INTO `users` (`username`, `mail`, `password` , `salt`, `tenant`, `api_key`, `api_quota`, `user_enc`, `mail_enc`, `api_key_enc`)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, data)
@@ -183,14 +184,14 @@ def sql_util_register(username, mail, password, tenant):
 def sql_util_auth_username(username, password, tenant):
     username = hash_string(username)
     tenant = hash_string(tenant)
-    if (sql_check_if_present("username", username)):
+    if sql_check_if_present("username", username):
         sql_pass = sql_query("username", username)["password"]
         sql_pass = aes_decrypt(sql_pass, get_aes_password())
         salt = sql_query("username", username)["salt"]
         password = hash_string(password + salt)
-        if(sql_pass == password):
+        if sql_pass == password:
             sql_tenant = sql_query("username", username)["tenant"]
-            if(sql_tenant == tenant):
+            if sql_tenant == tenant:
                 print("Authenticated")
                 return True
             else:
@@ -204,14 +205,14 @@ def sql_util_auth_username(username, password, tenant):
 def sql_util_auth_mail(mail, password, tenant):
     mail = hash_string(mail)
     tenant = hash_string(tenant)
-    if (sql_check_if_present("mail", mail)):
+    if sql_check_if_present("mail", mail):
         sql_pass = sql_query("mail", mail)["password"]
         sql_pass = aes_decrypt(sql_pass, get_aes_password())
         salt = sql_query("mail", mail)["salt"]
         password = hash_string(password + salt)
-        if(sql_pass == password):
+        if sql_pass == password:
             sql_tenant = sql_query("mail", mail)["tenant"]
-            if(sql_tenant == tenant):
+            if sql_tenant == tenant:
                 print("Authenticated")
                 return True
             else:
@@ -224,7 +225,7 @@ def sql_util_auth_mail(mail, password, tenant):
 
 def sql_util_auth_api(api_key):
     api_key = hash_string(api_key)
-    if (sql_check_if_present('api_key', api_key)):
+    if sql_check_if_present('api_key', api_key):
         print("Auth passed")
         return True
     else:
