@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
-import appflow.AppflowYaml as apyaml
+from flask import Flask
+from flask import make_response
+from flask import request
+
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
-import appflow.AppflowUtils as utils
-import appflow.AppflowSQL as sql
-from flask import Flask
-from flask import request
-from flask import make_response
+import appflow.AppflowYaml as apyaml
 
 app = Flask(__name__)
 
@@ -35,13 +34,14 @@ app = Flask(__name__)
 # https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask --> Securing a RESTful web service
 # https://www.owasp.org/index.php/REST_Security_Cheat_Sheet#Access_Control
 
+
 @app.route("/appflow/get", methods=['GET'])
 def get():
     try:
         file_name = request.args.get('file')
         key = request.args.get('key')
 
-        response = apyaml.get(file_name, key)
+        response = apyaml.get_value(file_name, key)
         if 'Error' in response:
             if 'Invalid' in response:
                 status_code = 400
@@ -64,7 +64,7 @@ def set():
         file_name = request.args.get('file')
         key = request.args.get('key')
         value = request.args.get('value')
-        response = apyaml.set(file_name, key, value)
+        response = apyaml.set_value(file_name, key, value)
         if 'Error' in response:
             if 'Invalid' in response:
                 status_code = 400
@@ -88,7 +88,7 @@ def add():
         file_name = request.args.get('file')
         key = request.args.get('key')
         value = request.args.get('value')
-        response = apyaml.add(file_name, key, value)
+        response = apyaml.add_value(file_name, key, value)
         if 'Error' in response:
             if 'Invalid' in response:
                 status_code = 400
@@ -111,7 +111,7 @@ def rm():
     try:
         file_name = request.args.get('file')
         key = request.args.get('key')
-        response = apyaml.rm(file_name, key)
+        response = apyaml.rm_value(file_name, key)
         if 'Error' in response:
             if 'Invalid' in response:
                 status_code = 400
@@ -146,8 +146,8 @@ def command():
         return {
             'reset': tools.git_reset(tenant, env),
             'status': tools.git_status(tenant, env),
-            'checkin': tools.git_checkin(tenant, env),
-            'checkout': tools.git_checkOut(tenant, env),
+            'checkin': tools.git_check_in(tenant, env),
+            'checkout': tools.git_check_out(tenant, env),
             'encrypt': apansible.encrypt(tenant, env),
             'decrypt': apansible.decrypt(tenant, env),
             'tags': apansible.tags(tenant, env),
@@ -157,12 +157,12 @@ def command():
         return make_response(str(exception), 500)
 
 
-@app.route("/appflow/signin",  methods=['POST'])
-@app.route("/appflow/signup/get/get_user_data",  methods=['POST'])
-@app.route("/appflow/signin/get/recover_mail",  methods=['POST'])
-@app.route("/appflow/signin/get/recover_username",  methods=['POST'])
-@app.route("/appflow/signin/get/recover_api_key",  methods=['POST'])
-@app.route("/appflow/signin/change_pass",  methods=['POST'])
-@app.route("/appflow/signin/change_mail",  methods=['POST'])
+# @app.route("/appflow/signin",  methods=['POST'])
+# @app.route("/appflow/signup/get/get_user_data",  methods=['POST'])
+# @app.route("/appflow/signin/get/recover_mail",  methods=['POST'])
+# @app.route("/appflow/signin/get/recover_username",  methods=['POST'])
+# @app.route("/appflow/signin/get/recover_api_key",  methods=['POST'])
+# @app.route("/appflow/signin/change_pass",  methods=['POST'])
+# @app.route("/appflow/signin/change_mail",  methods=['POST'])
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)

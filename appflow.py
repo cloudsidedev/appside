@@ -5,16 +5,16 @@
 
 import fire
 
-import appflow.AppflowYaml as apyaml
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
+import appflow.AppflowYaml as apyaml
 
 
 class AppFlow(object):
 
     def init(self, tenant, env):
-        tools.initialize(tenant, env)
+        tools.initialize(tenant)
 
     def ssh(self, tenant, env):
         tools.setup_ssh(tenant, env)
@@ -24,17 +24,17 @@ class AppFlow(object):
 
     def status(self, tenant, env):
         result = tools.git_status(tenant, env)
-        if (result == False):
+        if result is False:
             print('Files Already Encrypted')
         else:
             print('Changed files:')
             print('\n'.join(result))
 
     def checkout(self, tenant, env):
-        tools.git_checkOut(tenant, env)
+        tools.git_check_out(tenant, env)
 
     def checkin(self, tenant, env):
-        tools.git_checkin(tenant, env)
+        tools.git_check_in(tenant, env)
 
     def decrypt(self, tenant, env):
         print(utils.get_provision_color_string('decrypt', tenant, env))
@@ -53,16 +53,16 @@ class AppFlow(object):
         apansible.provision(tenant, env, args)
 
     def get(self, file, key=None):
-        apyaml.get(file, key)
+        print(apyaml.get_value(file, key))
 
     def set(self, file, key, value):
-        apyaml.set(file, key, value)
+        apyaml.set_value(file, key, value)
 
     def rm(self, file, key):
-        apyaml.rm(file, key)
+        apyaml.rm_value(file, key)
 
     def add(self, file, key, value):
-        apyaml.add(file, key, value)
+        apyaml.add_value(file, key, value)
 
 
 if __name__ == '__main__':
