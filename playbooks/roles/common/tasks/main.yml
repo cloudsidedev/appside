@@ -5,6 +5,9 @@
 # - import_tasks: net.yml
 #   tags: [ common ]
 
+# - import_tasks: apparmor.yml
+#   tags: [ common, apparmor ]
+
 - name: set root shell
   user: name=root shell={{ conf_root_shell }}
   tags: [ common, users, shell ]
@@ -37,7 +40,7 @@
 
 - import_tasks: centos-epel.yml
   when: ansible_os_family == "RedHat" 
-  tags: [ common, apt, base_packages ]
+  tags: [ common, apt, base_packages, epel ]
 
 - name: template /etc/hosts
   template: src=etc/hosts.j2 dest=/etc/hosts owner=root group={{ conf_root_group }} mode=0644 backup=no
@@ -47,6 +50,9 @@
 - import_tasks: rc_local.yml
   when: conf_rc_local_enable is defined and conf_rc_local_enable == true
   tags: [ common, rc-local, rc-local-conf ]
+
+- import_tasks: cron.yml
+  tags: [ common, cron ]
 
 - import_tasks: firewall.yml
   when: conf_firewall_enable is defined and conf_firewall_enable == true
