@@ -1,6 +1,6 @@
 ---
 
-# file: playbooks/roles/db/tasks/percona.yml
+# file: playbooks/roles/db/tasks/percona-xtradb-cluster.yml
 
 #
 # Debug CentOS:
@@ -11,13 +11,6 @@
 # - bootstrap master
 # - start clients
 # - restart master
-
-- name: apparmor disable mysqld (Debian family)
-  file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
-  notify: handle_reload_apparmor_mysql
-  ignore_errors: yes
-  when: ansible_os_family == "Debian"
-  tags: [ mysql, percona ]
 
 - name: check to determine if galera is aready installed (Debian family)
   shell: "dpkg-query -s percona-xtradb-cluster-galera-3.x"
@@ -93,8 +86,8 @@
 - name: install Percona XtraDB Cluster (Debian family)
   apt: pkg={{ item }} state=present force=yes
   with_items:
-    - percona-xtradb-cluster-server-5.6
-    - percona-xtradb-cluster-client-5.6
+    - "{{ conf_mysql_flavour_debian_family }}-server-{{ conf_mysql_version_debian_family }}"
+    - "{{ conf_mysql_flavour_debian_family }}-client-{{ conf_mysql_version_debian_family }}"
     - percona-xtradb-cluster-galera-3.x
     - python-mysqldb
   environment:
