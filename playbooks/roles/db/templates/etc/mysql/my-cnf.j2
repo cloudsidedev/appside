@@ -9,7 +9,7 @@
 #
 
 [client]
-port		= 3306
+port	= 3306
 socket	= {{ conf_mysql_socket }}
 
 default-character-set = utf8mb4
@@ -31,7 +31,7 @@ performance_schema=OFF
 # Z related
 log_bin_trust_function_creators = on
 max_sp_recursion_depth          = 32
-thread_stack		                = 576K
+thread_stack		            = 576K
 optimizer_search_depth          = 0
 local-infile
 
@@ -42,6 +42,10 @@ innodb_log_file_size = {{ conf_mysql_innodb_log_file_size }}
 sql_mode               = NO_ENGINE_SUBSTITUTION
 {% endif %}
 
+{% if conf_mysql_sql_mode is defined %}
+sql_mode               = {{ conf_mysql_sql_mode }}
+{% endif %}
+
 ft_min_word_len        = {{ conf_mysql_ft_min_word_len }}
 ft_boolean_syntax      = '{{ conf_mysql_ft_boolean_syntax }}'
 lower_case_table_names = {{ conf_mysql_lower_case_table_names }}
@@ -49,10 +53,10 @@ lower_case_table_names = {{ conf_mysql_lower_case_table_names }}
 #
 # * Basic Settings
 #
-user		        = mysql
+user		      = mysql
 pid-file	      = /var/run/mysqld/mysqld.pid
 socket		      = {{ conf_mysql_socket }}
-port		        = 3306
+port		      = 3306
 basedir		      = {{ conf_mysql_basedir }}
 datadir		      = {{ conf_mysql_datadir }}
 
@@ -71,7 +75,9 @@ bind-address		= 0.0.0.0
 #
 # * Fine Tuning
 #
+{% if conf_mysql_version_debian_family <= 5.6 %}
 key_buffer		    = {{ conf_mysql_key_buffer }}
+{% endif %}
 max_allowed_packet	= {{ conf_mysql_max_allowed_packet }}
 thread_cache_size   = {{ conf_mysql_thread_cache_size }}
 
@@ -81,7 +87,9 @@ myisam-recover-options = BACKUP
 
 max_connections        = {{ conf_mysql_max_connections }}
 table_open_cache       = {{ conf_mysql_table_cache }}
+{% if conf_mysql_version_debian_family <= 5.6 %}
 thread_concurrency     = {{ conf_mysql_thread_concurrency }}
+{% endif %}
 
 #
 # * Query Cache Configuration
@@ -99,14 +107,14 @@ query_cache_size  = {{ conf_mysql_query_cache_size }}
 # As of 5.1 you can enable the log at runtime!
 
 # general_log_file  = /var/log/mysql/mysql.log
-# general_log       = 1
+# general_log = 1
 
 # Error log - should be very few entries.
 log_error = /var/log/mysql/error.log
 
 # Here you can see queries with especially long duration
-slow_query_log  = /var/log/mysql/mysql-slow.log
-long_query_time   = 2
+slow_query_log = /var/log/mysql/mysql-slow.log
+long_query_time = 2
 log-queries-not-using-indexes
 
 {% if conf_mysql_replication == true %}
@@ -119,9 +127,9 @@ log-queries-not-using-indexes
 
 {% endif %}
 
-expire_logs_days	= 3
-max_binlog_size   = 100M
-# binlog_format     = MIXED
+expire_logs_days = 3
+max_binlog_size = 100M
+# binlog_format = MIXED
 
 # binlog_do_db		= include_database_name
 # binlog_ignore_db	= include_database_name

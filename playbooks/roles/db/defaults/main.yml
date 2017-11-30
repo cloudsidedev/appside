@@ -5,5 +5,5 @@
 #
 # MySQL
 #
-conf_mysql_flavour_debian_family: percona-xtradb-cluster-server
+conf_mysql_flavour_debian_family: percona-xtradb-cluster
 conf_mysql_version_debian_family: 5.6
