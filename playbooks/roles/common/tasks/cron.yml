@@ -1,0 +1,9 @@
+---
+
+# file: playbooks/roles/common/tasks/cron.yml
+
+- name: provision cron-show.sh
+  template: src={{ item }}.j2 dest=/{{ item }} owner=root group={{ conf_root_group }} mode=0755
+  with_items:
+      - usr/local/bin/cron-show.sh
+  tags: [ cron ]
