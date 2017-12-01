@@ -1,0 +1,24 @@
+# ---
+
+# file: playbooks/roles/web/tasks/nginx.yml
+
+- name: PHP nginx (Ubuntu)
+  apt_repository: repo='ppa:nginx/stable' update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes
+  tags: [ nginx, update ]
+
+- name: be sure nginx packages packages are installed (Debian family)
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+    - nginx
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: [ nginx ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - nginx/nginx.conf
+  notify: handle_reload_nginx
+  tags: [ nginx, nginx-conf ]
