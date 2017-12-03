@@ -1,6 +1,6 @@
 ---
 
-# file: playbooks/vars/os/distribution/Debian.yml
+# file: playbooks/vars/os/distribution/Mandriva.yml
 
 #
 # Base
@@ -17,6 +17,7 @@ conf_www_group: "www-data"
 conf_sudo_nopasswd_group: "admin"
 conf_hold_packages:
     - mod-pagespeed-stable
+    - ansible
 conf_unwanted_packages:
     - chef
     - chef-zero
@@ -79,11 +80,13 @@ conf_base_packages:
     - traceroute
     - acl
     - make
-    - golang
+    - golang-1.8-go
     - "{{ var_package_git }}"
     - convmv
     - tig
 conf_php_cli: "/usr/bin/php"
+conf_php_extension_dir: "/usr/lib/php/20131226"
+conf_php_ioncube_loader_so: "ioncube_loader_lin_5.6.so"
 conf_web_cron: "/etc/cron.d/wp-cron"
 conf_ssh_service: ssh
 
