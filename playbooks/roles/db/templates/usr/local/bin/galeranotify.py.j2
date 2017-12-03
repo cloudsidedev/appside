@@ -1,4 +1,9 @@
 #!/usr/bin/python
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
 #
 # Script to send email notifications when a change in Galera cluster membership
 # occurs.
@@ -29,24 +34,24 @@ import socket
 THIS_SERVER = socket.gethostname()
 
 # Server hostname or IP address
-SMTP_SERVER = 'mail.ttss.ch'
-SMTP_PORT = 465
+SMTP_SERVER = '{{ conf_galera_notify_smtp_server }}'
+SMTP_PORT = {{ conf_galera_notify_smtp_port }}
 
 # Set to True if you need SMTP over SSL
-SMTP_SSL = True
+SMTP_SSL = {{ conf_galera_notify_smtp_ssl }}
 
 # Set to True if you need to authenticate to your SMTP server
-SMTP_AUTH = True
+SMTP_AUTH = {{ conf_galera_notify_smtp_auth }}
 
 # Fill in authorization information here if True above
-SMTP_USERNAME = 'staging@ttss.ch'
-SMTP_PASSWORD = 'Cee1Eith'
+SMTP_USERNAME = '{{ conf_galera_notify_smtp_username }}'
+SMTP_PASSWORD = '{{ conf_galera_notify_smtp_password }}'
 
 # Takes a single sender
 MAIL_FROM = 'root@{{ conf_mailname }}'
 
 # Takes a list of recipients
-MAIL_TO = ['root']
+MAIL_TO = ['{{ conf_galera_notify_smtp_mail_to }}']
 
 # Edit below at your own risk
 ################################################################################
