@@ -346,16 +346,16 @@ sub vcl_deliver {
   # and obj.hits may not be reset in some cases where bans are in use. See bug 1492 for details.
   # So take hits with a grain of salt
   set resp.http.X-Cache-Hits = obj.hits;
+  set resp.http.status = resp.status;
   # Remove some headers: PHP version
-  unset resp.http.X-Powered-By;
-
+#   unset resp.http.X-Powered-By;
   # Remove some headers: Apache version & OS
-  unset resp.http.Server;
-  unset resp.http.X-Drupal-Cache;
-  unset resp.http.X-Varnish;
-  unset resp.http.Via;
-  unset resp.http.Link;
-  unset resp.http.X-Generator;
+#   unset resp.http.Server;
+#   unset resp.http.X-Drupal-Cache;
+#   unset resp.http.X-Varnish;
+#   unset resp.http.Via;
+#   unset resp.http.Link;
+#   unset resp.http.X-Generator;
   
   
 {% if conf_varnish_vcl_deliver is defined %}
