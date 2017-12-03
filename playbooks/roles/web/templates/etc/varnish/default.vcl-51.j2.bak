@@ -1,0 +1,256 @@
+vcl 4.0;
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+import std;
+###########
+# Backend #
+###########
+backend default {
+  {{ conf_varnish_backend_default }}}
+
+#############
+# ACL PURGE #
+#############
+acl purge {
+  {{ conf_varnish_acl_purge }}}
+
+  #
+  # X-Forwarded-For
+  #
+  # See: https://www.varnish-cache.org/docs/2.1/faq/http.html
+  #      % varnishlog | grep X-Forwarded-For
+  #
+  # We can have two scenarios actually:
+  #
+  #   REQUEST -> Varnish -> Apache2               (Varnish inserts X-Forwarded-For)
+  #   REQUEST -> HAPROXY -> Varnish -> Apache2    (HAPROXY inserts X-Forwarded-For)
+  #
+  # In case Varnish is first in the chain, insert own X-Forwarded-For.
+  # Boolean "conf_lbtier_enable", defined per node, tells us if we use HAPROXY.
+  #
+
+################
+# sub vcl_hash #
+################
+sub vcl_hash {
+  # Hash protocol and URL.
+  hash_data(req.http.X-Forwarded-Proto);
+  hash_data(req.url);
+
+  # Hash host or server IP.
+  if (req.http.host) {
+      hash_data(req.http.host);
+  } else {
+      hash_data(server.ip);
+  }
+
+  # Hash cookies for requests that have them.
+  if (req.http.Cookie) {
+      hash_data(req.http.Cookie);
+  }
+
+  return (lookup);
+}
+
+################
+# sub vcl_recv #
+################
+sub vcl_recv {
+  # Allow purging.
+  if (req.method == "PURGE") {
+      if (req.http.X-Forwarded-For || !client.ip ~ purge) {
+          return (synth(405, "This IP is not allowed to send PURGE requests."));
+      }
+
+      if (req.http.X-Purge-Method && req.http.X-Purge-Method ~ "(?i)regex") {
+        ban("obj.http.X-Req-URL ~ " + req.url + " && obj.http.X-Req-Host == " + req.http.host);
+        return (synth(200, "Ban added"));
+      }
+
+      # Force entry into vcl_hit() or vcl_miss() below and purge the actual cache.
+      return (hash);
+  }
+
+  # Only deal with "normal" method requests. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.method != "GET" &&
+      req.method != "HEAD" &&
+      req.method != "PUT" &&
+      req.method != "POST" &&
+      req.method != "TRACE" &&
+      req.method != "OPTIONS" &&
+      req.method != "PATCH" &&
+      req.method != "DELETE") {
+      /* Non-RFC2616 or CONNECT which is weird. */
+      return (pipe);
+  }
+
+  # Only cache GET or HEAD requests. This makes sure the POST requests are always passed. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.method != "GET" && req.method != "HEAD") {
+      return (pass);
+  }
+
+  # Normalize Accept-Encoding header.
+  if (req.http.Accept-Encoding) {
+      if (req.url ~ "^[^?]*\.(7z|avi|bz2|docx|eot|flac|flv|gif|ico|gz|jpeg|jpg|mka|mkv|mov|mp3|mp4|mpeg|mpg|ogg|ogm|opus|pdf|png|pptx|rar|svgz|tbz|tgz|txz|webm|webp|woff2|xlsx|xz|zip)(\?.*)?$") {
+          # No point in compressing these.
+          unset req.http.Accept-Encoding;
+      } elsif (req.http.Accept-Encoding ~ "gzip") {
+          set req.http.Accept-Encoding = "gzip";
+      } elsif (req.http.Accept-Encoding ~ "deflate") {
+          set req.http.Accept-Encoding = "deflate";
+      } else {
+          # Unkown algorithm.
+          unset req.http.Accept-Encoding;
+      }
+  }
+
+  # Large static files should be piped, so they are delivered directly to the end-user without
+  # waiting for Varnish to fully read the file first.
+  if (req.url ~ "^[^?]*\.(7z|avi|bz2|flac|flv|gz|mka|mkv|mov|mp3|mp4|mpeg|mpg|ogg|ogm|opus|rar|tar|tgz|tbz|txz|wav|webm|xz|zip)(\?.*)?$") {
+      unset req.http.Cookie;
+      return (pipe);
+  }
+
+  # Remove all cookies for static files.
+  if (req.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
+      unset req.http.Cookie;
+      return (hash);
+  }
+
+{% if conf_varnish_vcl_recv is defined %}
+  {{ conf_varnish_vcl_recv }}
+{% endif %}
+
+  # Don't cache requests with authorization. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
+  if (req.http.Authorization) {
+      return (pass);
+  }
+
+  return (hash);
+}
+
+#################
+# sub vcl_backend_response #
+#################
+sub vcl_backend_response {
+  set beresp.grace = 3600s;
+  set beresp.http.X-Req-Host = bereq.http.host;
+  set beresp.http.X-Req-URL = bereq.url;
+
+  # Strip any cookies before a static file is inserted into cache.
+  if (bereq.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
+     unset beresp.http.set-cookie;
+  }
+
+  # Set 2min cache if unset for static files. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-fetch)
+  if (beresp.ttl <= 0s || beresp.http.Set-Cookie || beresp.http.Vary == "*") {
+      set beresp.ttl = 120s;
+      set beresp.uncacheable = true;
+      return (deliver);
+  }
+    if (beresp.status == 500 || beresp.status == 502 || beresp.status == 503 || beresp.status == 504) {
+        return (abandon);
+    }
+
+{% if conf_varnish_vcl_backend_response is defined %}
+  {{ conf_varnish_vcl_backend_response }}
+{% endif %}
+  return (deliver);
+}
+
+###############
+# sub vcl_hit #
+###############
+sub vcl_hit {
+   if (obj.ttl >= 0s) {
+       // A pure unadultered hit, deliver it
+       return (deliver);
+   }
+
+  # We have no fresh fish. Lets look at the stale ones.
+  if (std.healthy(req.backend_hint)) {
+    # Backend is healthy. Limit age to 10s.
+    if (obj.ttl + 10s > 0s) {
+      #set req.http.grace = "normal(limited)";
+      return (deliver);
+    } else {
+      # No candidate for grace. Fetch a fresh object.
+      return (miss);
+    }
+  } else {
+    # backend is sick - use full grace
+      if (obj.ttl + obj.grace > 0s) {
+      #set req.http.grace = "full";
+      return (deliver);
+    } else {
+      # no graced object.
+      return (miss);
+    }
+}
+
+{% if conf_varnish_vcl_hit is defined %}
+  {{ conf_varnish_vcl_hit }}
+{% endif %}
+
+  return (miss);
+#   return (deliver);
+}
+
+################
+# sub vcl_miss #
+################
+sub vcl_miss {
+{% if conf_varnish_vcl_miss is defined %}
+  {{ conf_varnish_vcl_miss }}
+{% endif %}
+  return (fetch);
+}
+
+################
+# sub vcl_pass #
+################
+sub vcl_pass {
+{% if conf_varnish_vcl_pass is defined %}
+  {{ conf_varnish_vcl_pass }}
+{% endif %}
+
+  return (fetch);
+}
+sub vcl_synth {
+    if (resp.status == 503 && req.http.sie-enabled) {
+        unset req.http.sie-enabled;
+        return (restart);
+    }
+}
+
+sub vcl_purge {
+  # Only handle actual PURGE HTTP methods, everything else is discarded
+  if (req.method != "PURGE") {
+    # restart request
+    set req.http.X-Purge = "Yes";
+    return (restart);
+  }
+}
+###################
+# sub vcl_deliver #
+###################
+sub vcl_deliver {
+  unset resp.http.X-Req-Host;
+  unset resp.http.X-Req-URL;
+
+  # If the page is already cached return a HIT header, otherwise MISS.
+  if (obj.hits > 0) {
+    set resp.http.X-Cache = "HIT";
+    set resp.http.X-Cache-Hits = obj.hits;
+  } else {
+    set resp.http.X-Cache = "MISS";
+  }
+
+{% if conf_varnish_vcl_deliver is defined %}
+  {{ conf_varnish_vcl_deliver }}
+{% endif %}
+
+  return (deliver);
+}

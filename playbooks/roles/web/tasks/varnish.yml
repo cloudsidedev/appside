@@ -6,11 +6,6 @@
 #### conf_varnish_version = 41
 #### conf_varnish_version = 51
 
-# First stop the running service if present
-- name: varnish service state
-  service: name=varnish state=stopped enabled=yes
-  tags: [ varnish, apache2 ]
-
 - name: Varnish Depencencies (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
@@ -46,30 +41,28 @@
   ignore_errors: yes
   tags: [ varnish, varnish-conf, apache2 ]
 
-- name: varnish service state
-  service: name=varnish state=started enabled=yes
-  tags: [ varnish, apache2 ]
-
 - name: deploy varnish default conf (Debian family)
   template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
   with_items:
     - default/varnish
   notify: handle_reload_varnish
-  when: ansible_os_family == "Debian" and conf_varnish_version == 3
+  when: ansible_os_family == "Debian"
   tags: [ varnish, varnish-conf, apache2 ]
 
 - name: deploy varnish conf
-  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
+  template: src=etc/{{ item }}-{{ conf_varnish_version }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
   with_items:
     - varnish/default.vcl
   notify: handle_reload_varnish
-  when: conf_varnish_version == 3
   tags: [ varnish, varnish-conf, apache2 ]
 
 - name: perms /etc/varnish/secret (Debian family)
   file: path=/etc/varnish/secret owner=root group=nagios mode=0640
   when:
       - ansible_os_family == "Debian"
-      - conf_varnish_version == 3
       - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
   tags: [ varnish, varnish-conf, apache2 ]
+
+- name: varnish service state
+  service: name=varnish state=started enabled=yes
+  tags: [ varnish, apache2 ]
