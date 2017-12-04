@@ -41,10 +41,6 @@ defaults
     errorfile 400 {{ conf_haproxy_errors_path }}/400.http
     errorfile 403 {{ conf_haproxy_errors_path }}/403.http
     errorfile 408 {{ conf_haproxy_errors_path }}/408.http
-    errorfile 500 {{ conf_haproxy_errors_path }}/500.http
-    errorfile 502 {{ conf_haproxy_errors_path }}/502.http
-    errorfile 503 {{ conf_haproxy_errors_path }}/503.http
-    errorfile 504 {{ conf_haproxy_errors_path }}/504.http
 
 {% if conf_haproxy_userlist is defined %}
   # USERSLIT
@@ -115,7 +111,7 @@ backend www-backend
     # capture cookie vgnvisitor= len 32
     cookie SERVERID insert indirect nocache
     # option forwardfor
-    option httpchk
+    # option httpchk
     # option httpclose
     # rspidel ^Set-cookie:\ IP=
     {{ conf_haproxy_www_backend }}
