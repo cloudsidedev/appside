@@ -20,5 +20,6 @@
   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
   with_items:
       - nginx/nginx.conf
+      - nginx/sites-available/default
   notify: handle_reload_nginx
   tags: [ nginx, nginx-conf ]

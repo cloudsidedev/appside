@@ -37,6 +37,13 @@
   notify: handle_restart_hhvm
   tags: [ hhvm, hhvm-conf ]
 
+- name: provision HHVM nginx related configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - nginx/hhvm.conf
+  notify: handle_restart_nginx
+  tags: [ hhvm, hhvm-conf ]
+
 - name: hhvm service state
   service: name=hhvm state=started enabled=yes
   tags: [ hhvm ]

@@ -8,6 +8,12 @@
 conf_ruby_version_debian_family: 2.4
 
 #
+# nginx
+#
+conf_nginx_enable: false
+conf_nginx_hhvm_enable: false
+
+#
 # HHVM
 #
 conf_hhvm_enable: false
