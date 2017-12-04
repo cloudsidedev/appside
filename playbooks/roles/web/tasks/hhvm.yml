@@ -1,0 +1,42 @@
+---
+
+# file: playbooks/roles/web/tasks/hhvm.yml
+
+# sudo apt-get install software-properties-common apt-transport-https
+# sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xB4112585D386EB94
+
+# sudo add-apt-repository https://dl.hhvm.com/ubuntu
+# sudo apt-get update
+# sudo apt-get install hhvm
+
+- name: HHVM apt-key (Debian family)
+  apt_key: keyserver=keyserver.ubuntu.com id=0xB4112585D386EB94 state=present
+  when: ansible_os_family == "Debian"
+  tags: [ hhvm ]
+
+- name: HHVM repo (Ubuntu)
+  apt_repository: repo='deb https://dl.hhvm.com/ubuntu {{ ansible_distribution_release }}{{ conf_hhvm_version }} main' state=present update_cache=yes
+  when: ansible_distribution == "Ubuntu"
+  ignore_errors: yes
+  tags: [ hhvm, hhvm-conf, update ]
+
+- name: be sure HHVM packages packages are installed (Debian family)
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+    - hhvm
+  when: ansible_os_family == "Debian"
+  ignore_errors: yes
+  tags: [ hhvm ]
+
+- name: provision HHVM configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - hhvm/php.ini
+      - hhvm/server.ini
+      - default/hhvm
+  notify: handle_restart_hhvm
+  tags: [ hhvm, hhvm-conf ]
+
+- name: hhvm service state
+  service: name=hhvm state=started enabled=yes
+  tags: [ hhvm ]

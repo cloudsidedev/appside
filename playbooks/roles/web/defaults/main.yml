@@ -8,6 +8,12 @@
 conf_ruby_version_debian_family: 2.4
 
 #
+# HHVM
+#
+conf_hhvm_enable: false
+conf_hhvm_version: -lts-3.21
+
+#
 # PHP
 #
 conf_php_version_debian_family: 5.6

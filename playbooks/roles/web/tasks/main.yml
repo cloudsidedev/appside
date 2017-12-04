@@ -36,6 +36,22 @@
   when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
 
 #
+# nginx
+#
+- import_tasks: nginx.yml
+  when:
+    - conf_nginx_enable is defined and conf_nginx_enable == true  
+    - ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+
+#
+# HHVM
+#
+- import_tasks: hhvm.yml
+  when:
+    - conf_hhvm_enable is defined and conf_hhvm_enable == true  
+    - ansible_os_family == "Debian"
+
+#
 # mod_pagespeed
 #
 # - import_tasks: mod-pagespeed.yml
