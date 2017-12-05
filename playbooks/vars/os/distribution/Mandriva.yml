@@ -1,6 +1,6 @@
 ---
 
-# file: playbooks/vars/os/distribution/Ubuntu.yml
+# file: playbooks/vars/os/distribution/Mandriva.yml
 
 #
 # Base
@@ -110,17 +110,6 @@ conf_haproxy_errors_path: "/etc/haproxy/errors"
 #
 conf_etckeeper_lowlevel_package_manager: "dpkg"
 conf_etckeeper_highlevel_package_manager: "apt"
-
-#
-# nginx
-#
-conf_nginx_conf_path: /etc/nginx/conf.d
-conf_nginx_conf_file_path: /etc/nginx/nginx.conf
-conf_nginx_mime_file_path: /etc/nginx/mime.types
-conf_nginx_pidfile: /run/nginx.pid
-conf_nginx_vhost_path: /etc/nginx/sites-enabled
-conf_nginx_default_vhost_path: /etc/nginx/sites-enabled/default
-__conf_nginx_user: "www-data"
 
 #
 # etcd

@@ -53,6 +53,7 @@ ifeq "$(env)" "CFG_DEFAULT_ENV"
 env := $($(env))
 endif
 
+# on xenial64 the default user is "ubuntu"
 ifeq "$(firstrun)" "true"
 args += -k -u vagrant
 endif

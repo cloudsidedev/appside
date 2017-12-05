@@ -11,6 +11,7 @@ conf_local_etc_path: "/usr/local/etc"
 conf_lib_path: "/usr/local/lib"
 conf_bin_path: "/usr/local/bin"
 conf_zsh_path: "/usr/local/bin/zsh"
+conf_bash_path: "/usr/local/bin/bash"
 conf_root_group: "wheel"
 conf_www_group: "www"
 conf_sudo_nopasswd_group: wheel
