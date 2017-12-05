@@ -23,7 +23,7 @@
   tags: [ glusterfs ]
 
 - name: glusterfs PPA (staging and production) (Ubuntu)
-  apt_repository: repo='ppa:gluster/glusterfs-3.6' update_cache=yes
+  apt_repository: repo='ppa:gluster/glusterfs-{{ conf_glusterfs_version }}' update_cache=yes
   when: ansible_distribution == "Ubuntu" and conf_env != "development"
   tags: [ glusterfs ]
 
