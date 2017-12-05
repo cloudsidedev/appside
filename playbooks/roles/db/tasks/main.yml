@@ -69,8 +69,8 @@
 #
 - name: deploy /usr/local/bin/galeranotify.py
   template: src=usr/local/bin/galeranotify.py.j2 dest=/usr/local/bin/galeranotify owner=root group={{ conf_root_group }} mode=0755
-  when: conf_env != "development" and conf_galera_cluster == true
-  tags: [ mysql, percona ]
+  when: conf_env != "development" and conf_galera_cluster == true and conf_galera_notify_enable == true
+  tags: [ mysql, mysql-conf, percona, galeranotify ]
 
 #
 # AppArmor
@@ -79,7 +79,7 @@
   file: src=/etc/apparmor.d/usr.sbin.mysqld dest=/etc/apparmor.d/disable/usr.sbin.mysqld state=link force=yes
   notify: handle_reload_apparmor_mysql
   ignore_errors: yes
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and conf_mysql_version_debian_family <= 5.6
   tags: [ mysql ]
 
 - meta: flush_handlers
