@@ -3,6 +3,11 @@
 # file: playbooks/roles/web/defaults/main.yml
 
 #
+# GlusterFS
+#
+conf_glusterfs_version: 3.6
+
+#
 # ruby
 #
 conf_ruby_version_debian_family: 2.4
@@ -11,7 +16,94 @@ conf_ruby_version_debian_family: 2.4
 # nginx
 #
 conf_nginx_enable: false
-conf_nginx_hhvm_enable: false
+
+##########################################################
+# Used only for Debian/Ubuntu installation, as the -t option for apt.
+conf_nginx_default_release: ""
+
+# Used only for Redhat installation, enables source Nginx repo.
+conf_nginx_yum_repo_enabled: true
+
+# Use the official Nginx PPA for Ubuntu, and the version to use if so.
+conf_nginx_ppa_use: true
+conf_nginx_ppa_version: stable
+
+# The name of the nginx package to install.
+conf_nginx_package_name: "nginx"
+
+conf_nginx_conf_template: "etc/nginx/nginx.conf.j2"
+conf_nginx_vhost_template: "etc/nginx/vhost.j2"
+
+conf_nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+conf_nginx_worker_connections: "1024"
+conf_nginx_multi_accept: "off"
+
+conf_nginx_error_log: "/var/log/nginx/error.log warn"
+conf_nginx_access_log: "/var/log/nginx/access.log main buffer=16k flush=2m"
+
+conf_nginx_sendfile: "on"
+conf_nginx_tcp_nopush: "on"
+conf_nginx_tcp_nodelay: "on"
+
+conf_nginx_keepalive_timeout: "65"
+conf_nginx_keepalive_requests: "100"
+
+conf_nginx_server_tokens: "on"
+
+conf_nginx_client_max_body_size: "64m"
+
+conf_nginx_server_names_hash_bucket_size: "64"
+
+conf_nginx_proxy_cache_path: ""
+
+conf_nginx_extra_conf_options: ""
+# Example extra main options, used within the main nginx's context:
+#   conf_nginx_extra_conf_options: |
+#     env VARIABLE;
+#     include /etc/nginx/main.d/*.conf;
+
+conf_nginx_extra_http_options: ""
+# Example extra http options, printed inside the main server http config:
+#    conf_nginx_extra_http_options: |
+#      proxy_buffering    off;
+#      proxy_set_header   X-Real-IP $remote_addr;
+#      proxy_set_header   X-Scheme $scheme;
+#      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+#      proxy_set_header   Host $http_host;
+
+conf_nginx_remove_default_vhost: false
+conf_nginx_vhosts: []
+# Example vhost below, showing all available options:
+# - listen: "80" # default: "80"
+#   server_name: "example.com" # default: N/A
+#   root: "/var/www/example.com" # default: N/A
+#   index: "index.html index.htm" # default: "index.html index.htm"
+#   filename: "example.com.conf" # Can be used to set the filename of the vhost file.
+#
+#   # Properties that are only added if defined:
+#   server_name_redirect: "www.example.com" # default: N/A
+#   error_page: ""
+#   access_log: ""
+#   error_log: ""
+#   extra_parameters: "" # Can be used to add extra config blocks (multiline).
+#   template: "" # Can be used to override the `conf_nginx_vhost_template` per host.
+#   state: "absent" # To remove the vhost configuration.
+
+conf_nginx_upstreams: []
+# - name: myapp1
+#   strategy: "ip_hash" # "least_conn", etc.
+#   keepalive: 16 # optional
+#   servers: {
+#     "srv1.example.com",
+#     "srv2.example.com weight=3",
+#     "srv3.example.com"
+#   }
+
+conf_nginx_log_format: |
+  '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for"'
+##########################################################
 
 #
 # HHVM
