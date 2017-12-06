@@ -118,9 +118,8 @@ conf_php_version_debian_family: 5.6
 
 #
 # VARNISH
-# possible values: 3, 41, 51
 #
-conf_varnish_version: 51
+conf_varnish_version: 3
 
 #
 # rbenv

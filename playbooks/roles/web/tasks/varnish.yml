@@ -2,44 +2,44 @@
 
 # file: playbooks/roles/web/tasks/varnish.yml
 
-#### conf_varnish_version = 3
-#### conf_varnish_version = 41
-#### conf_varnish_version = 51
+#
+# conf_varnish_version = { 3 | 41 | 51 }
+#
 
-- name: Varnish Depencencies (Debian family)
+- name: varnish Depencencies (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
     - debian-archive-keyring
     - gnupg
     - apt-transport-https
-  tags: [ varnish, varnish-conf, apache2 ]
+  tags: [ varnish, apache2 ]
 
-- name: Varnish apt-key (Debian family)
+- name: varnish apt-key (Debian family)
   apt_key:
     url: https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/gpgkey
     state: present
   when: ansible_os_family == "Debian" and conf_varnish_version != 3
-  tags: [ varnish, varnish-conf, apache2 ]
+  tags: [ varnish, apache2 ]
 
-- name: Varnish repo (Debian family)
+- name: varnish repo (Debian family)
   apt_repository: repo='deb https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main' state=present update_cache=yes
   when: ansible_distribution == "Ubuntu" and conf_varnish_version != 3
   ignore_errors: yes
-  tags: [ varnish, varnish-conf, apache2 ]
+  tags: [ varnish, apache2 ]
 
-- name: Varnish repo src (Debian family)
+- name: varnish repo src (Debian family)
   apt_repository: repo='deb-src https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main' state=present update_cache=yes
   when: ansible_distribution == "Ubuntu" and conf_varnish_version != 3
   ignore_errors: yes
-  tags: [ varnish, varnish-conf, apache2 ]
+  tags: [ varnish, apache2 ]
 
-- name: be sure Varnish package is installed (Debian family)
+- name: be sure varnish package is installed (Debian family)
   apt: pkg={{ item }} state=latest force=yes
   with_items:
     - varnish
   when: ansible_os_family == "Debian"
   ignore_errors: yes
-  tags: [ varnish, varnish-conf, apache2 ]
+  tags: [ varnish, apache2 ]
 
 - name: deploy varnish default conf (Debian family)
   template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
@@ -65,4 +65,5 @@
 
 - name: varnish service state
   service: name=varnish state=started enabled=yes
-  tags: [ varnish, apache2 ]
+  tags: [ varnish, varnish-conf, apache2 ]
+  

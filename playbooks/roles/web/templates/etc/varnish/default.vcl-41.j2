@@ -1,7 +1,9 @@
-vcl 4.0;
 #
 # --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
 #
+
+vcl 4.0;
+
 import std;
 ###########
 # Backend #
@@ -150,10 +152,6 @@ sub vcl_backend_response {
   if (bereq.url ~ "^[^?]*\.(bmp|css|csv|doc|docx|eot|gif|ico|jpeg|jpg|js|odt|otf|pdf|png|ppt|pptx|rtf|svg|svgz|swf|ttf|txt|webp|woff|woff2|xls|xlsx|xml)(\?.*)?$") {
      unset beresp.http.set-cookie;
   }
-
-  # Allow stale content, in case the backend goes down.
-  # make Varnish keep all objects for 6 hours beyond their TTL
-  set beresp.grace = 6h;
 
 {% if conf_varnish_vcl_backend_response is defined %}
   {{ conf_varnish_vcl_backend_response }}
