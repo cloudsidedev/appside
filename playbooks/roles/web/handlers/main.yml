@@ -18,6 +18,9 @@
   command: varnishd -C -f /etc/varnish/default.vcl
   changed_when: False
 
+- name: handle_reload_systemd
+  command: systemctl daemon-reload
+
 - name: handle_restart_nginx
   service: name=nginx state=restarted
 
