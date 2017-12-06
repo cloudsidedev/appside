@@ -2,41 +2,43 @@
 
 # file: playbooks/roles/web/tasks/varnish.yml
 
-- name: varnish-3.0 repo (RedHat Family)
-  yum_repository:
-    name: "varnish-3.0"
-    description: "Varnish 3.0 for Enterprise Linux"
-    baseurl: "https://repo.varnish-cache.org/redhat/varnish-3.0/el7/$basearch"
-    gpgkey: "https://repo.varnish-cache.org/GPG-key.txt"
-    gpgcheck: no
-    enabled: yes
-  when: ansible_os_family == "RedHat"
-  tags: [ varnish, varnish-conf, apache2 ]
+#
+# conf_varnish_version = { 3 | 41 | 51 }
+#
 
-- name: set varnish on hold (RedHat Family)
-  lineinfile: dest=/etc/yum.conf regexp="^exclude=varnish" state=present create=yes line="exclude=varnish varnish-libs"
-  when: ansible_os_family == "RedHat"
-  tags: [ varnish, varnish-conf, apache2 ]
+- name: varnish Depencencies (Debian family)
+  apt: pkg={{ item }} state=latest force=yes
+  with_items:
+    - debian-archive-keyring
+    - gnupg
+    - apt-transport-https
+  tags: [ varnish, apache2 ]
+
+- name: varnish apt-key (Debian family)
+  apt_key:
+    url: https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/gpgkey
+    state: present
+  when: ansible_os_family == "Debian" and conf_varnish_version != 3
+  tags: [ varnish, apache2 ]
+
+- name: varnish repo (Debian family)
+  apt_repository: repo='deb https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main' state=present update_cache=yes
+  when: ansible_distribution == "Ubuntu" and conf_varnish_version != 3
+  ignore_errors: yes
+  tags: [ varnish, apache2 ]
+
+- name: varnish repo src (Debian family)
+  apt_repository: repo='deb-src https://packagecloud.io/varnishcache/varnish{{ conf_varnish_version }}/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main' state=present update_cache=yes
+  when: ansible_distribution == "Ubuntu" and conf_varnish_version != 3
+  ignore_errors: yes
+  tags: [ varnish, apache2 ]
 
 - name: be sure varnish package is installed (Debian family)
-  package: name={{ item }} state=present
+  apt: pkg={{ item }} state=latest force=yes
   with_items:
     - varnish
-  ignore_errors: yes
   when: ansible_os_family == "Debian"
-  tags: [ varnish, varnish-conf, apache2 ]
-
-- name: be sure varnish package is installed (RedHat family)
-  package: name={{ item }} state=present
-  with_items:
-    - varnish-libs-0:3.0.7-1.el7.centos.x86_64
-    - varnish-0:3.0.7-1.el7.centos.x86_64
   ignore_errors: yes
-  when: ansible_os_family == "RedHat"
-  tags: [ varnish, varnish-conf, apache2 ]
-
-- name: varnish service state
-  service: name=varnish state=started enabled=yes
   tags: [ varnish, apache2 ]
 
 - name: deploy varnish default conf (Debian family)
@@ -48,15 +50,20 @@
   tags: [ varnish, varnish-conf, apache2 ]
 
 - name: deploy varnish conf
-  template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
+  template: src=etc/{{ item }}-{{ conf_varnish_version }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_www_group }} mode=0644
   with_items:
     - varnish/default.vcl
   notify: handle_reload_varnish
   tags: [ varnish, varnish-conf, apache2 ]
 
-# - name: perms /etc/varnish/secret (Debian family)
-#   file: path=/etc/varnish/secret owner=root group=nagios mode=0640
-#   when:
-#       - ansible_os_family == "Debian"
-#       - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
-#   tags: [ varnish, varnish-conf, apache2 ]
+- name: perms /etc/varnish/secret (Debian family)
+  file: path=/etc/varnish/secret owner=root group=nagios mode=0640
+  when:
+      - ansible_os_family == "Debian"
+      - conf_icinga_master == true or conf_icinga_satellite == true or conf_icinga_client == true
+  tags: [ varnish, varnish-conf, apache2 ]
+
+- name: varnish service state
+  service: name=varnish state=started enabled=yes
+  tags: [ varnish, varnish-conf, apache2 ]
+  
