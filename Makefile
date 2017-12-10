@@ -53,9 +53,11 @@ ifeq "$(env)" "CFG_DEFAULT_ENV"
 env := $($(env))
 endif
 
-# on xenial64 the default user is "ubuntu"
+# on xenial64 the default user is "ubuntu", ubuntu/artful64 fixes this, see:
+# https://bugs.launchpad.net/cloud-images/+bug/1569237/comments/84
 ifeq "$(firstrun)" "true"
-args += -k -u vagrant
+# args += -k -u vagrant
+args += -k -u ubuntu
 endif
 
 ifeq "$(local)" "true"
@@ -173,7 +175,16 @@ local:
 ssh:
 	@utils/ssh.sh $($(tenant)) $($(vault)) $(env) $(args) $(tenant)
 
-vagrant:
+vagrant-xenial:
+	mkdir -p ~/Downloads/Software
+	mkdir -p ~/Downloads/Software/Vagrant-Boxes
+	wget -c -O ~/Downloads/Software/Vagrant-Boxes/xenial64.box https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-vagrant.box
+	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
+	vagrant plugin install vagrant-cachier
+	# https://github.com/mitchellh/vagrant/issues/1673
+	vagrant plugin install vagrant-vbguest
+
+vagrant-trusty:
 	mkdir -p ~/Downloads/Software
 	mkdir -p ~/Downloads/Software/Vagrant-Boxes
 	cd ~/Downloads/Software/Vagrant-Boxes &&  wget -c http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box  && mv trusty-server-cloudimg-amd64-vagrant-disk1.box trusty64.box && cd ~/Documents/webdev/appflow
@@ -190,7 +201,9 @@ vagrant-centos:
 	ln -s -f ~/Downloads/Software/Vagrant-Boxes .
 	vagrant plugin install vagrant-cachier
 	vagrant plugin install vagrant-vbguest
-	
+
+vagrant: vagrant-xenial
+
 support:
 	@utils/support.sh
 

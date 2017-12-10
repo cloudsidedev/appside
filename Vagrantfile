@@ -11,13 +11,15 @@ VAGRANTFILE_API_VERSION = "2"
 ANSIBLE_TAGS=ENV['ANSIBLE_TAGS']
 ANSIBLE_TAGS_SKIP=ENV['ANSIBLE_TAGS_SKIP']
 
-# Synced folders, can be overriden via Vagrantfile.local.yml
+# Custom settings which can be overriden via Vagrantfile.local.yml
 atlantis_synced_folder_appflow = "~/Documents/webdev/appflow"
 atlantis_synced_folder_webdev = "~/Documents/webdev/development"
 atlantis_synced_folder_mount_options = 'dmode=0775,fmode=0664'
 atlantis_synced_folder_type = ""
 atlantis_synced_folder_smb_username = ""
 atlantis_synced_folder_smb_password = ""
+atlantis_vm_hostname = "atlantis"
+atlantis_vm_box_url = "Vagrant-Boxes/xenial64.box"
 
 dir = File.dirname(File.expand_path(__FILE__))
 
@@ -41,6 +43,12 @@ if File.file?("#{dir}/Vagrantfile.local.yml")
   if custom_settings['synced_folder']['smb_password']
     atlantis_synced_folder_smb_password = custom_settings['synced_folder']['smb_password']
   end
+  if custom_settings['vm']['hostname']
+    atlantis_vm_hostname = custom_settings['vm']['hostname']
+  end
+  if custom_settings['vm']['box_url']
+    atlantis_vm_box_url = custom_settings['vm']['box_url']
+  end
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -54,8 +62,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   ############
   config.vm.define "atlantis" do |atlantis|
     atlantis.vm.box = "atlantis"
-    atlantis.vm.hostname = "atlantis"
-    atlantis.vm.box_url = "Vagrant-Boxes/trusty64.box"
+    atlantis.vm.hostname = atlantis_vm_hostname
+    atlantis.vm.box_url = atlantis_vm_box_url
     atlantis.vm.network :private_network, ip: "192.168.80.2"
     atlantis.vm.synced_folder atlantis_synced_folder_webdev, "/var/www/vhosts", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type, smb_username: atlantis_synced_folder_smb_username, smb_password: atlantis_synced_folder_smb_password
     atlantis.vm.synced_folder atlantis_synced_folder_appflow, "/var/appflow", owner: "deploy", group: "www-data", :mount_options => [atlantis_synced_folder_mount_options], type: atlantis_synced_folder_type
@@ -63,6 +71,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     atlantis.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis", "--natdnshostresolver1", "on"]
     end
+
+    atlantis.vm.provision "shell", inline: <<-SHELL
+      echo "ubuntu:ubuntu" | sudo chpasswd
+      sudo apt install python -y 
+    SHELL
 
   end
 
