@@ -72,10 +72,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--cpus", 2, "--memory", 2048, "--name", "vagrant-atlantis", "--natdnshostresolver1", "on"]
     end
 
-    atlantis.vm.provision "shell", inline: <<-SHELL
-      echo "ubuntu:ubuntu" | sudo chpasswd
-      sudo apt install python -y 
-    SHELL
+    # atlantis.vm.provision "shell", inline: <<-SHELL
+    #   echo "ubuntu:ubuntu" | sudo chpasswd
+    #   sudo apt install python -y 
+    # SHELL
 
   end
 

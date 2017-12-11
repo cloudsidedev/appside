@@ -85,7 +85,7 @@ args += --check
 endif
 
 ifeq "$(ask-sudo-pass)" "true"
-args +=  --ask-sudo-pass
+args += --ask-sudo-pass
 endif
 
 .PHONY: provision encrypt decrypt checkin
