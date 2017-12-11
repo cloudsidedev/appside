@@ -3,6 +3,11 @@
 # file: playbooks/roles/common/defaults/main.yml
 
 #
+# snmpd
+#
+conf_snmpd_enable: false
+
+#
 # Jailkit
 #
 conf_jailkit_enable: false
