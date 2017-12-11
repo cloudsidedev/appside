@@ -4,7 +4,6 @@
 # fire, yaml, json, flask, PyMySQL
 
 import fire
-
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
@@ -13,11 +12,14 @@ import appflow.AppflowYaml as apyaml
 
 class AppFlow(object):
 
-    def init(self, tenant, env):
+    def init(self, tenant):
         tools.initialize(tenant)
 
     def ssh(self, tenant, env):
         tools.setup_ssh(tenant, env)
+
+    def vhosts(self, tenant):
+        tools.set_vhosts_hosts(tenant)
 
     def reset(self, tenant, env):
         tools.git_reset(tenant, env)
@@ -56,13 +58,13 @@ class AppFlow(object):
         print(apyaml.get_value(file, key))
 
     def set(self, file, key, value):
-        apyaml.set_value(file, key, value)
+        print(apyaml.set_value(file, key, value))
 
     def rm(self, file, key):
-        apyaml.rm_value(file, key)
+        print(pyaml.rm_value(file, key))
 
     def add(self, file, key, value):
-        apyaml.add_value(file, key, value)
+        print(apyaml.add_value(file, key, value))
 
 
 if __name__ == '__main__':

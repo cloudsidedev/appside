@@ -14,7 +14,6 @@ def get_value(my_file, key=None):
     # if not (pattern.match(key)):
     #     return 'Error: Bad Syntax'
     my_file = my_file.replace('.', '/', 3)
-    print(my_file)
     if my_file != 'config':
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
     else:

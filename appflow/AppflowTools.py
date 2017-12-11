@@ -1,11 +1,14 @@
+import json
 import os
 import shutil
 import subprocess
+from builtins import any as b_any
 
 import yaml
 
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowUtils as utils
+import appflow.AppflowYaml as apyaml
 
 
 def initialize(tenant):
@@ -21,6 +24,36 @@ def initialize(tenant):
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
+
+
+def set_vhosts_hosts(tenant):
+    vhosts = apyaml.get_value(tenant + ".development.group_vars.all",
+                              "conf_vhosts_common")
+    vhosts = json.loads(vhosts)
+    ips = apyaml.get_value(tenant + ".development.group_vars.all",
+                           "conf_hosts")
+    ips = json.loads(ips)
+
+    file = open("/etc/hosts", 'r')
+    current_hosts = [line.strip() for line in file]
+
+    new_hosts = []
+    for host in vhosts:
+        if vhosts.get(host)["state"] == "enabled":
+            server_alias = vhosts.get(host)["servername"]
+            for alias in vhosts.get(host)["serveralias"]:
+                server_alias = server_alias + " " + alias
+        for ip in ips:
+            # Assemble the line IP + servername + aliases
+            ip = ip.split()[0] + " " + server_alias
+            # Check if this line is already present
+            if ip not in "".join(current_hosts):
+                # if not present add it!
+                new_hosts.append(ip)
+    for host in new_hosts:
+        # let's append to the file only the lines we need
+        # we will need sudo in order to write in /etc/hosts
+        os.system('echo ' + host + ' | sudo tee -a /etc/hosts')
 
 
 def setup_ssh(tenant, env):
