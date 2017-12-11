@@ -4,19 +4,32 @@ import appflow.AppflowUtils as utils
 
 def provision(tenant, env, *args):
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    playbook = '/opt/appflow/playbooks/generic.yml'
+    appflow_folder = os.path.dirname(
+        os.path.dirname(os.path.realpath(__file__)))
+    playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
     # Convert tags=xyz to --tags xyz
     tags_argument = list(args)
-    for tag in tags_argument[:]:
+    print(type(tags_argument))
+    firstrun = False
+    for tag in tags_argument:
         if tag.split('=')[1] == '':
             tags_argument.remove(tag)
+        elif tag == "firstrun=true":
+            tags_argument.remove(tag)
+            firstrun = True
     for i, tag in enumerate(tags_argument):
         tags_argument[i] = '--' + \
             tags_argument[i].split('=')[0].replace('_', '-') + \
             ' ' + tags_argument[i].split('=')[1]
 
+    # First run! Let's default to the generic user waiting for users provision
+    if firstrun:
+        tags_argument.append("-k -u ubuntu")
+    print('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
+          inventory + ' ' + playbook +
+          ' --vault-password-file ' + password_file)
     os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
               inventory + ' ' + playbook +
               ' --vault-password-file ' + password_file)
@@ -24,7 +37,9 @@ def provision(tenant, env, *args):
 
 def tags(tenant, env):
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    playbook = '/opt/appflow/playbooks/generic.yml'
+    appflow_folder = os.path.dirname(
+        os.path.dirname(os.path.realpath(__file__)))
+    playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
     os.system('ansible-playbook --list-tags -i ' + inventory +

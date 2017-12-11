@@ -50,7 +50,7 @@ class AppFlow(object):
 
     def provision(self, tenant, env, *args):
         print(utils.get_provision_color_string('provision', tenant, env))
-        apansible.provision(tenant, env, args)
+        apansible.provision(tenant, env, *args)
 
     def get(self, file, key=None):
         print(apyaml.get_value(file, key))
