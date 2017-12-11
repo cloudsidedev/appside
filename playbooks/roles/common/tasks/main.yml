@@ -103,7 +103,7 @@
   tags: [ common, nullmailer ]
 
 - import_tasks: snmpd.yml
-  when: and conf_snmpd_enable is defined and conf_snmpd_enable == true
+  when: conf_snmpd_enable is defined and conf_snmpd_enable == true
   tags: [ common, snmpd ]
 
 - import_tasks: nfs.yml
