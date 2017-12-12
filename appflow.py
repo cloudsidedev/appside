@@ -34,8 +34,8 @@ class AppFlow(object):
     def checkout(self, tenant, env):
         tools.git_check_out(tenant, env)
 
-    def checkin(self, tenant, env):
-        tools.git_check_in(tenant, env)
+    def checkin(self, tenant, env, commit="Auto Commit"):
+        tools.git_check_in(tenant, env, commit)
 
     def decrypt(self, tenant, env):
         print(utils.get_provision_color_string('decrypt', tenant, env))

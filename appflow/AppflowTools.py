@@ -111,7 +111,7 @@ def git_status(tenant, env):
         return diff
 
 
-def git_check_in(tenant, env):
+def git_check_in(tenant, env, commit):
     _dir = utils.get_tenant_dir(tenant)
     folder = utils.get_tenant_env_dir(tenant, env)
     file_list = utils.get_file_list(folder)
@@ -129,7 +129,6 @@ def git_check_in(tenant, env):
             ['git', '-C', _dir, 'add', file], stdout=_pipe, stderr=_pipe)
         for line in iter(out.stdout.readline, b''):
             print(line.decode('utf-8'))
-    commit = "Auto Commit"
     out = subprocess.Popen(
         ['git', '-C', _dir, 'commit', '-m', commit], stdout=_pipe, stderr=_pipe)
     for line in iter(out.stdout.readline, b''):
