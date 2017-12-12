@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Reuirements
+# Requirements
 # fire, yaml, json, flask, PyMySQL
 
 import fire
@@ -8,7 +8,6 @@ import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
 import appflow.AppflowYaml as apyaml
-
 
 class AppFlow(object):
 
@@ -65,7 +64,6 @@ class AppFlow(object):
 
     def add(self, file, key, value):
         print(apyaml.add_value(file, key, value))
-
 
 if __name__ == '__main__':
     fire.Fire(AppFlow)
