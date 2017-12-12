@@ -11,7 +11,6 @@ def provision(tenant, env, *args):
 
     # Convert tags=xyz to --tags xyz
     tags_argument = list(args)
-    print(type(tags_argument))
     firstrun = False
     for tag in tags_argument:
         if tag.split('=')[1] == '':
@@ -27,9 +26,6 @@ def provision(tenant, env, *args):
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         tags_argument.append("-k -u ubuntu")
-    print('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
-          inventory + ' ' + playbook +
-          ' --vault-password-file ' + password_file)
     os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
               inventory + ' ' + playbook +
               ' --vault-password-file ' + password_file)

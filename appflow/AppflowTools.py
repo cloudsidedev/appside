@@ -125,13 +125,19 @@ def git_check_in(tenant, env):
 
     _pipe = subprocess.PIPE
     for file in diff:
-        subprocess.Popen(
+        out = subprocess.Popen(
             ['git', '-C', _dir, 'add', file], stdout=_pipe, stderr=_pipe)
+        for line in iter(out.stdout.readline, b''):
+            print(line.decode('utf-8'))
     commit = "Auto Commit"
-    subprocess.Popen(
+    out = subprocess.Popen(
         ['git', '-C', _dir, 'commit', '-m', commit], stdout=_pipe, stderr=_pipe)
-    subprocess.Popen(
+    for line in iter(out.stdout.readline, b''):
+        print(line.decode('utf-8'))
+    out = subprocess.Popen(
         ['git', '-C', _dir, 'push'], stdout=_pipe, stderr=_pipe)
+    for line in iter(out.stdout.readline, b''):
+        print(line.decode('utf-8'))
     git_reset(tenant, env)
 
 
@@ -142,5 +148,7 @@ def git_check_out(tenant, env):
         git_reset(tenant, env)
         _dir = utils.get_tenant_dir(tenant)
         _pipe = subprocess.PIPE
-        subprocess.Popen(
+        out = subprocess.Popen(
             ['git', '-C', _dir, 'pull'], stdout=_pipe, stderr=_pipe)
+        for line in iter(out.stdout.readline, b''):
+            print(line.decode('utf-8'))
