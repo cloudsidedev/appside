@@ -123,6 +123,13 @@ conf_nginx_default_vhost_path: /etc/nginx/sites-enabled/default
 __conf_nginx_user: "www-data"
 
 #
+# redis
+#
+__conf_redis_package: redis-server
+conf_redis_daemon: redis-server
+conf_redis_conf_path: /etc/redis/redis.conf
+
+#
 # etcd
 #
 conf_etcd_config_only: False

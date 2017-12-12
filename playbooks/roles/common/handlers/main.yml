@@ -20,6 +20,9 @@
 - name: handle_restart_docker
   service: name=docker state=restarted
 
+- name: handle_restart_redis
+  service: name={{ conf_redis_daemon }} state=restarted
+
 - name: handle_restart_tinc
   service: name=tinc state=restarted
 

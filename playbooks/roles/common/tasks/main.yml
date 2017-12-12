@@ -122,6 +122,10 @@
   when: ansible_os_family == "Debian"
   tags: [ common ]
 
+- import_tasks: redis.yml
+  when: conf_redis_enable is defined and conf_redis_enable == true
+  tags: [ common, redis ]
+
 # - import_tasks: vpn.yml
 #   when: conf_vpn_netname is defined
 #   tags: [ common ]
