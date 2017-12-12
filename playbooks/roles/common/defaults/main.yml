@@ -17,3 +17,59 @@ conf_jailkit_url: "https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2"
 # Docker
 #
 conf_docker_enable: false
+
+#
+# redis
+#
+# conf_redis_enablerepo: epel
+conf_redis_enable: false
+
+conf_redis_port: 6379
+conf_redis_bind_interface: 127.0.0.1
+conf_redis_unixsocket: ''
+conf_redis_timeout: 300
+
+conf_redis_loglevel: "notice"
+conf_redis_logfile: /var/log/redis/redis-server.log
+
+conf_redis_databases: 16
+
+# Set to an empty set to disable persistence (saving the DB to disk).
+conf_redis_save:
+  - 900 1
+  - 300 10
+  - 60 10000
+
+conf_redis_rdbcompression: "yes"
+conf_redis_dbfilename: dump.rdb
+conf_redis_dbdir: /var/lib/redis
+
+conf_redis_maxmemory: 0
+conf_redis_maxmemory_policy: "noeviction"
+conf_redis_maxmemory_samples: 5
+
+conf_redis_appendonly: "no"
+conf_redis_appendfsync: "everysec"
+
+# Add extra include files for local configuration/overrides.
+conf_redis_includes: []
+
+# Require authentication to Redis with a password.
+conf_redis_requirepass: ""
+
+# Disable certain Redis commands for security reasons.
+conf_redis_disabled_commands: []
+#  - FLUSHDB
+#  - FLUSHALL
+#  - KEYS
+#  - PEXPIRE
+#  - DEL
+#  - CONFIG
+#  - SHUTDOWN
+#  - BGREWRITEAOF
+#  - BGSAVE
+#  - SAVE
+#  - SPOP
+#  - SREM
+#  - RENAME
+#  - DEBUG
