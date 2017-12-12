@@ -17,7 +17,7 @@ def get_value(my_file, key=None):
     if my_file != 'config':
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
     else:
-        file_name = os.getenv("HOME") + "/.appflow/" + my_file
+        file_name = os.getenv("HOME") + "/.appflow/" + my_file + ".yml"
 
     if not os.path.exists(file_name):
         return 'Error: No such File or Directory'

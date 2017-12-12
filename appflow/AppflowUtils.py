@@ -124,7 +124,7 @@ def get_md5_folder(tenant):
     return os.getenv("HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant
 
 
-def query_yes_no(question, default="yes"):
+def yes_no(question, default="yes"):
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     if default is None:

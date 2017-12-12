@@ -17,8 +17,13 @@ def initialize(tenant):
     for directory in dirs:
         os.makedirs(os.getenv('HOME') + directory, exist_ok=True)
 
-    conf = {'defaults': {'ControlMaster': 'auto', 'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock', 'ControlPersist': True,
-                         'ForwardAgent': True}, 'includes': ['~/.ssh/assh.d/*/*.yml', '~/.ssh/assh_personal.yml']}
+    conf = {'defaults': {'ControlMaster': 'auto',
+                         'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock',
+                         'ControlPersist': True,
+                         'ForwardAgent': True
+                         },
+            'includes': ['~/.ssh/assh.d/*/*.yml',
+                         '~/.ssh/assh_personal.yml']}
     file_name = os.getenv('HOME') + "/.ssh/assh.yml"
     utils.safe_remove(file_name)
     with open(file_name, 'w') as outfile:
@@ -97,7 +102,7 @@ def git_status(tenant, env):
         subprocess.Popen(
             ['git', '-C', _dir, 'diff-files --name-only -B -R -M', env],
             stdout=_pipe, stderr=_pipe)
-        return False
+        return []
     else:
         md5_store_folder = utils.get_md5_folder(tenant)
         md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
@@ -141,8 +146,8 @@ def git_check_in(tenant, env, commit):
 
 
 def git_check_out(tenant, env):
-    query = utils.query_yes_no(
-        'Warning, this process will overwrite any un-pushed work, continue?', 'no')
+    query = utils.yes_no(
+        'WARNING, this will overwrite any un-pushed work, continue?', 'no')
     if query is True:
         git_reset(tenant, env)
         _dir = utils.get_tenant_dir(tenant)
