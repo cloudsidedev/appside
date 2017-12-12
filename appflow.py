@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # Reuirements
 # fire, yaml, json, flask, PyMySQL
