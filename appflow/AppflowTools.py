@@ -32,6 +32,12 @@ def initialize(tenant):
 
 
 def set_vhosts_hosts(tenant):
+    _dir = utils.get_tenant_dir(tenant)
+    target_folder = _dir + "development"
+    is_decrypted = False
+    if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
+        apansible.decrypt(tenant, "development")
+        is_decrypted = True
     vhosts = apyaml.get_value(tenant + ".development.group_vars.all",
                               "conf_vhosts_common")
     vhosts = json.loads(vhosts)
@@ -59,6 +65,9 @@ def set_vhosts_hosts(tenant):
         # let's append to the file only the lines we need
         # we will need sudo in order to write in /etc/hosts
         os.system('echo ' + host + ' | sudo tee -a /etc/hosts')
+
+    if is_decrypted is True:
+        git_reset(tenant, "development")
 
 
 def setup_ssh(tenant, env):
