@@ -3,8 +3,12 @@
 # Requirements
 # fire, yaml, json, flask, PyMySQL
 
-import fire
 import json
+import os
+import subprocess
+
+import fire
+
 import appflow.AppflowAnsible as apansible
 import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
@@ -17,9 +21,21 @@ class AppFlow(object):
     default_tenant = default_config.get("appflow")["tenant"]["name"]
     default_env = default_config.get("appflow")["tenant"]["default_env"]
 
-    def test(self, tenant=default_tenant, env=default_env):
-        print(tenant)
-        print(env)
+    def test(self, branch="master"):
+        appflow_dir = os.path.dirname(os.path.realpath(__file__))
+        _pipe = subprocess.PIPE
+        out = subprocess.Popen(
+            ['git', '-C', appflow_dir, 'checkout', branch],
+            stdout=_pipe,
+            stderr=_pipe)
+        for line in iter(out.stdout.readline, b''):
+            print(line.decode('utf-8'))
+        out = subprocess.Popen(
+            ['git', '-C', appflow_dir, 'pull'],
+            stdout=_pipe,
+            stderr=_pipe)
+        for line in iter(out.stdout.readline, b''):
+            print(line.decode('utf-8'))
 
     def init(self, tenant=default_tenant):
         tools.initialize(tenant)
