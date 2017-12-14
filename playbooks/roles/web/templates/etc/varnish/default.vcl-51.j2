@@ -68,6 +68,7 @@ sub vcl_hash {
 # sub vcl_recv #
 ################
 sub vcl_recv {
+
   # Allow purging.
   if (req.method == "PURGE") {
       if (req.http.X-Forwarded-For || !client.ip ~ purge) {
@@ -129,14 +130,22 @@ sub vcl_recv {
       return (hash);
   }
 
+  # WP cookies: https://www.varnish-software.com/wiki/content/tutorials/wordpress/wp_step_by_step.html#ignore-cookies
+  set req.http.cookie = regsuball(req.http.cookie, "wp-settings-\d+=[^;]+(; )?", "");
+  set req.http.cookie = regsuball(req.http.cookie, "wp-settings-time-\d+=[^;]+(; )?", "");
+  set req.http.cookie = regsuball(req.http.cookie, "wordpress_test_cookie=[^;]+(; )?", "");
+  if (req.http.cookie == "") {
+    unset req.http.cookie;
+  }
+
 {% if conf_varnish_vcl_recv is defined %}
   {{ conf_varnish_vcl_recv }}
 {% endif %}
 
   # Don't cache requests with authorization. (http://book.varnish-software.com/3.0/VCL_Basics.html#default-vcl-recv)
-#   if (req.http.Authorization) {
-#       return (pass);
-#   }
+  #   if (req.http.Authorization) {
+  #       return (pass);
+  #   }
 
   return (hash);
 }
