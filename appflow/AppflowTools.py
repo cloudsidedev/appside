@@ -48,7 +48,13 @@ def set_vhosts_hosts(tenant):
     file = open("/etc/hosts", 'r')
     current_hosts = [line.strip() for line in file]
 
+    os.system('echo "\n" | sudo tee -a /etc/hosts')
     new_hosts = []
+    for ip in ips:
+        # Check if this line is already present
+        if ip not in "".join(current_hosts):
+            # if not present add it!
+            new_hosts.append(ip)
     for host in vhosts:
         if vhosts.get(host)["state"] == "enabled":
             server_alias = vhosts.get(host)["servername"]
@@ -65,7 +71,6 @@ def set_vhosts_hosts(tenant):
         # let's append to the file only the lines we need
         # we will need sudo in order to write in /etc/hosts
         os.system('echo ' + host + ' | sudo tee -a /etc/hosts')
-
     if is_decrypted is True:
         git_reset(tenant, "development")
 
