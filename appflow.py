@@ -21,7 +21,7 @@ class AppFlow(object):
     default_tenant = default_config.get("appflow")["tenant"]["name"]
     default_env = default_config.get("appflow")["tenant"]["default_env"]
 
-    def test(self, branch="master"):
+    def update(self, branch="master"):
         appflow_dir = os.path.dirname(os.path.realpath(__file__))
         _pipe = subprocess.PIPE
         out = subprocess.Popen(
