@@ -8,6 +8,20 @@
 conf_glusterfs_version: 3.6
 
 #
+# MogileFS
+#
+conf_mogilefs_enable: false
+conf_mogilefs_user: mogilefs
+conf_mogilefs_group: mogilefs
+conf_mogilefs_storage_path: /data/mogilefs
+conf_mogilefs_doc_root: /data/mogilefs
+conf_mogilefs_db_dsn: DBI:mysql:mogilefs:host=localhost;port=3306;mysql_connect_timeout=360
+conf_mogilefs_port: 7001
+conf_mogilefs_http_listen: 0.0.0.0:7500
+conf_mogilefs_mgmt_listen: 0.0.0.0:7501
+conf_mogilefs_trackers: 127.0.0.1:7001
+
+#
 # ruby
 #
 conf_ruby_version_debian_family: 2.4
@@ -117,9 +131,9 @@ conf_hhvm_version: -lts-3.21
 conf_php_version_debian_family: 5.6
 
 #
-# VARNISH
+# Varnish
 #
-conf_varnish_version: 41
+conf_varnish_version: 3
 
 #
 # rbenv
