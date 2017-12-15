@@ -4,9 +4,18 @@
 
 - import_tasks: php.yml
 
+#
+# GlusterFS
+#
 - import_tasks: glusterfs.yml
   when: conf_glusterfs_enable == true
   ignore_errors: yes
+
+#
+# MogileFS
+#
+- import_tasks: mogilefs.yml
+  when: conf_mogilefs_enable is defined and conf_mogilefs_enable == true
 
 #
 # ruby

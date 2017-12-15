@@ -1,0 +1,245 @@
+---
+
+# file: playbooks/roles/web/tasks/mogilefs.yml
+
+# - name: remove osbolete mogilefs PPA (staging and production) (Ubuntu)
+#   file: name=/etc/apt/sources.list.d/{{ item }} state=absent
+#   with_items:
+#     - "ppa_semiosis_ubuntu_mogilefs_3_5_precise.list"
+#     - "ppa_semiosis_ubuntu_mogilefs_3_5_trusty.list"
+#   when: ansible_distribution == "Ubuntu" and conf_env != "development"
+#   tags: [ mogilefs ]
+
+# - name: mogilefs PPA (staging and production) (Ubuntu)
+#   apt_repository: repo='ppa:gluster/mogilefs-{{ conf_mogilefs_version }}' update_cache=yes
+#   when: ansible_distribution == "Ubuntu" and conf_env != "development"
+#   tags: [ mogilefs ]
+
+# - name: install mogilefs (staging and production) (Ubuntu)
+#   apt: pkg={{ item }} state=latest
+#   with_items:
+#     - mogilefs-server
+#     - mogilefs-client
+#     - nfs-common
+#     - autofs5
+#   when: ansible_distribution == "Ubuntu" and conf_env != "development"
+#   tags: [ mogilefs ]
+
+# - name: mogilefs YUM (staging and production) (RedHat family)
+#   package: name={{ item }} state=latest
+#   with_items:
+#     # - centos-release-gluster38.noarch
+#     - centos-release-gluster36.noarch
+#   when: ansible_os_family == "RedHat" and conf_env != "development"
+#   tags: [ mogilefs ]
+
+# - name: install mogilefs (staging and production) (RedHat family)
+#   package: name={{ item }} state=latest
+#   with_items:
+#     - mogilefs
+#     - mogilefs-server
+#     - mogilefs-cli
+#     # - nfs-common
+#     - autofs
+#   when: ansible_os_family == "RedHat" and conf_env != "development"
+#   tags: [ mogilefs ]
+
+# - name: glusterd.service service state (staging and production) (RedHat family)
+#   service: name=glusterd.service state=started enabled=yes
+#   when: ansible_os_family == "RedHat" and conf_env != "development"
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: create mogilefs data folder (/data/mogilefs/gvol0/brick1)
+#   file: path=/data/mogilefs/gvol0/brick1 state=directory owner=root group={{ conf_root_group }} mode=0755
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: create mogilefs mountpoint (/mnt/mogilefs/gvol0)
+#   file: path=/mnt/mogilefs/gvol0 state=directory owner=root group={{ conf_root_group }} mode=0755
+#   when: conf_env != "development"
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: create mogilefs mountpoint (/mnt/mogilefs/gvol0/brick1)
+#   file: path=/mnt/mogilefs/gvol0/brick1 state=directory owner=root group={{ conf_root_group }} mode=0755
+#   when: conf_env == "development"
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: check gluster peer status (master)
+#   shell: "{{ conf_mogilefs_peer }}"
+#   ignore_errors: yes
+#   register: gluster_peer_res
+#   failed_when: gluster_peer_res.rc != 0
+#   when: conf_env != "development" and conf_mogilefs_master == true
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# # We need to register the master on the clients (TODO)
+# - name: check gluster peer status (clients)
+#   shell: gluster peer probe {{ conf_mogilefs_node0 }}
+#   ignore_errors: yes
+#   # register: gluster_peer_res
+#   # failed_when: gluster_peer_res.rc != 0
+#   when: conf_env != "development" and conf_mogilefs_master == false
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: check gluster gvol0
+#   shell: gluster volume info gvol0
+#   ignore_errors: yes
+#   register: gluster_check_res
+#   failed_when: gluster_check_res.rc != 0
+#   when: conf_env != "development" and gluster_peer_res != "failed" and conf_mogilefs_master == true
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# # - debug: msg="DEBUG is MASTER {{ conf_mogilefs_master }}"
+# #   when: gluster_check_res|failed and conf_mogilefs_master == true
+
+# - name: create gluster gvol0
+#   shell: "{{ conf_mogilefs_gvol0 }}"
+#   when: conf_env != "development" and gluster_check_res|failed and conf_mogilefs_master == true
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: start gluster gvol0
+#   shell: gluster volume start gvol0
+#   when: conf_env != "development" and gluster_check_res|failed and conf_mogilefs_master == true
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: set mogilefs volume options gvol0
+#   shell: gluster volume set gvol0 nfs.disable on
+#   # when: conf_env != "development" and gluster_check_res|failed and conf_mogilefs_master == true
+#   when: conf_env != "development" and conf_mogilefs_master == true
+#   tags: [ mogilefs, mogilefs-conf ]
+
+# - name: autofs GlusterFS
+#   template: src=etc/{{ item }}.j2 dest=/etc/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+#   with_items:
+#       - "auto.master"
+#       - "auto.mogilefs"
+#   when: conf_env != "development"
+#   notify: handle_restart_autofs
+#   tags: [ mogilefs, mogilefs-conf ]
+
+#########################################
+
+# - name: Include vars all.yml
+#   include_vars:
+#     file: "{{ playbook_dir }}/group_vars/all.yml"
+
+- name: MogileFS group
+  action: group name={{ item }} state=present
+  with_items:
+    - "{{ conf_mogilefs_group }}"
+  tags: [ mogilefs ]
+
+- name: MogileFS system user
+  user: name={{ item }} group={{ conf_mogilefs_group }} comment="MogileFS System User" system=yes  state=present
+  with_items:
+    - "{{ conf_mogilefs_user }}"
+  tags: [ mogilefs ]
+
+- name: MogileFS dependencies (Debian family)
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - cpanminus
+    - libperl-dev
+    - libdbd-mysql-perl
+  when: ansible_os_family == "Debian" 
+  tags: [ mogilefs ]
+
+- name: MogileFS Perl dependencies
+  cpanm: name={{ item }} system_lib=yes
+  with_items:
+    - MogileFS::Server
+    - MogileFS::Utils
+  tags: [ mogilefs ]
+
+- name: create MogileFS storage folder
+  file: path={{ item }} owner={{ conf_mogilefs_user }} group={{ conf_mogilefs_group }} mode=0755 state=directory
+  with_items:
+    - "{{ conf_mogilefs_storage_path }}"
+  tags: [ mogilefs ]
+
+- name: create MogileFS config folder
+  file: path="{{ conf_local_etc_path }}/mogilefs" owner=root group={{ conf_root_group }} mode=0755 state=directory
+  tags: [ mogilefs ]
+
+- name: provision MogileFS configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+    - mogilefs/mogilefsd.conf
+    - mogilefs/mogstored.conf
+  notify: handle_restart_mogilefs
+  tags: [ mogilefs, mogilefs-conf ]
+
+- name: Copy Debian Jessie/Xenial specific MogileFS configs (systemd)
+  template:
+    src: lib/systemd/system/{{ item }}.j2
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - mogilefs.service
+    - mogstored.service
+  when: >
+    (ansible_distribution == 'Debian' and ansible_distribution_version|int >= 8) or
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_version.split(".")[0]|int >= 16)
+  notify:
+    - handle_reload_systemd
+    - handle_restart_mogilefs
+    - handle_restart_mogstored
+  ignore_errors: yes
+  tags: [ mogilefs, mogilefs-conf ]
+
+- name: mogilefs and mogstored service state
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - mogilefs
+    - mogstored
+  tags: [ mogilefs, mogilefs-conf ]
+
+# - name: Pip (Python) - install boto3
+#   pip:
+#     name: boto3
+
+# - name: Pip (Python) - install botocore
+#   pip:
+#     name: botocore
+
+# - name: s3 - copy blobs (approx. 300MB) from s3 to /tmp/mogile-blobs.tar.gz
+#   aws_s3:
+#     aws_access_key: "{{aws_access_key}}"
+#     aws_secret_key: "{{aws_secret_key}}"
+#     bucket: fxp-ansible-dev-mogile
+#     object: mogile-blobs.tar.gz
+#     dest: /tmp/mogile-blobs.tar.gz
+#     mode: get
+
+# - name: Create /STORAGE/mogile/dev1/0/000/000
+#   file:
+#     path: /STORAGE/mogile/dev1/0/000/000
+#     state: directory
+#     owner: mogile
+#     group: mogile
+#     mode: "u+rwx,g+rwx,o+rx"
+
+# - name: Extract mogile-blobs.tar.gz into /STORAGE/mogile/dev1/0/000/000
+#   unarchive:
+#     src: /tmp/mogile-blobs.tar.gz
+#     dest: /STORAGE/mogile/dev1/0/000/000/
+#     remote_src: yes
+#     owner: mogile
+#     group: mogile
+
+# - name: systemd - reload configs
+#   systemd:
+#     daemon_reload: yes
+
+# - name: systemd - start mogilefs.service
+#   systemd:
+#     name: mogilefs.service
+#     enabled: yes
+#     state: started
+
+# - name: systemd - start mogstored.service
+#   systemd:
+#     name: mogstored.service
+#     enabled: yes
+#     state: started

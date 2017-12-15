@@ -8,6 +8,12 @@
 - name: handle_reload_apache2
   service: name=apache2 state=reloaded
 
+- name: handle_restart_mogilefs
+  service: name=mogilefs state=restarted
+
+- name: handle_restart_mogstored
+  service: name=mogstored state=restarted
+
 - name: handle_restart_varnish
   service: name=varnish state=restarted
 

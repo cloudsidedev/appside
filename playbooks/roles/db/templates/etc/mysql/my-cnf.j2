@@ -160,6 +160,13 @@ wait_timeout            = {{ conf_mysql_wait_timeout }}
 innodb_buffer_pool_size = {{ conf_mysql_innodb_buffer_pool_size }}
 join_buffer_size        = {{ conf_mysql_join_buffer_size }}
 
+{% if conf_mysql_innodb_log_buffer_size is defined %}innodb_log_buffer_size = {{ conf_mysql_innodb_log_buffer_size }}
+{% endif %}
+{% if conf_mysql_innodb_write_io_threads is defined %}innodb_write_io_threads = {{ conf_mysql_innodb_write_io_threads }}
+{% endif %}
+{% if conf_mysql_innodb_flush_log_at_trx_commit is defined %}innodb_flush_log_at_trx_commit = {{ conf_mysql_innodb_flush_log_at_trx_commit }}
+{% endif %}
+
 {% if conf_galera_cluster == true %}
 #
 # Percona
