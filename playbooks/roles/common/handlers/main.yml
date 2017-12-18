@@ -5,6 +5,10 @@
 - name: handle_restart_rsyslog
   service: name=rsyslog state=restarted
 
+- name: handle_restart_supervisor
+  service: name=supervisord state=restarted
+  when: conf_supervisor_started
+
 - name: handle_restart_nullmailer
   service: name=nullmailer state=restarted
 

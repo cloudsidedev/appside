@@ -17,6 +17,33 @@ conf_jailkit_url: "https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2"
 # Supervisor
 #
 conf_supervisor_enable: false
+conf_supervisor_version: latest
+conf_supervisor_started: true
+conf_supervisor_enabled: true
+conf_supervisor_config_path: /etc/supervisor
+conf_supervisor_programs: []
+  # - name: 'apache'
+  #   command: apache2ctl -c "ErrorLog /dev/stdout" -DFOREGROUND
+  #   state: present
+  #   configuration: |
+  #     autostart=true
+  #     autorestart=true
+  #     startretries=1
+  #     startsecs=1
+  #     redirect_stderr=true
+  #     stderr_logfile=/var/log/apache-err.log
+  #     stdout_logfile=/var/log/apache-out.log
+  #     user=root
+  #     killasgroup=true
+  #     stopasgroup=true
+conf_supervisor_nodaemon: false
+conf_supervisor_log_dir: /var/log/supervisor
+conf_supervisor_user: root
+conf_supervisor_password: 'appflow'
+conf_supervisor_unix_http_server_enable: true
+conf_supervisor_unix_http_server_socket_path: /var/run/supervisor.sock
+conf_supervisor_inet_http_server_enable: false
+conf_supervisor_inet_http_server_port: '*:9001'
 
 #
 # Docker
