@@ -1,8 +1,19 @@
+"""
+Appflow Ansible utilities.
+This contains all the functions needed to perform Ansible actions.
+From provision to encryption/decryption and tag listing.
+"""
 import os
 import appflow.AppflowUtils as utils
 
 
 def provision(tenant, env, *args):
+    """
+    This will perform the ansible playbook.
+    We pass tenant and environment.
+    all other tags are parsed from option=xyz to --option xys
+    in order to respect ansible's syntax.
+    """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = os.path.dirname(
         os.path.dirname(os.path.realpath(__file__)))
@@ -32,6 +43,9 @@ def provision(tenant, env, *args):
 
 
 def tags(tenant, env):
+    """
+    List all available tags for tenant/environment
+    """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = os.path.dirname(
         os.path.dirname(os.path.realpath(__file__)))
@@ -43,6 +57,9 @@ def tags(tenant, env):
 
 
 def encrypt(tenant, env):
+    """
+    Encrypt the tenant/environment data
+    """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
     flie_list = utils.get_file_list(target_folder)
@@ -52,6 +69,9 @@ def encrypt(tenant, env):
 
 
 def decrypt(tenant, env):
+    """
+    Decrypt the tenant/environment data
+    """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
 

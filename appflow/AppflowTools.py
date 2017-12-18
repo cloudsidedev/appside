@@ -1,8 +1,12 @@
+"""
+Appflow Tools.
+This contains all the functions needed to perform actions connected to
+initialization, config deployment and git versioning.
+"""
 import json
 import os
 import shutil
 import subprocess
-from builtins import any as b_any
 
 import yaml
 
@@ -12,6 +16,9 @@ import appflow.AppflowYaml as apyaml
 
 
 def initialize(tenant):
+    """
+    Create default dirs and yaml files for Assh to function properly.
+    """
     dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
 
     for directory in dirs:
@@ -20,8 +27,7 @@ def initialize(tenant):
     conf = {'defaults': {'ControlMaster': 'auto',
                          'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock',
                          'ControlPersist': True,
-                         'ForwardAgent': True
-                         },
+                         'ForwardAgent': True},
             'includes': ['~/.ssh/assh.d/*/*.yml',
                          '~/.ssh/assh_personal.yml']}
     file_name = os.getenv('HOME') + "/.ssh/assh.yml"
@@ -29,9 +35,38 @@ def initialize(tenant):
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
+    """
+    Setup the autocompletion now.
+    Generate is using -- --completion function of Fire
+    Save it to ~/.appflow_completion
+    Source if for bash and zsh.
+    """
+    bash_source_files = [os.getenv('HOME') + "/.bashrc",
+                         os.getenv('HOME') + "/.bashrc.local"]
+    zsh_source_files = [os.getenv('HOME') + "/.zshrc",
+                        os.getenv('HOME') + "/.zshrc.local"]
+    os.system(os.path.dirname(os.path.dirname(
+        os.path.realpath(__file__))) + "/appflow.py -- --completion > " +
+        os.getenv('HOME') + "/.appflow_completion")
+    for bash_file in bash_source_files:
+        if os.path.exists(bash_file):
+            if not utils.check_string_in_file(bash_file, "appflow_completion"):
+                os.system('echo "source ' + os.getenv('HOME') +
+                          '/.appflow_completion" >> ' + bash_file)
+    for zsh_file in zsh_source_files:
+        if os.path.exists(zsh_file):
+            if not utils.check_string_in_file(zsh_file, "appflow_completion"):
+                os.system("""echo "autoload bashcompinit
+                bashcompinit
+                source """ + os.getenv('HOME') +
+                          '/.appflow_completion" >> ' + zsh_file)
 
 
 def set_vhosts_hosts(tenant):
+    """
+    Setup /etc/hosts for tenant.
+    Requires root access to write.
+    """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + "development"
     is_decrypted = False
@@ -48,25 +83,26 @@ def set_vhosts_hosts(tenant):
     file = open("/etc/hosts", 'r')
     current_hosts = [line.strip() for line in file]
 
+    # Just add a separation line.
     os.system('echo "\n" | sudo tee -a /etc/hosts')
     new_hosts = []
-    for ip in ips:
+    for _ip in ips:
         # Check if this line is already present
-        if ip not in "".join(current_hosts):
+        if _ip not in "".join(current_hosts):
             # if not present add it!
-            new_hosts.append(ip)
+            new_hosts.append(_ip)
     for host in vhosts:
         if vhosts.get(host)["state"] == "enabled":
             server_alias = vhosts.get(host)["servername"]
             for alias in vhosts.get(host)["serveralias"]:
                 server_alias = server_alias + " " + alias
-        for ip in ips:
+        for _ip in ips:
             # Assemble the line IP + servername + aliases
-            ip = ip.split()[0] + " " + server_alias
+            _ip = _ip.split()[0] + " " + server_alias
             # Check if this line is already present
-            if ip not in "".join(current_hosts):
+            if _ip not in "".join(current_hosts):
                 # if not present add it!
-                new_hosts.append(ip)
+                new_hosts.append(_ip)
     for host in new_hosts:
         # let's append to the file only the lines we need
         # we will need sudo in order to write in /etc/hosts
@@ -75,7 +111,25 @@ def set_vhosts_hosts(tenant):
         git_reset(tenant, "development")
 
 
+def setup_default_config(tenant_id, tenant, environment):
+    """
+    Deploy a default config file in ~/.appflow/config.yml
+    """
+    file_name = os.getenv('HOME') + "/.appflow/config.yml"
+    if not os.path.isfile(file_name):
+        conf = {'appflow': {'tenant': {'id': tenant_id,
+                                       'name': tenant,
+                                       'default_env': environment}}}
+        utils.safe_remove(file_name)
+        with open(file_name, 'w') as outfile:
+            yaml.dump(conf, outfile, default_flow_style=False,
+                      indent=4)
+
+
 def setup_ssh(tenant, env):
+    """
+    Deploy Assh configs for tenant/environment.
+    """
     initialize(tenant)
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
@@ -88,12 +142,16 @@ def setup_ssh(tenant, env):
         is_decrypted = True
 
     shutil.copy2(target_folder + "/assh.yml", dest_file)
-
+    print(dest_folder + '/' + env + '.yml', "deployed")
     if is_decrypted is True:
         git_reset(tenant, env)
 
 
 def git_reset(tenant, env):
+    """
+    Perform git reset in the specified tenant/environment folder.
+    After this, updates the md5 file to reflect the new status.
+    """
     _dir = utils.get_tenant_dir(tenant)
     _pipe = subprocess.PIPE
     subprocess.Popen(
@@ -109,6 +167,11 @@ def git_reset(tenant, env):
 
 
 def git_status(tenant, env):
+    """
+    Return a status of modified files in the tenant/environment folder.
+    this is tracked separately from git, because encryption/decryption of files
+    will always override the git status method.
+    """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
     if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
@@ -131,6 +194,11 @@ def git_status(tenant, env):
 
 
 def git_check_in(tenant, env, commit):
+    """
+    Git push.
+    This will affecy only the modified files (see git_status function).
+    Commit message can be specified.
+    """
     _dir = utils.get_tenant_dir(tenant)
     folder = utils.get_tenant_env_dir(tenant, env)
     file_list = utils.get_file_list(folder)
@@ -160,6 +228,10 @@ def git_check_in(tenant, env, commit):
 
 
 def git_check_out(tenant, env):
+    """
+    Git pull of the specified tenant/environment folder.
+    un-pushed work can be overwritten by this, so ask for confirmation.
+    """
     query = utils.yes_no(
         'WARNING, this will overwrite any un-pushed work, continue?', 'no')
     if query is True:

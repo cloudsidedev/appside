@@ -1,6 +1,10 @@
+"""
+Appflow Yaml utilities.
+This contains all the functions needed to manipulate yaml files.
+Handy for configs and for tenant setups.
+"""
 import json
 import os
-# import re
 
 import yaml
 
@@ -8,11 +12,11 @@ import appflow.AppflowUtils as utils
 
 
 def get_value(my_file, key=None):
-    # pattern = re.compile("^[a-zA-Z\.-]*$")
-    # if not (pattern.match(my_file)):
-    #     return 'Error: Bad Syntax'
-    # if not (pattern.match(key)):
-    #     return 'Error: Bad Syntax'
+    """
+    Returns key-value for searched key in file.
+    If key is not specified, returns the whole file.
+    Returns string in json format.
+    """
     my_file = my_file.replace('.', '/', 3)
     if my_file != 'config':
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
@@ -38,11 +42,12 @@ def get_value(my_file, key=None):
 
 
 def set_value(my_file, key, value):
-    # pattern = re.compile("^[a-zA-Z\._-]*$")
-    # if not (pattern.match(my_file)):
-    #     return 'Error: Bad Syntax'
-    # if not (pattern.match(key)):
-    #     return 'Error: Bad Syntax'
+    """
+    Returns key-value for searched key in file.
+    Searched key will be set with the value specified.
+    Data is written to file.
+    Returns string in json format.
+    """
     my_file = my_file.replace('.', '/', 3)
     key = key.split('.')
     if my_file != 'config':
@@ -63,11 +68,12 @@ def set_value(my_file, key, value):
 
 
 def rm_value(my_file, key):
-    # pattern = re.compile("^[a-zA-Z\._-]*$")
-    # if not (pattern.match(my_file)):
-    #     return 'Error: Bad Syntax'
-    # if not (pattern.match(key)):
-    #     return 'Error: Bad Syntax'
+    """
+    Returns key-value for searched key in file.
+    Searched key will be removed.
+    Data is written to file.
+    Returns string in json format.
+    """
     my_file = my_file.replace('.', '/', 3)
     key = key.split('.')
     if my_file != 'config':
@@ -88,11 +94,12 @@ def rm_value(my_file, key):
 
 
 def add_value(my_file, _key, _value):
-    # pattern = re.compile("^[a-zA-Z\._-]*$")
-    # if not (pattern.match(my_file)):
-    #     return 'Error: Bad Syntax'
-    # if not (pattern.match(key)):
-    #     return 'Error: Bad Syntax'
+    """
+    Returns key-value for searched key in file.
+    Key will be created with the value specified.
+    Data is written to file.
+    Returns string in json format.
+    """
     my_file = my_file.replace('.', '/', 3)
     _key = _key.split('.')
     if my_file != 'config':
