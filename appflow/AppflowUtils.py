@@ -88,15 +88,21 @@ def diff_files(file1, file2):
     Returned data is a list of strings.
     """
     result = list()
-    with open(file1) as file_1:
-        with open(file2) as file_2:
-            lines_file_1 = file_1.readlines()
-            lines_file_2 = file_2.readlines()
-            diff = [line for line in lines_file_1 if line not in lines_file_2]
-            for line in diff:
-                file_name = line.split('\t')[1].replace('\n', '')
-                result.append(file_name)
-            return result
+    if os.path.exists(file1):
+        with open(file1) as file_1:
+            if os.path.exists(file2):
+                with open(file2) as file_2:
+                    lines_file_1 = file_1.readlines()
+                    lines_file_2 = file_2.readlines()
+                    diff = [line for line in lines_file_1 if line not in lines_file_2]
+                    for line in diff:
+                        file_name = line.split('\t')[1].replace('\n', '')
+                        result.append(file_name)
+                    return result
+            else:
+                return result
+    else:
+        return result
 
 
 def safe_remove(file_name):
