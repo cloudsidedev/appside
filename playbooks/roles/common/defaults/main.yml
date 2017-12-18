@@ -14,6 +14,11 @@ conf_jailkit_enable: false
 conf_jailkit_url: "https://olivier.sessink.nl/jailkit/jailkit-2.19.tar.bz2"
 
 #
+# Supervisor
+#
+conf_supervisor_enable: false
+
+#
 # Docker
 #
 conf_docker_enable: false
