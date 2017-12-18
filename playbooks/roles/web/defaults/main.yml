@@ -193,3 +193,16 @@ rbenv_yum_packages:
 - openssl-devel
 - readline-devel
 - zlib-devel
+
+#
+# Thumbor
+#
+conf_thumbor_enable: false
+conf_thumbor_user: thumbor
+conf_thumbor_group: thumbor
+conf_thumbor_tmp_path: /opt/thumbor/tmp_store
+conf_thumbor_log_path: /var/log/thumbor
+conf_thumbor_backend_url: http://localhost:8888/unsafe
+conf_thumbor_debug: false
+conf_thumbor_img_db_host: localhost
+conf_thumbor_remote_debug: false
