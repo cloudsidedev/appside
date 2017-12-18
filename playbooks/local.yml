@@ -1,0 +1,16 @@
+---
+
+# file: playbooks/local.yml
+
+- hosts: local
+
+
+  roles:
+    - local
+
+  vars_files:
+
+      - "vars/os/distribution/{{ ansible_distribution }}.yml"
+      - "vars/os/environment/{{ ansible_system }}-{{ conf_env }}.yml"
+     # We do not need this
+     # - "vars/os/distribution_release/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
