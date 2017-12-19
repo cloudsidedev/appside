@@ -20,7 +20,6 @@ import appflow.AppflowTools as tools
 import appflow.AppflowUtils as utils
 import appflow.AppflowYaml as apyaml
 
-
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
 # Tenant and environment.
@@ -169,26 +168,24 @@ class AppFlow(object):
         skip_tags: will run all the tags except for the specified ones
         limit: limit to only some specified hosts.
 
-        Optionally it is possible to specify:
-        tenant=xxx env=xxx
+        Optionally it is possible to specify custom tenant and environment
+        appflow provision tenant-name env-name tags=xxx...
         this is optional and by default will read the
         default config in ~/.appflow/config.yml
         """
         args = list(args)
         # First we check if a tenant is specified
         # Else we fallback to the default
-        if any("tenant=" in s for s in args):
-            match = [s for s in args if "tenant=" in s][0]
-            tenant = match.split("=")[1]
-            args.remove(match)
+        if "=" not in args[0]:
+            tenant = args[0]
+            args.pop(0)
         else:
             tenant = DEFAULT_TENANT
         # Then we check if an environment is specified
         # Else we fallback to the default
-        if any("env=" in s for s in args):
-            match = [s for s in args if "env=" in s][0]
-            env = match.split("=")[1]
-            args.remove(match)
+        if "=" not in args[0]:
+            env = args[0]
+            args.pop(0)
         else:
             env = DEFAULT_ENV
         print(utils.get_provision_color_string('provision', tenant, env))
