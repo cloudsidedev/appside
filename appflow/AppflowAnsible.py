@@ -4,6 +4,7 @@ This contains all the functions needed to perform Ansible actions.
 From provision to encryption/decryption and tag listing.
 """
 import os
+
 import appflow.AppflowUtils as utils
 
 
@@ -24,12 +25,15 @@ def provision(tenant, env, *args):
     tags_argument = list(args)
     firstrun = False
     for tag in tags_argument:
+        # Remove empty tags
         if tag.split('=')[1] == '':
             tags_argument.remove(tag)
+        # Mark if firstrun or not
         elif tag == "firstrun=true":
             tags_argument.remove(tag)
             firstrun = True
     for i, tag in enumerate(tags_argument):
+        # from tags=xyz to --tags xyz
         tags_argument[i] = '--' + \
             tags_argument[i].split('=')[0].replace('_', '-') + \
             ' ' + tags_argument[i].split('=')[1]

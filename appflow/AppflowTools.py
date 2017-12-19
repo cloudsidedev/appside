@@ -24,6 +24,7 @@ def initialize(tenant):
     for directory in dirs:
         os.makedirs(os.getenv('HOME') + directory, exist_ok=True)
 
+    # Initialize a default assh.yml config
     conf = {'defaults': {'ControlMaster': 'auto',
                          'ControlPath': '~/tmp/.ssh/cm/%h-%p-%r.sock',
                          'ControlPersist': True,
@@ -48,11 +49,13 @@ def initialize(tenant):
     os.system(os.path.dirname(os.path.dirname(
         os.path.realpath(__file__))) + "/appflow.py -- --completion > " +
         os.getenv('HOME') + "/.appflow_completion")
+    # Add bash completion
     for bash_file in bash_source_files:
         if os.path.exists(bash_file):
             if not utils.check_string_in_file(bash_file, "appflow_completion"):
                 os.system('echo "source ' + os.getenv('HOME') +
                           '/.appflow_completion" >> ' + bash_file)
+    # Add zsh completion
     for zsh_file in zsh_source_files:
         if os.path.exists(zsh_file):
             if not utils.check_string_in_file(zsh_file, "appflow_completion"):
@@ -70,15 +73,16 @@ def set_vhosts_hosts(tenant):
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + "development"
     is_decrypted = False
+    # Files are encrypted. Decrypt and save status to re-encrypt later.
     if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
         apansible.decrypt(tenant, "development")
         is_decrypted = True
     vhosts = apyaml.get_value(tenant + ".development.group_vars.all",
                               "conf_vhosts_common")
     vhosts = json.loads(vhosts)
-    ips = apyaml.get_value(tenant + ".development.group_vars.all",
-                           "conf_hosts")
-    ips = json.loads(ips)
+    ip_list = apyaml.get_value(tenant + ".development.group_vars.all",
+                               "conf_hosts")
+    ip_list = json.loads(ip_list)
 
     file = open("/etc/hosts", 'r')
     current_hosts = [line.strip() for line in file]
@@ -86,7 +90,7 @@ def set_vhosts_hosts(tenant):
     # Just add a separation line.
     os.system('echo "\n" | sudo tee -a /etc/hosts')
     new_hosts = []
-    for _ip in ips:
+    for _ip in ip_list:
         # Check if this line is already present
         if _ip not in "".join(current_hosts):
             # if not present add it!
@@ -96,7 +100,7 @@ def set_vhosts_hosts(tenant):
             server_alias = vhosts.get(host)["servername"]
             for alias in vhosts.get(host)["serveralias"]:
                 server_alias = server_alias + " " + alias
-        for _ip in ips:
+        for _ip in ip_list:
             # Assemble the line IP + servername + aliases
             _ip = _ip.split()[0] + " " + server_alias
             # Check if this line is already present
@@ -137,6 +141,7 @@ def setup_ssh(tenant, env):
     dest_file = dest_folder + '/' + env + '.yml'
 
     is_decrypted = False
+    # Files are encrypted. Decrypt and save status to re-encrypt later.
     if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
         apansible.decrypt(tenant, env)
         is_decrypted = True
@@ -202,10 +207,10 @@ def git_check_in(tenant, env, commit):
     _dir = utils.get_tenant_dir(tenant)
     folder = utils.get_tenant_env_dir(tenant, env)
     file_list = utils.get_file_list(folder)
-    is_encrypted = True
+    is_encrypted = False
     for file in file_list:
-        if utils.check_string_in_file(file, 'AES256') is False:
-            is_encrypted = False
+        if utils.check_string_in_file(file, 'AES256'):
+            is_encrypted = True
     diff = git_status(tenant, env)
     if is_encrypted is False:
         apansible.encrypt(tenant, env)
