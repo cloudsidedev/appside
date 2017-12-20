@@ -15,10 +15,10 @@ import subprocess
 
 import fire
 
-import Appflow.AppflowAnsible as apansible
-import Appflow.AppflowTools as tools
-import Appflow.AppflowUtils as utils
-import Appflow.AppflowYaml as apyaml
+import lib.appflow.appflow_ansible as apansible
+import lib.appflow.appflow_tools as tools
+import lib.appflow.appflow_utils as utils
+import lib.appflow.appflow_yaml as apyaml
 
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
@@ -67,13 +67,13 @@ class AppFlow(object):
         for line in iter(out.stdout.readline, b''):
             print(line.decode('utf-8'))
 
-    def default(self, tenant_id, tenant, environment):
+    def default(self, tenant_id, tenant, env):
         """
         We need some default configurations
         This will allow to call "appflow action *args" without always specifying
         Tenant and environment.
         """
-        tools.setup_default_config(tenant_id, tenant, environment)
+        tools.setup_default_config(tenant_id, tenant, env)
 
     def init(self, tenant=DEFAULT_TENANT):
         """

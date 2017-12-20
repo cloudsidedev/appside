@@ -8,7 +8,7 @@ import os
 
 import yaml
 
-import Appflow.AppflowUtils as utils
+import lib.appflow.appflow_utils as utils
 
 
 def get_value(my_file, key=None):

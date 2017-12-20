@@ -10,9 +10,9 @@ import subprocess
 
 import yaml
 
-import Appflow.AppflowAnsible as apansible
-import Appflow.AppflowUtils as utils
-import Appflow.AppflowYaml as apyaml
+import lib.appflow.appflow_ansible as apansible
+import lib.appflow.appflow_utils as utils
+import lib.appflow.appflow_yaml as apyaml
 
 
 def initialize(tenant):
