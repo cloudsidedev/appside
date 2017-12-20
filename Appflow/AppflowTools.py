@@ -10,9 +10,9 @@ import subprocess
 
 import yaml
 
-import appflow.AppflowAnsible as apansible
-import appflow.AppflowUtils as utils
-import appflow.AppflowYaml as apyaml
+import Appflow.AppflowAnsible as apansible
+import Appflow.AppflowUtils as utils
+import Appflow.AppflowYaml as apyaml
 
 
 def initialize(tenant):
@@ -21,6 +21,7 @@ def initialize(tenant):
     """
     dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
 
+    # Mkdir -p of needed folders.
     for directory in dirs:
         os.makedirs(os.getenv('HOME') + directory, exist_ok=True)
 
@@ -33,6 +34,7 @@ def initialize(tenant):
                          '~/.ssh/assh_personal.yml']}
     file_name = os.getenv('HOME') + "/.ssh/assh.yml"
     utils.safe_remove(file_name)
+    # Write it to file.
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
@@ -45,9 +47,9 @@ def initialize(tenant):
                          os.getenv('HOME') + "/.bashrc.local"]
     zsh_source_files = [os.getenv('HOME') + "/.zshrc",
                         os.getenv('HOME') + "/.zshrc.local"]
-    os.system(os.path.dirname(os.path.dirname(
-        os.path.realpath(__file__))) + "/appflow.py -- --completion > " +
-        os.getenv('HOME') + "/.appflow_completion")
+    os.system(utils.get_appflow_folder(__file__) +
+              "/appflow -- --completion > " +
+              os.getenv('HOME') + "/.appflow_completion")
     # Add bash completion
     for bash_file in bash_source_files:
         if os.path.exists(bash_file):
@@ -83,11 +85,14 @@ def set_vhosts_hosts(tenant):
                                "conf_hosts")
     ip_list = json.loads(ip_list)
 
+    # Open /etc/hosts file.
+    # Put it in string list.
     file = open("/etc/hosts", 'r')
     current_hosts = [line.strip() for line in file]
 
     # Just add a separation line.
     os.system('echo "\n" | sudo tee -a /etc/hosts')
+
     new_hosts = []
     for _ip in ip_list:
         # Check if this line is already present

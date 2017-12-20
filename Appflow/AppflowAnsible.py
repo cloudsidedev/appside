@@ -5,10 +5,11 @@ From provision to encryption/decryption and tag listing.
 """
 import os
 
-import appflow.AppflowUtils as utils
+import Appflow.AppflowUtils as utils
 
 
-def provision(tenant, env, *args):
+def provision(tenant: str, env: str, limit: str, tags: str,
+              skip_tags: str, firstrun: bool):
     """
     This will perform the ansible playbook.
     We pass tenant and environment.
@@ -16,34 +17,30 @@ def provision(tenant, env, *args):
     in order to respect ansible's syntax.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    appflow_folder = os.path.dirname(
-        os.path.dirname(os.path.realpath(__file__)))
+    appflow_folder = utils.get_appflow_folder(__file__)
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
-    # Convert tags=xyz to --tags xyz
-    tags_argument = list(args)
-    firstrun = False
-    for tag in tags_argument:
-        # Remove empty tags
-        if tag.split('=')[1] == '':
-            tags_argument.remove(tag)
-        # Mark if firstrun or not
-        elif tag == "firstrun=true":
-            tags_argument.remove(tag)
-            firstrun = True
-    for i, tag in enumerate(tags_argument):
-        # from tags=xyz to --tags xyz
-        tags_argument[i] = '--' + \
-            tags_argument[i].split('=')[0].replace('_', '-') + \
-            ' ' + tags_argument[i].split('=')[1]
+    # Let's be sure the arguments are strings.
+    # In case of multiple arguments (comma separated), convert them back to str.
+    limit = utils.format_string_argument(limit)
+    tags = utils.format_string_argument(tags)
+    skip_tags = utils.format_string_argument(skip_tags)
 
+    tags_argument = []
+    # Format arguments for ansible command now.
+    if limit is not None:
+        tags_argument.append("--limit " + limit)
+    if tags is not None:
+        tags_argument.append("--tags " + tags)
+    if skip_tags is not None:
+        tags_argument.append("--skip-tags " + skip_tags)
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         tags_argument.append("-k -u ubuntu")
-    os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
-              inventory + ' ' + playbook +
-              ' --vault-password-file ' + password_file)
+    print('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
+          inventory + ' ' + playbook +
+          ' --vault-password-file ' + password_file)
 
 
 def tags(tenant, env):
@@ -51,8 +48,7 @@ def tags(tenant, env):
     List all available tags for tenant/environment
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    appflow_folder = os.path.dirname(
-        os.path.dirname(os.path.realpath(__file__)))
+    appflow_folder = utils.get_appflow_folder(__file__)
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 

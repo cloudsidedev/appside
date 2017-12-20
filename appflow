@@ -15,10 +15,10 @@ import subprocess
 
 import fire
 
-import appflow.AppflowAnsible as apansible
-import appflow.AppflowTools as tools
-import appflow.AppflowUtils as utils
-import appflow.AppflowYaml as apyaml
+import Appflow.AppflowAnsible as apansible
+import Appflow.AppflowTools as tools
+import Appflow.AppflowUtils as utils
+import Appflow.AppflowYaml as apyaml
 
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
@@ -52,16 +52,16 @@ class AppFlow(object):
         Simple function to update Appflow.
         This is handy for the appflow-git package.
         """
-        appflow_dir = os.path.dirname(os.path.realpath(__file__))
+        appflow_folder = utils.get_appflow_folder(__file__)
         _pipe = subprocess.PIPE
         out = subprocess.Popen(
-            ['git', '-C', appflow_dir, 'checkout', branch],
+            ['git', '-C', appflow_folder, 'checkout', branch],
             stdout=_pipe,
             stderr=_pipe)
         for line in iter(out.stdout.readline, b''):
             print(line.decode('utf-8'))
         out = subprocess.Popen(
-            ['git', '-C', appflow_dir, 'pull'],
+            ['git', '-C', appflow_folder, 'pull'],
             stdout=_pipe,
             stderr=_pipe)
         for line in iter(out.stdout.readline, b''):
@@ -159,37 +159,24 @@ class AppFlow(object):
         print(utils.get_provision_color_string('tags', tenant, env))
         apansible.tags(tenant, env)
 
-    def provision(self, *args):
+    def provision(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
+                  limit: str = None, tags: str = None, skip_tags: str = None,
+                  firstrun: bool = False):
         """
         Provision your machines.
         Syntax is:
-        appflow provision tags=xxx skip_tags=xxx limit=xxx
+        appflow provision "machine1,machine2" tag1,tag2 skiptag1,skiptag2
         tags: will run only the tags specified
         skip_tags: will run all the tags except for the specified ones
         limit: limit to only some specified hosts.
 
         Optionally it is possible to specify custom tenant and environment
-        appflow provision tenant-name env-name tags=xxx...
+        appflow provision tenant-name env-name...
         this is optional and by default will read the
         default config in ~/.appflow/config.yml
         """
-        args = list(args)
-        # First we check if a tenant is specified
-        # Else we fallback to the default
-        if "=" not in args[0]:
-            tenant = args[0]
-            args.pop(0)
-        else:
-            tenant = DEFAULT_TENANT
-        # Then we check if an environment is specified
-        # Else we fallback to the default
-        if "=" not in args[0]:
-            env = args[0]
-            args.pop(0)
-        else:
-            env = DEFAULT_ENV
         print(utils.get_provision_color_string('provision', tenant, env))
-        apansible.provision(tenant, env, *args)
+        apansible.provision(tenant, env, limit, tags, skip_tags, firstrun)
 
     def get(self, file, key=None):
         """

@@ -1,6 +1,7 @@
 """
 Appflow Utilities.
-This contains all the generic functions needed to support the rest of the library.
+This contains all the generic functions
+needed to support the rest of the library.
 """
 import operator
 import os
@@ -77,7 +78,7 @@ def check_string_in_file(file_name, string):
     found = False
     with open(file_name) as file:
         for line in file:
-            if string in line:  # Key line: check if `w` is in the line.
+            if string in line:
                 found = True
     return found
 
@@ -94,11 +95,10 @@ def diff_files(file1, file2):
                 with open(file2) as file_2:
                     lines_file_1 = file_1.readlines()
                     lines_file_2 = file_2.readlines()
-                    diff = [line for line in lines_file_1 if line not in lines_file_2]
-                    for line in diff:
-                        file_name = line.split('\t')[1].replace('\n', '')
-                        result.append(file_name)
-                    return result
+                    diff = [line.split('\t')[1].replace('\n', '')
+                            for line in lines_file_1
+                            if line not in lines_file_2]
+                    return diff
             else:
                 return result
     else:
@@ -156,6 +156,10 @@ def get_env_color_string(env):
     }.get(env, 'development')
 
 
+def get_appflow_folder(_file):
+    return os.path.dirname(os.path.dirname(os.path.realpath(_file)))
+
+
 def get_tenant_dir(tenant):
     """
     Get directory for the specified tenant.
@@ -181,7 +185,21 @@ def get_md5_folder(tenant):
     """
     Get directory for the specified tenant md5 files.
     """
-    return os.getenv("HOME") + "/.appflow/tmp/.appflow-" + os.getenv("USER") + "/" + tenant
+    return (os.getenv("HOME") + "/.appflow/tmp/.appflow-" +
+            os.getenv("USER") + "/" + tenant)
+
+
+def format_string_argument(argument):
+    """
+    Check argument type and put it to string.
+    Separated comma strings convertion for lists and tuples.
+    """
+    if argument is None:
+        return None
+    elif isinstance(argument, tuple) or isinstance(argument, list):
+        return ','.join(argument)
+    else:
+        return argument
 
 
 def yes_no(question, default="yes"):
