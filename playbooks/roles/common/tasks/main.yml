@@ -51,6 +51,10 @@
   when: conf_rc_local_enable is defined and conf_rc_local_enable == true
   tags: [ common, rc-local, rc-local-conf ]
 
+- import_tasks: supervisor.yml
+  when: conf_supervisor_enable is defined and conf_supervisor_enable == true
+  tags: [ common, supervisor, supervisor-conf ]
+
 - import_tasks: cron.yml
   tags: [ common, cron ]
 
