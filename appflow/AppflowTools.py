@@ -36,12 +36,11 @@ def initialize(tenant):
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
-    """
-    Setup the autocompletion now.
-    Generate is using -- --completion function of Fire
-    Save it to ~/.appflow_completion
-    Source if for bash and zsh.
-    """
+
+    # Setup the autocompletion now.
+    # Generate is using -- --completion function of Fire
+    # Save it to ~/.appflow_completion
+    # Source if for bash and zsh.
     bash_source_files = [os.getenv('HOME') + "/.bashrc",
                          os.getenv('HOME') + "/.bashrc.local"]
     zsh_source_files = [os.getenv('HOME') + "/.zshrc",
