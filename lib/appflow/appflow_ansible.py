@@ -38,7 +38,7 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         tags_argument.append("-k -u ubuntu")
-    print('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
+    os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
           inventory + ' ' + playbook +
           ' --vault-password-file ' + password_file)
 

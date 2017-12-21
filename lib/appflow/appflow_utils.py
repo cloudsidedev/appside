@@ -157,7 +157,13 @@ def get_env_color_string(env):
 
 
 def get_appflow_folder(_file):
-    return os.path.dirname(os.path.dirname(os.path.realpath(_file)))
+    """
+    Get directory or appflow.
+    """
+    # return os.getenv("HOME") + "/appflow"
+    path = os.path.abspath(_file)
+    path = path[:path.find("/lib")]
+    return path
 
 
 def get_tenant_dir(tenant):
