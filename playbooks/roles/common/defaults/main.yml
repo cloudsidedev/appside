@@ -38,8 +38,8 @@ conf_supervisor_programs: []
   #     stopasgroup=true
 conf_supervisor_nodaemon: false
 conf_supervisor_log_dir: /var/log/supervisor
-conf_supervisor_user: root
-conf_supervisor_password: 'appflow'
+# conf_supervisor_user:
+# conf_supervisor_password:
 conf_supervisor_unix_http_server_enable: true
 conf_supervisor_unix_http_server_socket_path: /var/run/supervisor.sock
 conf_supervisor_inet_http_server_enable: false
