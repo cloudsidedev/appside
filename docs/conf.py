@@ -15,7 +15,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys, os
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
+print(os.path.join(os.path.dirname(__name__), '..'), "*******************8")
+# sys.path.insert(0, os.path.abspath('../'))
+# sys.path.insert(0, os.path.abspath('.'))
 
 # from AppFlow import __version__ as sw_version
 
@@ -84,7 +87,7 @@ primary_domain = 'rst'
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-#add_module_names = True
+add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -169,7 +172,7 @@ html_sidebars = {
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = True
 
 # If false, no index is generated.
 html_use_index = False

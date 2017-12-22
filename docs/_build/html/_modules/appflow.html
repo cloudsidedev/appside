@@ -1,0 +1,474 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>appflow &#8212; AppFlow - Deduplicating Archiver 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/AppFlow.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="search" title="Search" href="../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">
+  <img src='../_static/logo.svg' width='100%'>
+
+  AppFlow 1.0
+</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html#license">License</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="index.html">Module code</a></li>
+              
+              <li>appflow</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for appflow</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Appflow CLI tool.</span>
+
+<span class="sd">Type appflow to have a list of available commands.</span>
+<span class="sd">Type appflow command -- --help to have help for the specified command.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Requirements</span>
+<span class="c1"># fire, yaml, json, flask, PyMySQL</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">import</span> <span class="nn">fire</span>
+
+<span class="kn">import</span> <span class="nn">lib.appflow.appflow_ansible</span> <span class="k">as</span> <span class="nn">apansible</span>
+<span class="kn">import</span> <span class="nn">lib.appflow.appflow_tools</span> <span class="k">as</span> <span class="nn">tools</span>
+<span class="kn">import</span> <span class="nn">lib.appflow.appflow_utils</span> <span class="k">as</span> <span class="nn">utils</span>
+<span class="kn">import</span> <span class="nn">lib.appflow.appflow_yaml</span> <span class="k">as</span> <span class="nn">apyaml</span>
+
+<span class="c1"># We need some default configurations</span>
+<span class="c1"># This will allow to call &quot;appflow action *args&quot; without always specifying</span>
+<span class="c1"># Tenant and environment.</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/.appflow/config.yml&quot;</span><span class="p">):</span>
+    <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">apyaml</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">))</span>
+    <span class="n">DEFAULT_TENANT</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appflow&quot;</span><span class="p">)[</span><span class="s2">&quot;tenant&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">DEFAULT_ENV</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appflow&quot;</span><span class="p">)[</span><span class="s2">&quot;tenant&quot;</span><span class="p">][</span><span class="s2">&quot;default_env&quot;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">DEFAULT_TENANT</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">DEFAULT_ENV</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Default configs not set&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Run:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;appflow default </span><span class="se">\&quot;</span><span class="s2">tenant-id</span><span class="se">\&quot;</span><span class="s2"> </span><span class="se">\&quot;</span><span class="s2">tenant-name</span><span class="se">\&quot;</span><span class="s2"> </span><span class="se">\&quot;</span><span class="s2">default-environment</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to setup the default configs&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AppFlow"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow">[docs]</a><span class="k">class</span> <span class="nc">AppFlow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Appflow CLI tool.</span>
+
+<span class="sd">    Type appflow to have a list of available commands.</span>
+<span class="sd">    Type appflow command -- --help to have help for the specified command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AppFlow.update"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;master&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simple function to update Appflow.</span>
+<span class="sd">        This is handy for the appflow-git package.</span>
+
+<span class="sd">        @type  branch: string</span>
+<span class="sd">        @param branch: The branch from where to pull.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">appflow_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_appflow_folder</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;-C&#39;</span><span class="p">,</span> <span class="n">appflow_folder</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="n">branch</span><span class="p">],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">_pipe</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">_pipe</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;-C&#39;</span><span class="p">,</span> <span class="n">appflow_folder</span><span class="p">,</span> <span class="s1">&#39;pull&#39;</span><span class="p">],</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">_pipe</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">_pipe</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppFlow.default"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant_id</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We need some default configurations</span>
+<span class="sd">        This will allow to call &quot;appflow action *args&quot; without always specifying</span>
+<span class="sd">        Tenant and environment.</span>
+<span class="sd">    </span>
+<span class="sd">        @type  tenant_id: string</span>
+<span class="sd">        @param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant. (ex: mrrobot)</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">setup_default_config</span><span class="p">(</span><span class="n">tenant_id</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.init"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will initialize all the folders for Assh.</span>
+<span class="sd">        This will also setup autocompletion for the CLI tool.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">tenant</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Default Assh folders initialized, use appflow ssh to deploy configs.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Appflow autocompletion initialized. Re-source your rc file to take effect&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.ssh"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.ssh">[docs]</a>    <span class="k">def</span> <span class="nf">ssh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will deploy the ssh keys from your tenant/env</span>
+<span class="sd">        to the Assh folders.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">setup_ssh</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.vhosts"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.vhosts">[docs]</a>    <span class="k">def</span> <span class="nf">vhosts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will setup your /etc/hosts to reflect the configs</span>
+<span class="sd">        int your tenant/development host_vars.</span>
+<span class="sd">        ** Needs Root Access **</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">set_vhosts_hosts</span><span class="p">(</span><span class="n">tenant</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.reset"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset your local tenant repository.</span>
+<span class="sd">        This will restore the status to the latest git pull.</span>
+<span class="sd">        This will also reset any unpushed work.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">git_reset</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.status"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Outputs your local tenant status, any modified files.</span>
+<span class="sd">        This is handy to have an overview of what&#39;s going to be pushed</span>
+<span class="sd">        as a dry run.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">git_status</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Files Already Encrypted&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Changed files:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppFlow.checkout"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.checkout">[docs]</a>    <span class="k">def</span> <span class="nf">checkout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Git pull your local tenant repository.</span>
+<span class="sd">        This will download the lates available code.</span>
+<span class="sd">        This will also overwrite any unpushed work.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">git_check_out</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.checkin"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.checkin">[docs]</a>    <span class="k">def</span> <span class="nf">checkin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">,</span>
+                <span class="n">commit</span><span class="o">=</span><span class="s2">&quot;Auto Commit&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Git push from yout local tenant repository.</span>
+<span class="sd">        This will only push the files that were modified.</span>
+<span class="sd">        Before any push, all the files are encrypted.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+
+<span class="sd">        @type  commit: string</span>
+<span class="sd">        @param commit: The commit message to use</span>
+<span class="sd">                        when committing. (default Auto Commit)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tools</span><span class="o">.</span><span class="n">git_check_in</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.decrypt"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.decrypt">[docs]</a>    <span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decrypt your local tenant repository</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_provision_color_string</span><span class="p">(</span><span class="s1">&#39;decrypt&#39;</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">))</span>
+        <span class="n">apansible</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.encrypt"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.encrypt">[docs]</a>    <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encrypt your local tenant repository</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_provision_color_string</span><span class="p">(</span><span class="s1">&#39;encrypt&#39;</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">))</span>
+        <span class="n">apansible</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.tags"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.tags">[docs]</a>    <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show available tags. This is handy to provision only a part of them</span>
+<span class="sd">        or skipping some of them.</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_provision_color_string</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">))</span>
+        <span class="n">apansible</span><span class="o">.</span><span class="n">tags</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.provision"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.provision">[docs]</a>    <span class="k">def</span> <span class="nf">provision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="n">DEFAULT_TENANT</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">DEFAULT_ENV</span><span class="p">,</span>
+                  <span class="n">limit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skip_tags</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">firstrun</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provision your machines.</span>
+<span class="sd">        Syntax is:</span>
+<span class="sd">        appflow provision &quot;machine1,machine2&quot; tag1,tag2 skiptag1,skiptag2</span>
+<span class="sd">        tags: will run only the tags specified</span>
+<span class="sd">        skip_tags: will run all the tags except for the specified ones</span>
+<span class="sd">        limit: limit to only some specified hosts.</span>
+
+<span class="sd">        Optionally it is possible to specify custom tenant and environment</span>
+<span class="sd">        appflow provision tenant-name env-name...</span>
+<span class="sd">        this is optional and by default will read the</span>
+<span class="sd">        default config in ~/.appflow/config.yml</span>
+
+<span class="sd">        @type  tenant: string</span>
+<span class="sd">        @param tenant: The name of the tenant.</span>
+
+<span class="sd">        @type  env: string</span>
+<span class="sd">        @param env: The name of the tenant.</span>
+
+<span class="sd">        @type  limit: string</span>
+<span class="sd">        @param limit: Comma separated list of hosts to provision. (default None)</span>
+
+<span class="sd">        @type  tags: string</span>
+<span class="sd">        @param tags: Comma separated list of tags to exec (default All).</span>
+
+<span class="sd">        @type  skip_tags: string</span>
+<span class="sd">        @param skip_tags: Comma separated list of tags to skip (default None).</span>
+
+<span class="sd">        @type  firstrun: bool</span>
+<span class="sd">        @param firstrun: if it&#39;s first run (default False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_provision_color_string</span><span class="p">(</span><span class="s1">&#39;provision&#39;</span><span class="p">,</span> <span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">))</span>
+        <span class="n">apansible</span><span class="o">.</span><span class="n">provision</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">skip_tags</span><span class="p">,</span> <span class="n">firstrun</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppFlow.get"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will print the key you are searcing (or the whole file if key is not specified)</span>
+<span class="sd">        Syntax:</span>
+<span class="sd">        appflow get tenant.environment.folder.to.file.searched key.subkey.value</span>
+
+<span class="sd">        @type  file: string</span>
+<span class="sd">        @param file: path.to.file (dot encoded) where to search the key.</span>
+
+<span class="sd">        @type  key: string</span>
+<span class="sd">        @param key: The key to search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">apyaml</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppFlow.set"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will modify and then print the key you are specifying.</span>
+<span class="sd">        Syntax:</span>
+<span class="sd">        appflow get tenant.environment.folder.to.file.searched key.subkey.value</span>
+
+<span class="sd">        @type  file: string</span>
+<span class="sd">        @param file: path.to.file (dot encoded) where to set the key.</span>
+
+<span class="sd">        @type  key: string</span>
+<span class="sd">        @param key: The key to search.</span>
+
+<span class="sd">        @type  value: T</span>
+<span class="sd">        @param value: the value to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">apyaml</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppFlow.rm"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.rm">[docs]</a>    <span class="k">def</span> <span class="nf">rm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will remove and then print the key you are specifying.</span>
+<span class="sd">        Syntax:</span>
+<span class="sd">        appflow get tenant.environment.folder.to.file.searched key.subkey.value</span>
+<span class="sd">        </span>
+<span class="sd">        @type  file: string</span>
+<span class="sd">        @param file: path.to.file (dot encoded) where to remove the key.</span>
+
+<span class="sd">        @type  key: string</span>
+<span class="sd">        @param key: The key to search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">apyaml</span><span class="o">.</span><span class="n">rm_value</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppFlow.add"><a class="viewcode-back" href="../source/appflow.html#appflow.AppFlow.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This will create and then print the key you are specifying.</span>
+<span class="sd">        Syntax:</span>
+<span class="sd">        appflow get tenant.environment.folder.to.file.searched key.subkey.value</span>
+
+<span class="sd">        @type  file: string</span>
+<span class="sd">        @param file: path.to.file (dot encoded) where to set the key.</span>
+
+<span class="sd">        @type  key: string</span>
+<span class="sd">        @param key: The key to search. (this function will add it if not found.)</span>
+
+<span class="sd">        @type  value: T</span>
+<span class="sd">        @param value: the value to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">apyaml</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">AppFlow</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Ivo Marino, Luca Di Maio. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

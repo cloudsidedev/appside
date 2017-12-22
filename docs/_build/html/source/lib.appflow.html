@@ -1,0 +1,679 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>lib.appflow package &#8212; AppFlow - Deduplicating Archiver 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/AppFlow.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Authors" href="../authors.html" />
+    <link rel="prev" title="Appflow Library" href="lib.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="right" >
+          <a href="../authors.html" title="Authors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lib.html" title="Appflow Library"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >appflow</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="lib.html" accesskey="U">Appflow Library</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">
+  <img src='../_static/logo.svg' width='100%'>
+
+  AppFlow 1.0
+</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">appflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html#license">License</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../development.html">Development</a></li>
+              
+                <li><a href="modules.html">appflow</a></li>
+              
+                <li><a href="lib.html">Appflow Library</a></li>
+              
+              <li>lib.appflow package</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="lib-appflow-package">
+<h1>lib.appflow package<a class="headerlink" href="#lib-appflow-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lib.appflow.appflow_ansible">
+<span id="lib-appflow-appflow-ansible-module"></span><h2>lib.appflow.appflow_ansible module<a class="headerlink" href="#module-lib.appflow.appflow_ansible" title="Permalink to this headline">¶</a></h2>
+<p>Appflow Ansible utilities.
+This contains all the functions needed to perform Ansible actions.
+From provision to encryption/decryption and tag listing.</p>
+<dl class="function">
+<dt id="lib.appflow.appflow_ansible.decrypt">
+<code class="descclassname">lib.appflow.appflow_ansible.</code><code class="descname">decrypt</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_ansible.html#decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_ansible.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt the tenant/environment data</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function does print to screen the ansible output of the</p>
+<blockquote>
+<div>execution.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_ansible.encrypt">
+<code class="descclassname">lib.appflow.appflow_ansible.</code><code class="descname">encrypt</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_ansible.html#encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_ansible.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encrypt the tenant/environment data</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function does print to screen the ansible output of the</p>
+<blockquote>
+<div>execution.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_ansible.provision">
+<code class="descclassname">lib.appflow.appflow_ansible.</code><code class="descname">provision</code><span class="sig-paren">(</span><em>tenant: str</em>, <em>env: str</em>, <em>limit: str</em>, <em>tags: str</em>, <em>skip_tags: str</em>, <em>firstrun: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_ansible.html#provision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_ansible.provision" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will perform the ansible playbook.
+We pass tenant and environment.
+all other tags are parsed from option=xyz to –option xys
+in order to respect ansible’s syntax.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;type  limit: string
+&#64;param limit: Comma separated list of hosts to provision.</p>
+<p>&#64;type  tags: string
+&#64;param tags: Comma separated list of tags to exec (default All).</p>
+<p>&#64;type  skip_tags: string
+&#64;param skip_tags: Comma separated list of tags to skip (default None).</p>
+<p>&#64;type  firstrun: bool
+&#64;param firstrun: if it’s first run (default False)</p>
+<p>&#64;rtype:   None
+&#64;return:  the function does print to screen the ansible output of the</p>
+<blockquote>
+<div>execution.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_ansible.tags">
+<code class="descclassname">lib.appflow.appflow_ansible.</code><code class="descname">tags</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_ansible.html#tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_ansible.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all available tags for tenant/environment</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function does print to screen the available tags.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-lib.appflow.appflow_tools">
+<span id="lib-appflow-appflow-tools-module"></span><h2>lib.appflow.appflow_tools module<a class="headerlink" href="#module-lib.appflow.appflow_tools" title="Permalink to this headline">¶</a></h2>
+<p>Appflow Tools.
+This contains all the functions needed to perform actions connected to
+initialization, config deployment and git versioning.</p>
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.git_check_in">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">git_check_in</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em>, <em>commit</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#git_check_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.git_check_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git push.
+This will affecy only the modified files (see git_status function).
+Commit message can be specified.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;type  commit: string
+&#64;param commit: The commit message to use when committing.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.git_check_out">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">git_check_out</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#git_check_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.git_check_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git pull of the specified tenant/environment folder.
+un-pushed work can be overwritten by this, so ask for confirmation.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.git_reset">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">git_reset</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#git_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.git_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform git reset in the specified tenant/environment folder.
+After this, updates the md5 file to reflect the new status.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.git_status">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">git_status</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#git_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.git_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a status of modified files in the tenant/environment folder.
+this is tracked separately from git, because encryption/decryption of files
+will always override the git status method.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   list
+&#64;return:  the function returns a list containing the different lines between</p>
+<blockquote>
+<div>the 2 md5 files.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.initialize">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">initialize</code><span class="sig-paren">(</span><em>tenant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create default dirs and yaml files for Assh to function properly.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  This function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.set_vhosts_hosts">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">set_vhosts_hosts</code><span class="sig-paren">(</span><em>tenant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#set_vhosts_hosts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.set_vhosts_hosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup /etc/hosts for tenant.
+Requires root access to write.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.setup_default_config">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">setup_default_config</code><span class="sig-paren">(</span><em>tenant_id</em>, <em>tenant</em>, <em>environment</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#setup_default_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.setup_default_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy a default config file in ~/.appflow/config.yml</p>
+<p>&#64;type  tenant_id: string
+&#64;param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant. (ex: mrrobot)</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function does print to screen the ansible output of the</p>
+<blockquote>
+<div>execution.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_tools.setup_ssh">
+<code class="descclassname">lib.appflow.appflow_tools.</code><code class="descname">setup_ssh</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_tools.html#setup_ssh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_tools.setup_ssh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy Assh configs for tenant/environment.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-lib.appflow.appflow_utils">
+<span id="lib-appflow-appflow-utils-module"></span><h2>lib.appflow.appflow_utils module<a class="headerlink" href="#module-lib.appflow.appflow_utils" title="Permalink to this headline">¶</a></h2>
+<p>Appflow Utilities.
+This contains all the generic functions
+needed to support the rest of the library.</p>
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.add_keys">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">add_keys</code><span class="sig-paren">(</span><em>data_dict</em>, <em>key</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#add_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.add_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add keys to dictionary (set also value if specified)</p>
+<p>&#64;type  data_dict: dict
+&#64;param data_dict: The dictionary where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;type  value: string
+&#64;param value: The value to set. (default None)</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.check_string_in_file">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">check_string_in_file</code><span class="sig-paren">(</span><em>file_name</em>, <em>searched_string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#check_string_in_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.check_string_in_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if string is in file</p>
+<p>&#64;type  file_name: string
+&#64;param file_name: The file name where to search the string.</p>
+<p>&#64;type  searched_string: string
+&#64;param searched_string: The string to search.</p>
+<p>&#64;rtype:   bool
+&#64;return:  the function returns if the string is found or not.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.diff_files">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">diff_files</code><span class="sig-paren">(</span><em>file1</em>, <em>file2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#diff_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.diff_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns different lines between file1 and file2.
+Returned data is a list of strings.</p>
+<p>&#64;type  file1: string
+&#64;param file1: The name of the first file.</p>
+<p>&#64;type  file2: string
+&#64;param file2: The name of the second file.</p>
+<p>&#64;rtype:   list
+&#64;return:  the function returns a list containing the different lines between</p>
+<blockquote>
+<div>the 2 files.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.format_string_argument">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">format_string_argument</code><span class="sig-paren">(</span><em>argument</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#format_string_argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.format_string_argument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fire takes multiple arguments (comma separated) as list or tuple.
+Check argument type and put it to string.</p>
+<p>&#64;type  argument: tuple or list
+&#64;param argument: The argument passed.</p>
+<p>&#64;rtype:   string
+&#64;return:  Separated comma strings convertion for lists and tuples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_appflow_folder">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_appflow_folder</code><span class="sig-paren">(</span><em>_file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_appflow_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_appflow_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get directory or appflow.</p>
+<p>&#64;type  _file: string
+&#64;param _file: The name of the script file executed internally.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the root of appflow. Needed to then search</p>
+<blockquote>
+<div>for playbooks.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_env_color_string">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_env_color_string</code><span class="sig-paren">(</span><em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_env_color_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_env_color_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color code for the environment variable
+Needed in provision string.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the color needed for the corresponding env.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_file_list">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_file_list</code><span class="sig-paren">(</span><em>_dir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_file_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_file_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of files in a directory.</p>
+<p>&#64;type  _dir: string
+&#64;param _dir: The name of the directory to explore.</p>
+<p>&#64;rtype:   list
+&#64;return:  the function returns the list of files in the folder.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_from_dict">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_from_dict</code><span class="sig-paren">(</span><em>data_dict</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return key-value dictionary</p>
+<p>&#64;type  data_dict: dict
+&#64;param data_dict: The dictionary where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;rtype:   dict
+&#64;return:  the function returns a dict containing the</p>
+<blockquote>
+<div>key-value pair searched.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_md5_folder">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_md5_folder</code><span class="sig-paren">(</span><em>tenant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_md5_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_md5_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get directory for the specified tenant md5 files.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the md5_folder searched.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_md5_sum">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_md5_sum</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_md5_sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_md5_sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the md5 checksum of the specified file.</p>
+<p>&#64;type  file_name: string
+&#64;param file_name: The name of the file to hash.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the md5 hash of the file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_provision_color_string">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_provision_color_string</code><span class="sig-paren">(</span><em>command</em>, <em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_provision_color_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_provision_color_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color code for the provision string</p>
+<p>&#64;type  command: string
+&#64;param command: The command to execute.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the color coded string to print</p>
+<blockquote>
+<div>before the execution of the ansible command.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_tenant_dir">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_tenant_dir</code><span class="sig-paren">(</span><em>tenant</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_tenant_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_tenant_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get directory for the specified tenant.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the tenant folder.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_tenant_env_dir">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_tenant_env_dir</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_tenant_env_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_tenant_env_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get directory for the specified tenant/environment.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the environment.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the tenant/environment folder.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.get_vault_file">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">get_vault_file</code><span class="sig-paren">(</span><em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#get_vault_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.get_vault_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get vault file for the specified tenant/environment.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the environment.</p>
+<p>&#64;rtype:   string
+&#64;return:  the function returns the vault file searched.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.rm_in_dict">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">rm_in_dict</code><span class="sig-paren">(</span><em>data_dict</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#rm_in_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.rm_in_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove keys from dictionary</p>
+<p>&#64;type  data_dict: dict
+&#64;param data_dict: The dictionary where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;rtype:   dict
+&#64;return:  the function returns the dictionary with the deleted the</p>
+<blockquote>
+<div>key searched.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.safe_remove">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">safe_remove</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#safe_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.safe_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gracefully delete a file.</p>
+<p>&#64;type  file_name: string
+&#64;param file_name: The name of the file to delete.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.set_in_dict">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">set_in_dict</code><span class="sig-paren">(</span><em>data_dict</em>, <em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#set_in_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.set_in_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set key-value in dictionary</p>
+<p>&#64;type  data_dict: dict
+&#64;param data_dict: The dictionary where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;type  value: string
+&#64;param value: The value to set.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.write_md5_sum">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">write_md5_sum</code><span class="sig-paren">(</span><em>file_name</em>, <em>md5_store_file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#write_md5_sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.write_md5_sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the modified md5 filename to the md5_store_file</p>
+<p>&#64;type  file_name: string
+&#64;param file_name: The name of the file to hash.</p>
+<p>&#64;type  md5_store_file: string
+&#64;param md5_store_file: The name of the file where to write the hash.</p>
+<p>&#64;rtype:   None
+&#64;return:  the function doesn’t have a return statement.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_utils.yes_no">
+<code class="descclassname">lib.appflow.appflow_utils.</code><code class="descname">yes_no</code><span class="sig-paren">(</span><em>question</em>, <em>default='yes'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_utils.html#yes_no"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_utils.yes_no" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a prompt for asking a question with y/N as accepted answer.</p>
+<p>&#64;type  question: string
+&#64;param question: The question to ask.</p>
+<p>&#64;type  default: string
+&#64;param default: The default answer. (default Yes)</p>
+<p>&#64;rtype:   bool
+&#64;return:  the function returns if the answer was yes or no.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-lib.appflow.appflow_yaml">
+<span id="lib-appflow-appflow-yaml-module"></span><h2>lib.appflow.appflow_yaml module<a class="headerlink" href="#module-lib.appflow.appflow_yaml" title="Permalink to this headline">¶</a></h2>
+<p>Appflow Yaml utilities.
+This contains all the functions needed to manipulate yaml files.
+Handy for configs and for tenant setups.</p>
+<dl class="function">
+<dt id="lib.appflow.appflow_yaml.add_value">
+<code class="descclassname">lib.appflow.appflow_yaml.</code><code class="descname">add_value</code><span class="sig-paren">(</span><em>_file</em>, <em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_yaml.html#add_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_yaml.add_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns key-value for searched key in file.
+Key will be created with the value specified.
+Data is written to file.
+Returns string in json format.</p>
+<p>&#64;type  _file: string
+&#64;param _file: path.to.file (dot encoded) where to set the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search. (this function will add it if not found.)</p>
+<p>&#64;type  value: T
+&#64;param value: the value to set.</p>
+<p>&#64;rtype:   json
+&#64;return:  the function returns a json containing the updated file content.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_yaml.get_value">
+<code class="descclassname">lib.appflow.appflow_yaml.</code><code class="descname">get_value</code><span class="sig-paren">(</span><em>_file</em>, <em>key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_yaml.html#get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_yaml.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns key-value for searched key in file.
+If key is not specified, returns the whole file.
+Returns string in json format.</p>
+<p>&#64;type  _file: string
+&#64;param _file: path.to.file (dot encoded) where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;rtype:   json
+&#64;return:  the function returns a json containing the</p>
+<blockquote>
+<div>key-value searched.</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_yaml.rm_value">
+<code class="descclassname">lib.appflow.appflow_yaml.</code><code class="descname">rm_value</code><span class="sig-paren">(</span><em>_file</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_yaml.html#rm_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_yaml.rm_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns key-value for searched key in file.
+Searched key will be removed.
+Data is written to file.
+Returns string in json format.</p>
+<p>&#64;type  _file: string
+&#64;param _file: path.to.file (dot encoded) where to remove the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;rtype:   json
+&#64;return:  the function returns a json containing the updated file content.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.appflow.appflow_yaml.set_value">
+<code class="descclassname">lib.appflow.appflow_yaml.</code><code class="descname">set_value</code><span class="sig-paren">(</span><em>_file</em>, <em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lib/appflow/appflow_yaml.html#set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.appflow.appflow_yaml.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns key-value for searched key in file.
+Searched key will be set with the value specified.
+Data is written to file.
+Returns string in json format.</p>
+<p>&#64;type  _file: string
+&#64;param _file: path.to.file (dot encoded) where to set the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;type  value: T
+&#64;param value: the value to set.</p>
+<p>&#64;rtype:   json
+&#64;return:  the function returns a json containing the updated file content.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-lib.appflow">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lib.appflow" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="lib.html" title="previous chapter (use the left arrow)">Appflow Library</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="../authors.html" title="next chapter (use the right arrow)">Authors</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="right" >
+          <a href="../authors.html" title="Authors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lib.html" title="Appflow Library"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >appflow</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="lib.html" >Appflow Library</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Ivo Marino, Luca Di Maio. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

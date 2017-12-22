@@ -1,0 +1,404 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Appflow CLI Tool &#8212; AppFlow - Deduplicating Archiver 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/AppFlow.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Appflow Library" href="lib.html" />
+    <link rel="prev" title="appflow" href="modules.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="right" >
+          <a href="lib.html" title="Appflow Library"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="appflow"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" accesskey="U">appflow</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">
+  <img src='../_static/logo.svg' width='100%'>
+
+  AppFlow 1.0
+</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">appflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html#license">License</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../index.html">Docs</a></li>
+              
+                <li><a href="../development.html">Development</a></li>
+              
+                <li><a href="modules.html">appflow</a></li>
+              
+              <li>Appflow CLI Tool</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="appflow-cli-tool">
+<h1>Appflow CLI Tool<a class="headerlink" href="#appflow-cli-tool" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-appflow"></span><p>Appflow CLI tool.</p>
+<p>Type appflow to have a list of available commands.
+Type appflow command – –help to have help for the specified command.</p>
+<dl class="class">
+<dt id="appflow.AppFlow">
+<em class="property">class </em><code class="descclassname">appflow.</code><code class="descname">AppFlow</code><a class="reference internal" href="../_modules/appflow.html#AppFlow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a href="#id1"><span class="problematic" id="id2">:class:`object`</span></a></p>
+<p>Appflow CLI tool.</p>
+<p>Type appflow to have a list of available commands.
+Type appflow command – –help to have help for the specified command.</p>
+<dl class="method">
+<dt id="appflow.AppFlow.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>file</em>, <em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will create and then print the key you are specifying.
+Syntax:
+appflow get tenant.environment.folder.to.file.searched key.subkey.value</p>
+<p>&#64;type  file: string
+&#64;param file: path.to.file (dot encoded) where to set the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search. (this function will add it if not found.)</p>
+<p>&#64;type  value: T
+&#64;param value: the value to set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.checkin">
+<code class="descname">checkin</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em>, <em>commit='Auto Commit'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.checkin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.checkin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git push from yout local tenant repository.
+This will only push the files that were modified.
+Before any push, all the files are encrypted.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;type  commit: string
+&#64;param commit: The commit message to use</p>
+<blockquote>
+<div>when committing. (default Auto Commit)</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.checkout">
+<code class="descname">checkout</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.checkout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.checkout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git pull your local tenant repository.
+This will download the lates available code.
+This will also overwrite any unpushed work.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.decrypt">
+<code class="descname">decrypt</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt your local tenant repository</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.default">
+<code class="descname">default</code><span class="sig-paren">(</span><em>tenant_id</em>, <em>tenant</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>We need some default configurations
+This will allow to call “appflow action <a href="#id3"><span class="problematic" id="id4">*</span></a>args” without always specifying
+Tenant and environment.</p>
+<p>&#64;type  tenant_id: string
+&#64;param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant. (ex: mrrobot)</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.encrypt">
+<code class="descname">encrypt</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encrypt your local tenant repository</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>file</em>, <em>key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will print the key you are searcing (or the whole file if key is not specified)
+Syntax:
+appflow get tenant.environment.folder.to.file.searched key.subkey.value</p>
+<p>&#64;type  file: string
+&#64;param file: path.to.file (dot encoded) where to search the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.init">
+<code class="descname">init</code><span class="sig-paren">(</span><em>tenant='ttss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will initialize all the folders for Assh.
+This will also setup autocompletion for the CLI tool.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.provision">
+<code class="descname">provision</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em>, <em>limit: str = None</em>, <em>tags: str = None</em>, <em>skip_tags: str = None</em>, <em>firstrun: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.provision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.provision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provision your machines.
+Syntax is:
+appflow provision “machine1,machine2” tag1,tag2 skiptag1,skiptag2
+tags: will run only the tags specified
+skip_tags: will run all the tags except for the specified ones
+limit: limit to only some specified hosts.</p>
+<p>Optionally it is possible to specify custom tenant and environment
+appflow provision tenant-name env-name…
+this is optional and by default will read the
+default config in ~/.appflow/config.yml</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+<p>&#64;type  limit: string
+&#64;param limit: Comma separated list of hosts to provision. (default None)</p>
+<p>&#64;type  tags: string
+&#64;param tags: Comma separated list of tags to exec (default All).</p>
+<p>&#64;type  skip_tags: string
+&#64;param skip_tags: Comma separated list of tags to skip (default None).</p>
+<p>&#64;type  firstrun: bool
+&#64;param firstrun: if it’s first run (default False)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset your local tenant repository.
+This will restore the status to the latest git pull.
+This will also reset any unpushed work.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.rm">
+<code class="descname">rm</code><span class="sig-paren">(</span><em>file</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.rm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.rm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will remove and then print the key you are specifying.
+Syntax:
+appflow get tenant.environment.folder.to.file.searched key.subkey.value</p>
+<p>&#64;type  file: string
+&#64;param file: path.to.file (dot encoded) where to remove the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.set">
+<code class="descname">set</code><span class="sig-paren">(</span><em>file</em>, <em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will modify and then print the key you are specifying.
+Syntax:
+appflow get tenant.environment.folder.to.file.searched key.subkey.value</p>
+<p>&#64;type  file: string
+&#64;param file: path.to.file (dot encoded) where to set the key.</p>
+<p>&#64;type  key: string
+&#64;param key: The key to search.</p>
+<p>&#64;type  value: T
+&#64;param value: the value to set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.ssh">
+<code class="descname">ssh</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.ssh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.ssh" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will deploy the ssh keys from your tenant/env
+to the Assh folders.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.status">
+<code class="descname">status</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs your local tenant status, any modified files.
+This is handy to have an overview of what’s going to be pushed
+as a dry run.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.tags">
+<code class="descname">tags</code><span class="sig-paren">(</span><em>tenant='ttss'</em>, <em>env='development'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show available tags. This is handy to provision only a part of them
+or skipping some of them.</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+<p>&#64;type  env: string
+&#64;param env: The name of the tenant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>branch='master'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple function to update Appflow.
+This is handy for the appflow-git package.</p>
+<p>&#64;type  branch: string
+&#64;param branch: The branch from where to pull.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="appflow.AppFlow.vhosts">
+<code class="descname">vhosts</code><span class="sig-paren">(</span><em>tenant='ttss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/appflow.html#AppFlow.vhosts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#appflow.AppFlow.vhosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will setup your /etc/hosts to reflect the configs
+int your tenant/development host_vars.
+** Needs Root Access **</p>
+<p>&#64;type  tenant: string
+&#64;param tenant: The name of the tenant.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="modules.html" title="previous chapter (use the left arrow)">appflow</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="lib.html" title="next chapter (use the right arrow)">Appflow Library</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="right" >
+          <a href="lib.html" title="Appflow Library"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="appflow"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >appflow</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Ivo Marino, Luca Di Maio. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

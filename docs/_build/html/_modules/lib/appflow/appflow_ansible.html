@@ -1,0 +1,278 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>lib.appflow.appflow_ansible &#8212; AppFlow - Deduplicating Archiver 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/css/AppFlow.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../../index.html" class="text-logo">
+  <img src='../../../_static/logo.svg' width='100%'>
+
+  AppFlow 1.0
+</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html#license">License</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../../index.html">Docs</a></li>
+              
+                <li><a href="../../index.html">Module code</a></li>
+              
+              <li>lib.appflow.appflow_ansible</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for lib.appflow.appflow_ansible</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Appflow Ansible utilities.</span>
+<span class="sd">This contains all the functions needed to perform Ansible actions.</span>
+<span class="sd">From provision to encryption/decryption and tag listing.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">lib.appflow.appflow_utils</span> <span class="k">as</span> <span class="nn">utils</span>
+
+
+<div class="viewcode-block" id="provision"><a class="viewcode-back" href="../../../source/lib.appflow.html#lib.appflow.appflow_ansible.provision">[docs]</a><span class="k">def</span> <span class="nf">provision</span><span class="p">(</span><span class="n">tenant</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+              <span class="n">skip_tags</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">firstrun</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This will perform the ansible playbook.</span>
+<span class="sd">    We pass tenant and environment.</span>
+<span class="sd">    all other tags are parsed from option=xyz to --option xys</span>
+<span class="sd">    in order to respect ansible&#39;s syntax.</span>
+
+<span class="sd">    @type  tenant: string</span>
+<span class="sd">    @param tenant: The name of the tenant.</span>
+
+<span class="sd">    @type  env: string</span>
+<span class="sd">    @param env: The name of the tenant.</span>
+
+<span class="sd">    @type  limit: string</span>
+<span class="sd">    @param limit: Comma separated list of hosts to provision.</span>
+
+<span class="sd">    @type  tags: string</span>
+<span class="sd">    @param tags: Comma separated list of tags to exec (default All).</span>
+
+<span class="sd">    @type  skip_tags: string</span>
+<span class="sd">    @param skip_tags: Comma separated list of tags to skip (default None).</span>
+
+<span class="sd">    @type  firstrun: bool</span>
+<span class="sd">    @param firstrun: if it&#39;s first run (default False)</span>
+
+<span class="sd">    @rtype:   None</span>
+<span class="sd">    @return:  the function does print to screen the ansible output of the</span>
+<span class="sd">                execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inventory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_tenant_dir</span><span class="p">(</span><span class="n">tenant</span><span class="p">)</span> <span class="o">+</span> <span class="n">env</span> <span class="o">+</span> <span class="s2">&quot;/inventory&quot;</span>
+    <span class="n">appflow_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_appflow_folder</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">playbook</span> <span class="o">=</span> <span class="n">appflow_folder</span> <span class="o">+</span> <span class="s1">&#39;/playbooks/generic.yml&#39;</span>
+    <span class="n">password_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_vault_file</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+    <span class="c1"># Let&#39;s be sure the arguments are strings.</span>
+    <span class="c1"># In case of multiple arguments (comma separated), convert them back to str.</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">format_string_argument</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">format_string_argument</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+    <span class="n">skip_tags</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">format_string_argument</span><span class="p">(</span><span class="n">skip_tags</span><span class="p">)</span>
+
+    <span class="n">tags_argument</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Format arguments for ansible command now.</span>
+    <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tags_argument</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--limit &quot;</span> <span class="o">+</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tags_argument</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--tags &quot;</span> <span class="o">+</span> <span class="n">tags</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">skip_tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tags_argument</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--skip-tags &quot;</span> <span class="o">+</span> <span class="n">skip_tags</span><span class="p">)</span>
+    <span class="c1"># First run! Let&#39;s default to the generic user waiting for users provision</span>
+    <span class="k">if</span> <span class="n">firstrun</span><span class="p">:</span>
+        <span class="n">tags_argument</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-k -u ubuntu&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;ansible-playbook -b &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags_argument</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; -i &#39;</span> <span class="o">+</span>
+              <span class="n">inventory</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">playbook</span> <span class="o">+</span>
+              <span class="s1">&#39; --vault-password-file &#39;</span> <span class="o">+</span> <span class="n">password_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tags"><a class="viewcode-back" href="../../../source/lib.appflow.html#lib.appflow.appflow_ansible.tags">[docs]</a><span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all available tags for tenant/environment</span>
+
+<span class="sd">    @type  tenant: string</span>
+<span class="sd">    @param tenant: The name of the tenant.</span>
+
+<span class="sd">    @type  env: string</span>
+<span class="sd">    @param env: The name of the tenant.</span>
+
+<span class="sd">    @rtype:   None</span>
+<span class="sd">    @return:  the function does print to screen the available tags.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inventory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_tenant_dir</span><span class="p">(</span><span class="n">tenant</span><span class="p">)</span> <span class="o">+</span> <span class="n">env</span> <span class="o">+</span> <span class="s2">&quot;/inventory&quot;</span>
+    <span class="n">appflow_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_appflow_folder</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">playbook</span> <span class="o">=</span> <span class="n">appflow_folder</span> <span class="o">+</span> <span class="s1">&#39;/playbooks/generic.yml&#39;</span>
+    <span class="n">password_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_vault_file</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;ansible-playbook --list-tags -i &#39;</span> <span class="o">+</span> <span class="n">inventory</span> <span class="o">+</span>
+              <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">playbook</span> <span class="o">+</span> <span class="s1">&#39; --vault-password-file &#39;</span> <span class="o">+</span> <span class="n">password_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encrypt"><a class="viewcode-back" href="../../../source/lib.appflow.html#lib.appflow.appflow_ansible.encrypt">[docs]</a><span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encrypt the tenant/environment data</span>
+
+<span class="sd">    @type  tenant: string</span>
+<span class="sd">    @param tenant: The name of the tenant.</span>
+
+<span class="sd">    @type  env: string</span>
+<span class="sd">    @param env: The name of the tenant.</span>
+
+<span class="sd">    @rtype:   None</span>
+<span class="sd">    @return:  the function does print to screen the ansible output of the</span>
+<span class="sd">                execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_tenant_env_dir</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+    <span class="n">password_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_vault_file</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+    <span class="n">flie_list</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_file_list</span><span class="p">(</span><span class="n">target_folder</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">flie_list</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;ansible-vault encrypt &#39;</span> <span class="o">+</span> <span class="n">file</span> <span class="o">+</span>
+                  <span class="s1">&#39; --vault-password-file &#39;</span> <span class="o">+</span> <span class="n">password_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="decrypt"><a class="viewcode-back" href="../../../source/lib.appflow.html#lib.appflow.appflow_ansible.decrypt">[docs]</a><span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decrypt the tenant/environment data</span>
+
+<span class="sd">    @type  tenant: string</span>
+<span class="sd">    @param tenant: The name of the tenant.</span>
+
+<span class="sd">    @type  env: string</span>
+<span class="sd">    @param env: The name of the tenant.</span>
+
+<span class="sd">    @rtype:   None</span>
+<span class="sd">    @return:  the function does print to screen the ansible output of the</span>
+<span class="sd">                execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_tenant_env_dir</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+    <span class="n">password_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_vault_file</span><span class="p">(</span><span class="n">tenant</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+    <span class="n">md5_store_folder</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_md5_folder</span><span class="p">(</span><span class="n">tenant</span><span class="p">)</span>
+    <span class="n">md5_store_file</span> <span class="o">=</span> <span class="n">md5_store_folder</span> <span class="o">+</span> <span class="s2">&quot;/appflow-&quot;</span> <span class="o">+</span> <span class="n">env</span> <span class="o">+</span> <span class="s2">&quot;-md5&quot;</span>
+
+    <span class="n">utils</span><span class="o">.</span><span class="n">safe_remove</span><span class="p">(</span><span class="n">md5_store_file</span><span class="p">)</span>
+    <span class="n">flie_list</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_file_list</span><span class="p">(</span><span class="n">target_folder</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">flie_list</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;ansible-vault decrypt &#39;</span> <span class="o">+</span> <span class="n">file</span> <span class="o">+</span>
+                  <span class="s1">&#39; --vault-password-file &#39;</span> <span class="o">+</span> <span class="n">password_file</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">write_md5_sum</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">md5_store_file</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">AppFlow - Deduplicating Archiver 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2017, Ivo Marino, Luca Di Maio. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
