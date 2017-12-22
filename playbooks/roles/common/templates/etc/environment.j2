@@ -13,3 +13,7 @@ export no_proxy="localhost,127.0.0.1"
 {% endif %}
 export HTTP_PROXY_REQUEST_FULLURI=false
 export HTTPS_PROXY_REQUEST_FULLURI=false
+
+{% if conf_environment_options is defined %}
+{{ conf_environment_options }}
+{% endif %}
