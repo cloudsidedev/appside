@@ -15,6 +15,28 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     We pass tenant and environment.
     all other tags are parsed from option=xyz to --option xys
     in order to respect ansible's syntax.
+
+    @type  tenant: string
+    @param tenant: The name of the tenant.
+
+    @type  env: string
+    @param env: The name of the tenant.
+
+    @type  limit: string
+    @param limit: Comma separated list of hosts to provision.
+
+    @type  tags: string
+    @param tags: Comma separated list of tags to exec (default All).
+
+    @type  skip_tags: string
+    @param skip_tags: Comma separated list of tags to skip (default None).
+
+    @type  firstrun: bool
+    @param firstrun: if it's first run (default False)
+
+    @rtype:   None
+    @return:  the function does print to screen the ansible output of the
+                execution.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = utils.get_appflow_folder(__file__)
@@ -39,13 +61,22 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     if firstrun:
         tags_argument.append("-k -u ubuntu")
     os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
-          inventory + ' ' + playbook +
-          ' --vault-password-file ' + password_file)
+              inventory + ' ' + playbook +
+              ' --vault-password-file ' + password_file)
 
 
 def tags(tenant, env):
     """
     List all available tags for tenant/environment
+
+    @type  tenant: string
+    @param tenant: The name of the tenant.
+
+    @type  env: string
+    @param env: The name of the tenant.
+
+    @rtype:   None
+    @return:  the function does print to screen the available tags.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = utils.get_appflow_folder(__file__)
@@ -59,6 +90,16 @@ def tags(tenant, env):
 def encrypt(tenant, env):
     """
     Encrypt the tenant/environment data
+
+    @type  tenant: string
+    @param tenant: The name of the tenant.
+
+    @type  env: string
+    @param env: The name of the tenant.
+
+    @rtype:   None
+    @return:  the function does print to screen the ansible output of the
+                execution.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
@@ -71,6 +112,16 @@ def encrypt(tenant, env):
 def decrypt(tenant, env):
     """
     Decrypt the tenant/environment data
+
+    @type  tenant: string
+    @param tenant: The name of the tenant.
+
+    @type  env: string
+    @param env: The name of the tenant.
+
+    @rtype:   None
+    @return:  the function does print to screen the ansible output of the
+                execution.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)

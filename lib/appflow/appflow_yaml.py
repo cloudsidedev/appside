@@ -11,25 +11,35 @@ import yaml
 import lib.appflow.appflow_utils as utils
 
 
-def get_value(my_file, key=None):
+def get_value(_file, key=None):
     """
     Returns key-value for searched key in file.
     If key is not specified, returns the whole file.
     Returns string in json format.
+
+    @type  _file: string
+    @param _file: path.to.file (dot encoded) where to search the key.
+
+    @type  key: string
+    @param key: The key to search.
+
+    @rtype:   json
+    @return:  the function returns a json containing the
+                key-value searched.
     """
-    my_file = my_file.replace('.', '/', 3)
-    if my_file != 'config':
-        file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
+    _file = _file.replace('.', '/', 3)
+    if _file != 'config':
+        file_name = os.getenv("HOME") + "/.appflow/tenant/" + _file
     else:
-        file_name = os.getenv("HOME") + "/.appflow/" + my_file + ".yml"
+        file_name = os.getenv("HOME") + "/.appflow/" + _file + ".yml"
 
     if not os.path.exists(file_name):
         return 'Error: No such File or Directory'
-    if my_file.split('/').pop() == 'inventory':
+    if _file.split('/').pop() == 'inventory':
         return 'Error: Invalid Request'
     if os.path.isdir(file_name):
         for subfile in os.listdir(file_name):
-            get_value(my_file.replace('/', '.', 3) + '.' + subfile)
+            get_value(_file.replace('/', '.', 3) + '.' + subfile)
     else:
         with open(file_name, 'r') as stream:
             conf = yaml.safe_load(stream)
@@ -41,22 +51,34 @@ def get_value(my_file, key=None):
                 return json.dumps(conf, ensure_ascii=False, indent=4)
 
 
-def set_value(my_file, key, value):
+def set_value(_file, key, value):
     """
     Returns key-value for searched key in file.
     Searched key will be set with the value specified.
     Data is written to file.
     Returns string in json format.
+
+    @type  _file: string
+    @param _file: path.to.file (dot encoded) where to set the key.
+
+    @type  key: string
+    @param key: The key to search.
+
+    @type  value: T
+    @param value: the value to set.
+
+    @rtype:   json
+    @return:  the function returns a json containing the updated file content.
     """
-    my_file = my_file.replace('.', '/', 3)
+    _file = _file.replace('.', '/', 3)
     key = key.split('.')
-    if my_file != 'config':
-        file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
+    if _file != 'config':
+        file_name = os.getenv("HOME") + "/.appflow/tenant/" + _file
     else:
-        file_name = os.getenv("HOME") + "/.appflow/" + my_file
+        file_name = os.getenv("HOME") + "/.appflow/" + _file
     if not os.path.exists(file_name):
         return 'Error: No such File or Directory'
-    if my_file.split('/').pop() == 'inventory':
+    if _file.split('/').pop() == 'inventory':
         return 'Error: Invalid Request'
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
@@ -67,22 +89,31 @@ def set_value(my_file, key, value):
     return json.dumps(conf, ensure_ascii=False, indent=4)
 
 
-def rm_value(my_file, key):
+def rm_value(_file, key):
     """
     Returns key-value for searched key in file.
     Searched key will be removed.
     Data is written to file.
     Returns string in json format.
+
+    @type  _file: string
+    @param _file: path.to.file (dot encoded) where to remove the key.
+
+    @type  key: string
+    @param key: The key to search.
+
+    @rtype:   json
+    @return:  the function returns a json containing the updated file content.
     """
-    my_file = my_file.replace('.', '/', 3)
+    _file = _file.replace('.', '/', 3)
     key = key.split('.')
-    if my_file != 'config':
-        file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
+    if _file != 'config':
+        file_name = os.getenv("HOME") + "/.appflow/tenant/" + _file
     else:
-        file_name = os.getenv("HOME") + "/.appflow/" + my_file
+        file_name = os.getenv("HOME") + "/.appflow/" + _file
     if not os.path.exists(file_name):
         return 'Error: No such File or Directory'
-    if my_file.split('/').pop() == 'inventory':
+    if _file.split('/').pop() == 'inventory':
         return 'Error: Invalid Request'
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
@@ -93,31 +124,43 @@ def rm_value(my_file, key):
     return json.dumps(conf, ensure_ascii=False, indent=4)
 
 
-def add_value(my_file, _key, _value):
+def add_value(_file, key, value):
     """
     Returns key-value for searched key in file.
     Key will be created with the value specified.
     Data is written to file.
     Returns string in json format.
+
+    @type  _file: string
+    @param _file: path.to.file (dot encoded) where to set the key.
+
+    @type  key: string
+    @param key: The key to search. (this function will add it if not found.)
+
+    @type  value: T
+    @param value: the value to set.
+
+    @rtype:   json
+    @return:  the function returns a json containing the updated file content.
     """
-    my_file = my_file.replace('.', '/', 3)
-    _key = _key.split('.')
-    if my_file != 'config':
-        file_name = os.getenv("HOME") + "/.appflow/tenant/" + my_file
+    _file = _file.replace('.', '/', 3)
+    key = key.split('.')
+    if _file != 'config':
+        file_name = os.getenv("HOME") + "/.appflow/tenant/" + _file
     else:
-        file_name = os.getenv("HOME") + "/.appflow/" + my_file
+        file_name = os.getenv("HOME") + "/.appflow/" + _file
     if not os.path.exists(file_name):
         return 'Error: No such File or Directory'
-    if my_file.split('/').pop() == 'inventory':
+    if _file.split('/').pop() == 'inventory':
         return 'Error: Invalid Request'
     with open(file_name, 'r') as stream:
         conf = yaml.safe_load(stream)
     dictionary = {}
-    utils.add_keys(dictionary, _key, _value)
+    utils.add_keys(dictionary, key, value)
     my_dicts = [conf, dictionary]
     for item in my_dicts:
-        for _key, _value in item.items():
-            conf[_key].update(_value)
+        for key, value in item.items():
+            conf[key].update(value)
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4, default_style='')
