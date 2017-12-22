@@ -47,6 +47,10 @@
   when: conf_hosts_fqdn is defined
   tags: [ common, hosts ]
 
+- import_tasks: shared.yml
+  when: conf_shared_enable is defined and conf_shared_enable == true
+  tags: [ common, shared ]
+
 - import_tasks: rc_local.yml
   when: conf_rc_local_enable is defined and conf_rc_local_enable == true
   tags: [ common, rc-local, rc-local-conf ]

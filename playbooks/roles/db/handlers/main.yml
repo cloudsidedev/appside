@@ -18,3 +18,6 @@
 
 - name: handle_restart_xinetd
   service: name=xinetd state=restarted
+
+- name: handle_restart_cassandra
+  service: name=cassandra state=restarted

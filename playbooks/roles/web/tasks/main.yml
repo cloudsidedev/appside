@@ -139,6 +139,12 @@
   when: conf_geoip_enable is defined and conf_geoip_enable == true
 
 #
+# Thumbor
+#
+- import_tasks: thumbor.yml
+  when: conf_thumbor_enable is defined and conf_thumbor_enable == true
+
+#
 # WoodWing
 #
 - import_tasks: woodwing.yml

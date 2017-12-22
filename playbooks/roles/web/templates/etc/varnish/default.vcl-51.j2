@@ -5,6 +5,8 @@
 vcl 4.0;
 
 import std;
+{% if conf_varnish_import is defined %}{{ conf_varnish_import }}{% endif %}
+
 ###########
 # Backend #
 ###########
@@ -19,6 +21,8 @@ backend default {
     .threshold = 3;
   }
 }
+
+{% if conf_varnish_backends is defined %}{{ conf_varnish_backends }}{% endif %}
 
 #############
 # ACL PURGE #
@@ -63,6 +67,16 @@ sub vcl_hash {
 
   return (lookup);
 }
+
+{% if conf_varnish_vcl_init is defined %}
+################
+# sub vcl_init #
+################
+sub vcl_init {
+  {{ conf_varnish_vcl_init }}
+  return (ok);
+}
+{% endif %}
 
 ################
 # sub vcl_recv #
