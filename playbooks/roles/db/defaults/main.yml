@@ -11,4 +11,12 @@ conf_mysql_version_debian_family: 5.6
 #
 # galeranotify
 #
-conf_galera_notify_enable: False
+conf_galera_notify_enable: false
+
+#
+# Cassandra
+#
+conf_cassandra_enable: false
+conf_cassandra_gpg_keyserver: pool.sks-keyservers.net
+conf_cassandra_gpg_key_id: A278B781FE4B2BDA
+conf_cassandra_series_version: 311x
