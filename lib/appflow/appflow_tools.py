@@ -145,8 +145,7 @@ def setup_default_config(tenant_id, tenant, environment):
     :param env: The name of the tenant.
 
     :rtype:   None
-    :return:  the function does print to screen the ansible output of the
-                execution.
+    :return:  the function prints to screen the ansible output of the execution.
     """
     file_name = os.getenv('HOME') + "/.appflow/config.yml"
     if not os.path.isfile(file_name):

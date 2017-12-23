@@ -35,7 +35,7 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     :param firstrun: if it's first run (default False)
 
     :rtype:   None
-    :return:  the function does print to screen the ansible output of the
+    :return:  the function prints to screen the ansible output of the
                 execution.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
@@ -76,7 +76,7 @@ def list_tags(tenant, env):
     :param env: The name of the tenant.
 
     :rtype:   None
-    :return:  the function does print to screen the available tags.
+    :return:  the function prints to screen the available tags.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = utils.get_appflow_folder(__file__)
@@ -98,7 +98,7 @@ def encrypt(tenant, env):
     :param env: The name of the tenant.
 
     :rtype:   None
-    :return:  the function does print to screen the ansible output of the
+    :return:  the function prints to screen the ansible output of the
                 execution.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
@@ -120,7 +120,7 @@ def decrypt(tenant, env):
     :param env: The name of the tenant.
 
     :rtype:   None
-    :return:  the function does print to screen the ansible output of the
+    :return:  the function prints to screen the ansible output of the
                 execution.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
