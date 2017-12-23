@@ -236,13 +236,7 @@ def git_status(tenant, env):
     """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
-    if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
-        _pipe = subprocess.PIPE
-        subprocess.Popen(
-            ['git', '-C', _dir, 'diff-files --name-only -B -R -M', env],
-            stdout=_pipe, stderr=_pipe)
-        return []
-    else:
+    if not utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
         md5_store_folder = utils.get_md5_folder(tenant)
         md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
         md5_store_file_new = md5_store_folder + "/appflow-" + env + "-md5-new"
@@ -253,6 +247,16 @@ def git_status(tenant, env):
 
         diff = utils.diff_files(md5_store_file, md5_store_file_new)
         return diff
+
+    # Files are encrypted, simply do a git diff
+    _pipe = subprocess.PIPE
+    out = subprocess.Popen(['git', '-C', _dir,
+                            'diff-files', '--name-only', '-B', '-R', '-M', env],
+                           stdout=_pipe, stderr=_pipe)
+    result = []
+    for line in iter(out.stdout):
+        result.append(line.decode('utf-8'))
+    return result
 
 
 def git_check_in(tenant, env, commit):

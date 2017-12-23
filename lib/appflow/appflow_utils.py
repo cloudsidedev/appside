@@ -354,10 +354,9 @@ def format_string_argument(argument):
     """
     if argument is None:
         return None
-    elif isinstance(argument, tuple) or isinstance(argument, list):
+    elif isinstance(argument, (list, tuple)):
         return ','.join(argument)
-    else:
-        return argument
+    return argument
 
 
 def yes_no(question, default="yes"):

@@ -45,10 +45,8 @@ def get_value(_file, key=None):
             conf = yaml.safe_load(stream)
             if key is not None:
                 key = key.split('.')
-                return json.dumps(utils.get_from_dict(conf, key),
-                                  ensure_ascii=False, indent=4)
-            else:
-                return json.dumps(conf, ensure_ascii=False, indent=4)
+                conf = utils.get_from_dict(conf, key)
+            return json.dumps(conf, ensure_ascii=False, indent=4)
 
 
 def set_value(_file, key, value):
@@ -159,8 +157,8 @@ def add_value(_file, key, value):
     utils.add_keys(dictionary, key, value)
     my_dicts = [conf, dictionary]
     for item in my_dicts:
-        for key, value in item.items():
-            conf[key].update(value)
+        for _k, _v in item.items():
+            conf[_k].update(_v)
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4, default_style='')

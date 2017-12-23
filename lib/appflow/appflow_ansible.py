@@ -65,7 +65,7 @@ def provision(tenant: str, env: str, limit: str, tags: str,
               ' --vault-password-file ' + password_file)
 
 
-def tags(tenant, env):
+def list_tags(tenant, env):
     """
     List all available tags for tenant/environment
 

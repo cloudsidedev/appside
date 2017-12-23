@@ -227,7 +227,7 @@ class AppFlow(object):
         :param env: The name of the tenant.
         """
         print(utils.get_provision_color_string('tags', tenant, env))
-        apansible.tags(tenant, env)
+        apansible.list_tags(tenant, env)
 
     def provision(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
                   limit: str = None, tags: str = None, skip_tags: str = None,
