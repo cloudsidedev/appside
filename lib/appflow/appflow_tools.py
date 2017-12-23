@@ -19,11 +19,11 @@ def initialize(tenant):
     """
     Create default dirs and yaml files for Assh to function properly.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @rtype:   None
-    @return:  This function doesn't have a return statement.
+    :rtype:   None
+    :return:  This function doesn't have a return statement.
     """
     dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
 
@@ -77,11 +77,11 @@ def set_vhosts_hosts(tenant):
     Setup /etc/hosts for tenant.
     Requires root access to write.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @rtype:   None
-    @return:  the function doesn't have a return statement.
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + "development"
@@ -135,17 +135,17 @@ def setup_default_config(tenant_id, tenant, environment):
     """
     Deploy a default config file in ~/.appflow/config.yml
 
-    @type  tenant_id: string
-    @param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
+    :type  tenant_id: string
+    :param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
 
-    @type  tenant: string
-    @param tenant: The name of the tenant. (ex: mrrobot)
+    :type  tenant: string
+    :param tenant: The name of the tenant. (ex: mrrobot)
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @rtype:   None
-    @return:  the function does print to screen the ansible output of the
+    :rtype:   None
+    :return:  the function does print to screen the ansible output of the
                 execution.
     """
     file_name = os.getenv('HOME') + "/.appflow/config.yml"
@@ -163,14 +163,14 @@ def setup_ssh(tenant, env):
     """
     Deploy Assh configs for tenant/environment.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @rtype:   None
-    @return:  the function doesn't have a return statement.
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     initialize(tenant)
     _dir = utils.get_tenant_dir(tenant)
@@ -195,14 +195,14 @@ def git_reset(tenant, env):
     Perform git reset in the specified tenant/environment folder.
     After this, updates the md5 file to reflect the new status.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @rtype:   None
-    @return:  the function doesn't have a return statement.
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     _dir = utils.get_tenant_dir(tenant)
     _pipe = subprocess.PIPE
@@ -224,14 +224,14 @@ def git_status(tenant, env):
     this is tracked separately from git, because encryption/decryption of files
     will always override the git status method.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @rtype:   list
-    @return:  the function returns a list containing the different lines between
+    :rtype:   list
+    :return:  the function returns a list containing the different lines between
                 the 2 md5 files.
     """
     _dir = utils.get_tenant_dir(tenant)
@@ -261,17 +261,17 @@ def git_check_in(tenant, env, commit):
     This will affecy only the modified files (see git_status function).
     Commit message can be specified.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @type  commit: string
-    @param commit: The commit message to use when committing.
+    :type  commit: string
+    :param commit: The commit message to use when committing.
 
-    @rtype:   None
-    @return:  the function doesn't have a return statement.
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
 
     """
     _dir = utils.get_tenant_dir(tenant)
@@ -307,14 +307,14 @@ def git_check_out(tenant, env):
     Git pull of the specified tenant/environment folder.
     un-pushed work can be overwritten by this, so ask for confirmation.
 
-    @type  tenant: string
-    @param tenant: The name of the tenant.
+    :type  tenant: string
+    :param tenant: The name of the tenant.
 
-    @type  env: string
-    @param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-    @rtype:   None
-    @return:  the function doesn't have a return statement.
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     query = utils.yes_no(
         'WARNING, this will overwrite any un-pushed work, continue?', 'no')

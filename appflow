@@ -52,8 +52,8 @@ class AppFlow(object):
         Simple function to update Appflow.
         This is handy for the appflow-git package.
 
-        @type  branch: string
-        @param branch: The branch from where to pull.
+        :type  branch: string
+        :param branch: The branch from where to pull.
         """
         appflow_folder = utils.get_appflow_folder(__file__)
         _pipe = subprocess.PIPE
@@ -75,15 +75,15 @@ class AppFlow(object):
         We need some default configurations
         This will allow to call "appflow action *args" without always specifying
         Tenant and environment.
-    
-        @type  tenant_id: string
-        @param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
 
-        @type  tenant: string
-        @param tenant: The name of the tenant. (ex: mrrobot)
+        :type  tenant_id: string
+        :param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant. (ex: mrrobot)
+
+        :type  env: string
+        :param env: The name of the tenant.
         """
         tools.setup_default_config(tenant_id, tenant, env)
 
@@ -92,8 +92,8 @@ class AppFlow(object):
         This will initialize all the folders for Assh.
         This will also setup autocompletion for the CLI tool.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
         """
         tools.initialize(tenant)
         print("Default Assh folders initialized, use appflow ssh to deploy configs.")
@@ -104,11 +104,11 @@ class AppFlow(object):
         This will deploy the ssh keys from your tenant/env
         to the Assh folders.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         tools.setup_ssh(tenant, env)
 
@@ -118,8 +118,8 @@ class AppFlow(object):
         int your tenant/development host_vars.
         ** Needs Root Access **
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
         """
         tools.set_vhosts_hosts(tenant)
 
@@ -129,11 +129,11 @@ class AppFlow(object):
         This will restore the status to the latest git pull.
         This will also reset any unpushed work.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         tools.git_reset(tenant, env)
 
@@ -143,11 +143,11 @@ class AppFlow(object):
         This is handy to have an overview of what's going to be pushed
         as a dry run.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         result = tools.git_status(tenant, env)
         if result is False:
@@ -162,11 +162,11 @@ class AppFlow(object):
         This will download the lates available code.
         This will also overwrite any unpushed work.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         tools.git_check_out(tenant, env)
 
@@ -177,14 +177,14 @@ class AppFlow(object):
         This will only push the files that were modified.
         Before any push, all the files are encrypted.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
 
-        @type  commit: string
-        @param commit: The commit message to use
+        :type  commit: string
+        :param commit: The commit message to use
                         when committing. (default Auto Commit)
         """
         tools.git_check_in(tenant, env, commit)
@@ -193,11 +193,11 @@ class AppFlow(object):
         """
         Decrypt your local tenant repository
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         print(utils.get_provision_color_string('decrypt', tenant, env))
         apansible.decrypt(tenant, env)
@@ -206,11 +206,11 @@ class AppFlow(object):
         """
         Encrypt your local tenant repository
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         print(utils.get_provision_color_string('encrypt', tenant, env))
         apansible.encrypt(tenant, env)
@@ -220,11 +220,11 @@ class AppFlow(object):
         Show available tags. This is handy to provision only a part of them
         or skipping some of them.
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
         """
         print(utils.get_provision_color_string('tags', tenant, env))
         apansible.tags(tenant, env)
@@ -245,23 +245,23 @@ class AppFlow(object):
         this is optional and by default will read the
         default config in ~/.appflow/config.yml
 
-        @type  tenant: string
-        @param tenant: The name of the tenant.
+        :type  tenant: string
+        :param tenant: The name of the tenant.
 
-        @type  env: string
-        @param env: The name of the tenant.
+        :type  env: string
+        :param env: The name of the tenant.
 
-        @type  limit: string
-        @param limit: Comma separated list of hosts to provision. (default None)
+        :type  limit: string
+        :param limit: Comma separated list of hosts to provision. (default None)
 
-        @type  tags: string
-        @param tags: Comma separated list of tags to exec (default All).
+        :type  tags: string
+        :param tags: Comma separated list of tags to exec (default All).
 
-        @type  skip_tags: string
-        @param skip_tags: Comma separated list of tags to skip (default None).
+        :type  skip_tags: string
+        :param skip_tags: Comma separated list of tags to skip (default None).
 
-        @type  firstrun: bool
-        @param firstrun: if it's first run (default False)
+        :type  firstrun: bool
+        :param firstrun: if it's first run (default False)
         """
         print(utils.get_provision_color_string('provision', tenant, env))
         apansible.provision(tenant, env, limit, tags, skip_tags, firstrun)
@@ -272,11 +272,11 @@ class AppFlow(object):
         Syntax:
         appflow get tenant.environment.folder.to.file.searched key.subkey.value
 
-        @type  file: string
-        @param file: path.to.file (dot encoded) where to search the key.
+        :type  file: string
+        :param file: path.to.file (dot encoded) where to search the key.
 
-        @type  key: string
-        @param key: The key to search.
+        :type  key: string
+        :param key: The key to search.
         """
         print(apyaml.get_value(file, key))
 
@@ -286,14 +286,14 @@ class AppFlow(object):
         Syntax:
         appflow get tenant.environment.folder.to.file.searched key.subkey.value
 
-        @type  file: string
-        @param file: path.to.file (dot encoded) where to set the key.
+        :type  file: string
+        :param file: path.to.file (dot encoded) where to set the key.
 
-        @type  key: string
-        @param key: The key to search.
+        :type  key: string
+        :param key: The key to search.
 
-        @type  value: T
-        @param value: the value to set.
+        :type  value: T
+        :param value: the value to set.
         """
         print(apyaml.set_value(file, key, value))
 
@@ -302,12 +302,12 @@ class AppFlow(object):
         This will remove and then print the key you are specifying.
         Syntax:
         appflow get tenant.environment.folder.to.file.searched key.subkey.value
-        
-        @type  file: string
-        @param file: path.to.file (dot encoded) where to remove the key.
 
-        @type  key: string
-        @param key: The key to search.
+        :type  file: string
+        :param file: path.to.file (dot encoded) where to remove the key.
+
+        :type  key: string
+        :param key: The key to search.
         """
         print(apyaml.rm_value(file, key))
 
@@ -317,14 +317,14 @@ class AppFlow(object):
         Syntax:
         appflow get tenant.environment.folder.to.file.searched key.subkey.value
 
-        @type  file: string
-        @param file: path.to.file (dot encoded) where to set the key.
+        :type  file: string
+        :param file: path.to.file (dot encoded) where to set the key.
 
-        @type  key: string
-        @param key: The key to search. (this function will add it if not found.)
+        :type  key: string
+        :param key: The key to search. (this function will add it if not found.)
 
-        @type  value: T
-        @param value: the value to set.
+        :type  value: T
+        :param value: the value to set.
         """
         print(apyaml.add_value(file, key, value))
 

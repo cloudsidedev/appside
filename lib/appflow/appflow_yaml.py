@@ -17,14 +17,14 @@ def get_value(_file, key=None):
     If key is not specified, returns the whole file.
     Returns string in json format.
 
-    @type  _file: string
-    @param _file: path.to.file (dot encoded) where to search the key.
+    :type  _file: string
+    :param _file: path.to.file (dot encoded) where to search the key.
 
-    @type  key: string
-    @param key: The key to search.
+    :type  key: string
+    :param key: The key to search.
 
-    @rtype:   json
-    @return:  the function returns a json containing the
+    :rtype:   json
+    :return:  the function returns a json containing the
                 key-value searched.
     """
     _file = _file.replace('.', '/', 3)
@@ -58,17 +58,17 @@ def set_value(_file, key, value):
     Data is written to file.
     Returns string in json format.
 
-    @type  _file: string
-    @param _file: path.to.file (dot encoded) where to set the key.
+    :type  _file: string
+    :param _file: path.to.file (dot encoded) where to set the key.
 
-    @type  key: string
-    @param key: The key to search.
+    :type  key: string
+    :param key: The key to search.
 
-    @type  value: T
-    @param value: the value to set.
+    :type  value: T
+    :param value: the value to set.
 
-    @rtype:   json
-    @return:  the function returns a json containing the updated file content.
+    :rtype:   json
+    :return:  the function returns a json containing the updated file content.
     """
     _file = _file.replace('.', '/', 3)
     key = key.split('.')
@@ -96,14 +96,14 @@ def rm_value(_file, key):
     Data is written to file.
     Returns string in json format.
 
-    @type  _file: string
-    @param _file: path.to.file (dot encoded) where to remove the key.
+    :type  _file: string
+    :param _file: path.to.file (dot encoded) where to remove the key.
 
-    @type  key: string
-    @param key: The key to search.
+    :type  key: string
+    :param key: The key to search.
 
-    @rtype:   json
-    @return:  the function returns a json containing the updated file content.
+    :rtype:   json
+    :return:  the function returns a json containing the updated file content.
     """
     _file = _file.replace('.', '/', 3)
     key = key.split('.')
@@ -131,17 +131,17 @@ def add_value(_file, key, value):
     Data is written to file.
     Returns string in json format.
 
-    @type  _file: string
-    @param _file: path.to.file (dot encoded) where to set the key.
+    :type  _file: string
+    :param _file: path.to.file (dot encoded) where to set the key.
 
-    @type  key: string
-    @param key: The key to search. (this function will add it if not found.)
+    :type  key: string
+    :param key: The key to search. (this function will add it if not found.)
 
-    @type  value: T
-    @param value: the value to set.
+    :type  value: T
+    :param value: the value to set.
 
-    @rtype:   json
-    @return:  the function returns a json containing the updated file content.
+    :rtype:   json
+    :return:  the function returns a json containing the updated file content.
     """
     _file = _file.replace('.', '/', 3)
     key = key.split('.')

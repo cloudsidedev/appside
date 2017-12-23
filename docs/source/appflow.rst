@@ -1,4 +1,4 @@
-Appflow CLI Tool
+appflow module
 ==============
 
 .. automodule:: appflow

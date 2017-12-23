@@ -1,4 +1,4 @@
-Appflow Library
+lib package
 ===========
 
 Subpackages
