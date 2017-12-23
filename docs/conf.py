@@ -16,7 +16,6 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
-print(os.path.join(os.path.dirname(__name__), '..'), "*******************8")
 # sys.path.insert(0, os.path.abspath('../'))
 # sys.path.insert(0, os.path.abspath('.'))
 
