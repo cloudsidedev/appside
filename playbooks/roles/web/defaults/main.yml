@@ -8,6 +8,13 @@
 conf_glusterfs_version: 3.6
 
 #
+# MogileFS
+#
+conf_mogilefs_user: mogile
+conf_mogilefs_group: mogile
+conf_mogilefs_storage_path: /data/mogilefs
+
+#
 # ruby
 #
 conf_ruby_version_debian_family: 2.4
