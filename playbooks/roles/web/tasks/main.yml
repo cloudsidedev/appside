@@ -145,6 +145,12 @@
   when: conf_thumbor_enable is defined and conf_thumbor_enable == true
 
 #
+# Serf
+#
+- import_tasks: serf.yml
+  when: conf_serf_enable is defined and conf_serf_enable == true
+
+#
 # WoodWing
 #
 - import_tasks: woodwing.yml

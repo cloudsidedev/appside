@@ -192,3 +192,14 @@ conf_thumbor_backend_url: http://localhost:8888/unsafe
 conf_thumbor_debug: false
 conf_thumbor_img_db_host: localhost
 conf_thumbor_remote_debug: false
+
+#
+# Serf
+#
+conf_serf_user: serf
+conf_serf_group: serf
+conf_serf_download_url: https://releases.hashicorp.com/serf/0.8.1/serf_0.8.1_linux_amd64.zip
+conf_serf_download_dir: /usr/local/src
+conf_serf_version: 0.8.1
+conf_serf_arch: linux_amd64
+conf_serf_exe: /usr/local/bin/serf
