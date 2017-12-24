@@ -3,6 +3,7 @@
 #
 .vscode
 __*
+_build/
 *.retry
 nohup.out
 .vagrant

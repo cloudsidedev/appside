@@ -18,6 +18,12 @@ import lib.appflow.appflow_yaml as apyaml
 def initialize(tenant):
     """
     Create default dirs and yaml files for Assh to function properly.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :rtype:   None
+    :return:  This function doesn't have a return statement.
     """
     dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
 
@@ -70,6 +76,12 @@ def set_vhosts_hosts(tenant):
     """
     Setup /etc/hosts for tenant.
     Requires root access to write.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + "development"
@@ -122,6 +134,18 @@ def set_vhosts_hosts(tenant):
 def setup_default_config(tenant_id, tenant, environment):
     """
     Deploy a default config file in ~/.appflow/config.yml
+
+    :type  tenant_id: string
+    :param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
+
+    :type  tenant: string
+    :param tenant: The name of the tenant. (ex: mrrobot)
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function prints to screen the ansible output of the execution.
     """
     file_name = os.getenv('HOME') + "/.appflow/config.yml"
     if not os.path.isfile(file_name):
@@ -137,6 +161,15 @@ def setup_default_config(tenant_id, tenant, environment):
 def setup_ssh(tenant, env):
     """
     Deploy Assh configs for tenant/environment.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     initialize(tenant)
     _dir = utils.get_tenant_dir(tenant)
@@ -160,6 +193,15 @@ def git_reset(tenant, env):
     """
     Perform git reset in the specified tenant/environment folder.
     After this, updates the md5 file to reflect the new status.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     _dir = utils.get_tenant_dir(tenant)
     _pipe = subprocess.PIPE
@@ -180,16 +222,20 @@ def git_status(tenant, env):
     Return a status of modified files in the tenant/environment folder.
     this is tracked separately from git, because encryption/decryption of files
     will always override the git status method.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   list
+    :return:  the function returns a list containing the different lines between
+                the 2 md5 files.
     """
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
-    if utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
-        _pipe = subprocess.PIPE
-        subprocess.Popen(
-            ['git', '-C', _dir, 'diff-files --name-only -B -R -M', env],
-            stdout=_pipe, stderr=_pipe)
-        return []
-    else:
+    if not utils.check_string_in_file(target_folder + "/inventory", 'AES256'):
         md5_store_folder = utils.get_md5_folder(tenant)
         md5_store_file = md5_store_folder + "/appflow-" + env + "-md5"
         md5_store_file_new = md5_store_folder + "/appflow-" + env + "-md5-new"
@@ -201,12 +247,35 @@ def git_status(tenant, env):
         diff = utils.diff_files(md5_store_file, md5_store_file_new)
         return diff
 
+    # Files are encrypted, simply do a git diff
+    _pipe = subprocess.PIPE
+    out = subprocess.Popen(['git', '-C', _dir,
+                            'diff-files', '--name-only', '-B', '-R', '-M', env],
+                           stdout=_pipe, stderr=_pipe)
+    result = []
+    for line in iter(out.stdout):
+        result.append(line.decode('utf-8'))
+    return result
+
 
 def git_check_in(tenant, env, commit):
     """
     Git push.
     This will affecy only the modified files (see git_status function).
     Commit message can be specified.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :type  commit: string
+    :param commit: The commit message to use when committing.
+
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
+
     """
     _dir = utils.get_tenant_dir(tenant)
     folder = utils.get_tenant_env_dir(tenant, env)
@@ -240,6 +309,15 @@ def git_check_out(tenant, env):
     """
     Git pull of the specified tenant/environment folder.
     un-pushed work can be overwritten by this, so ask for confirmation.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant.
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function doesn't have a return statement.
     """
     query = utils.yes_no(
         'WARNING, this will overwrite any un-pushed work, continue?', 'no')
