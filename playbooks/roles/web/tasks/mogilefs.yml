@@ -108,18 +108,11 @@
 #     owner: mogile
 #     group: mogile
 
-# - name: systemd - reload configs
-#   systemd:
-#     daemon_reload: yes
+- name: systemd reload configs
+  systemd: daemon_reload=yes
 
-# - name: systemd - start mogilefs.service
-#   systemd:
-#     name: mogilefs.service
-#     enabled: yes
-#     state: started
+- name: systemd start mogstored.service
+  systemd: name=mogstored.service enabled=yes state=started
 
-# - name: systemd - start mogstored.service
-#   systemd:
-#     name: mogstored.service
-#     enabled: yes
-#     state: started
+- name: systemd start mogilefs.service
+  systemd: name=mogilefs.service enabled=yes state=started
