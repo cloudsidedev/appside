@@ -33,22 +33,22 @@
   when: ansible_os_family == "Debian"
   tags: [ cassandra ]
 
-# - name: install cassandra python driver via pip
-#   pip: name=cassandra-driver
-#   when: ansible_os_family == "Debian"
-#   tags: [ cassandra ]
+- name: install cassandra python driver via pip
+  pip: name=cassandra-driver
+  when: ansible_os_family == "Debian"
+  tags: [ cassandra ]
 
 - name: provision cassandra configs
   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
   with_items:
       - cassandra/cassandra.yaml
-      - cassandra/cassandra-env.sh
-      - cassandra/cassandra-rackdc.properties
-      - cassandra/cassandra-topology.properties
-      - cassandra/commitlog_archiving.properties
-      - cassandra/jvm.options
-      - cassandra/logback-tools.xml
-      - cassandra/logback.xml
+      # - cassandra/cassandra-env.sh
+      # - cassandra/cassandra-rackdc.properties
+      # - cassandra/cassandra-topology.properties
+      # - cassandra/commitlog_archiving.properties
+      # - cassandra/jvm.options
+      # - cassandra/logback-tools.xml
+      # - cassandra/logback.xml
   notify: handle_restart_cassandra
   tags: [ cassandra, cassandra-conf ]
 
