@@ -42,15 +42,15 @@
     - "{{ conf_thumbor_log_path }}"
   tags: [ thumbor ]
 
-- name: Checkout imgdb2 repo to /opt/imgdb2
-  git:
-    repo: "{{ conf_thumbor_imgdb2_repo }}"
-    version: master
-    dest: /opt/imgdb2
-    force: yes
-    update: yes
-    accept_hostkey: yes
-  tags: [ thumbor ]
+# - name: Checkout imgdb2 repo to /opt/imgdb2
+#   git:
+#     repo: "{{ conf_thumbor_imgdb2_repo }}"
+#     version: master
+#     dest: /opt/imgdb2
+#     force: yes
+#     update: yes
+#     accept_hostkey: yes
+#   tags: [ thumbor ]
 
 - name: Set owner and group to thumbor on /opt/imgdb2
   file:
