@@ -78,6 +78,13 @@ sub vcl_init {
 }
 {% endif %}
 
+{% if conf_varnish_custom is defined %}
+##########
+# custom #
+##########
+{{ conf_varnish_custom }}
+{% endif %}
+
 ################
 # sub vcl_recv #
 ################
@@ -299,3 +306,21 @@ sub vcl_deliver {
 
   return (deliver);
 }
+
+{% if conf_varnish_vcl_synth is defined %}
+#################
+# sub vcl_synth #
+#################
+sub vcl_synth {
+  {{ conf_varnish_vcl_synth }}
+}
+{% endif %}
+
+{% if conf_varnish_vcl_backend_error is defined %}
+#########################
+# sub vcl_backend_error #
+#########################
+sub vcl_backend_error {
+  {{ conf_varnish_vcl_backend_error }}
+}
+{% endif %}
