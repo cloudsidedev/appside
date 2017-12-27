@@ -1,0 +1,14 @@
+---
+
+# file: playbooks/roles/common/tasks/git.yml
+
+- name: clone git repos
+  git:
+    repo: "{{ item.repo }}"
+    version: "{{ item.version }}"
+    dest: "{{ item.dest }}"
+    force: "{{ item.force }}"
+    accept_hostkey: "{{ item.accept_hostkey }}"
+  when: item.state|default('present') != 'absent'
+  with_items: "{{ conf_git_repos }}"
+  tags: [ git ]

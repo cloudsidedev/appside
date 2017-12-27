@@ -95,6 +95,10 @@
 - import_tasks: base_packages.yml
   tags: [ common, apt, base_packages ]
 
+- import_tasks: git.yml
+  when: conf_git_enable is defined and conf_git_enable == true
+  tags: [ common, git ]
+
 - import_tasks: docker.yml
   when: conf_docker_enable is defined and conf_docker_enable == true
   tags: [ common, docker ]
