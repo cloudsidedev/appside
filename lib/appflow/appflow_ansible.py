@@ -39,7 +39,7 @@ def provision(tenant: str, env: str, limit: str, tags: str,
                 execution.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    appflow_folder = utils.get_appflow_folder(__file__)
+    appflow_folder = utils.get_appflow_folder()
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
@@ -79,7 +79,7 @@ def list_tags(tenant, env):
     :return:  the function prints to screen the available tags.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
-    appflow_folder = utils.get_appflow_folder(__file__)
+    appflow_folder = utils.get_appflow_folder()
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 

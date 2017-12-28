@@ -53,7 +53,7 @@ def initialize(tenant):
                          os.getenv('HOME') + "/.bashrc.local"]
     zsh_source_files = [os.getenv('HOME') + "/.zshrc",
                         os.getenv('HOME') + "/.zshrc.local"]
-    os.system(utils.get_appflow_folder(__file__) +
+    os.system(utils.get_appflow_folder() +
               "/appflow -- --completion > " +
               os.getenv('HOME') + "/.appflow_completion")
     # Add bash completion

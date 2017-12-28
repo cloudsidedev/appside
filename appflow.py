@@ -47,22 +47,13 @@ class AppFlow(object):
     Type appflow command -- --help to have help for the specified command.
     """
 
-    def update(self, branch="master"):
+    def update(self):
         """
         Simple function to update Appflow.
         This is handy for the appflow-git package.
-
-        :type  branch: string
-        :param branch: The branch from where to pull.
         """
-        appflow_folder = utils.get_appflow_folder(__file__)
+        appflow_folder = utils.get_appflow_folder()
         _pipe = subprocess.PIPE
-        out = subprocess.Popen(
-            ['git', '-C', appflow_folder, 'checkout', branch],
-            stdout=_pipe,
-            stderr=_pipe)
-        for line in iter(out.stdout.readline, b''):
-            print(line.decode('utf-8'))
         out = subprocess.Popen(
             ['git', '-C', appflow_folder, 'pull'],
             stdout=_pipe,

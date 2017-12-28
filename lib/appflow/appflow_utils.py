@@ -265,7 +265,7 @@ def get_env_color_string(env):
     }.get(env, 'development')
 
 
-def get_appflow_folder(_file):
+def get_appflow_folder():
     """
     Get directory or appflow.
 
@@ -277,7 +277,7 @@ def get_appflow_folder(_file):
                 for playbooks.
     """
     # return os.getenv("HOME") + "/appflow"
-    path = os.path.abspath(_file)
+    path = os.path.abspath(__file__)
     path = path[:path.find("/lib")]
     return path
 
