@@ -30,41 +30,41 @@
 # - name: Include OS-specific variables.
 #   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Define nginx_user.
+- name: Define nginx_user
   set_fact:
     conf_nginx_user: "{{ __conf_nginx_user }}"
   when: conf_nginx_user is not defined
   tags: [ nginx, nginx-conf ]
 
-- name: Add PPA for Nginx.
+- name: Add PPA for nginx
   apt_repository:
     repo: 'ppa:nginx/{{ conf_nginx_ppa_version }}'
     state: present
     update_cache: yes
   register: nginx_ppa_added
   when: conf_nginx_ppa_use
-  tags: [ nginx, nginx-conf ]
+  tags: [ nginx ]
 
-- name: Ensure nginx will reinstall if the PPA was just added.
+- name: Ensure nginx will reinstall if the PPA was just added
   apt:
     name: nginx
     state: absent
   when: nginx_ppa_added.changed
-  tags: [ nginx, nginx-conf ]
+  tags: [ nginx ]
 
-- name: Update apt cache.
+- name: Update apt cache
   apt: update_cache=yes cache_valid_time=86400
   changed_when: false
-  tags: [ nginx, nginx-conf ]
+  tags: [ nginx ]
 
-- name: Ensure nginx is installed.
+- name: Ensure nginx is installed
   apt:
     name: "{{ conf_nginx_package_name }}"
     state: installed
     default_release: "{{ conf_nginx_default_release }}"
-  tags: [ nginx, nginx-conf ]
+  tags: [ nginx ]
 
-- name: Remove default nginx vhost config file (if configured).
+- name: Remove default nginx vhost config file (if configured)
   file:
     path: "{{ conf_nginx_default_vhost_path }}"
     state: absent
@@ -72,14 +72,14 @@
   notify: handle_restart_nginx
   tags: [ nginx, nginx-conf ]
 
-- name: Ensure conf_nginx_vhost_path exists.
+- name: Ensure conf_nginx_vhost_path exists
   file:
     path: "{{ conf_nginx_vhost_path }}"
     state: directory
   notify: handle_reload_nginx
   tags: [ nginx, nginx-conf ]
 
-- name: Add managed vhost config files.
+- name: Add managed vhost config files
   template:
     src: "{{ item.template|default(conf_nginx_vhost_template) }}"
     dest: "{{ conf_nginx_vhost_path }}/{{ item.filename|default(item.server_name.split(' ')[0] ~ '.conf') }}"
@@ -92,7 +92,35 @@
   notify: handle_reload_nginx
   tags: [ nginx, nginx-conf ]
 
-- name: Remove managed vhost config files.
+# - name: Make sure nginx user is in ssl-cert
+#   user: name=nginx groups=nginx,ssl-cert
+#   notify: handle_restart_nginx
+#   when: ansible_os_family == "Debian"
+#   tags: [ nginx, nginx-conf, ssl, ssl-conf ]
+
+- name: /etc/nginx/ssl
+  file: path=/etc/nginx/ssl mode=750 state=directory owner=root group={{ conf_www_group }}
+  tags: [ nginx, nginx-conf, ssl, ssl-conf ]
+
+###############
+# SSL CRT/KEY #
+###############
+
+- name: Add managed vhost SSL cert
+  copy: content="{{ item.ssl_certificate }}" dest="{{ item.ssl_certificate_file }}" owner=root group={{ conf_www_group }} mode=0640
+  when: item.state|default('present') != 'absent' and item.ssl_certificate is defined
+  with_items: "{{ conf_nginx_vhosts }}"
+  notify: handle_reload_nginx
+  tags: [ nginx, nginx-conf, certs ]
+
+- name: Add managed vhost SSL cert key
+  copy: content="{{ item.ssl_certificate_key }}" dest="{{ item.ssl_certificate_key_file }}" owner=root group={{ conf_www_group }} mode=0640
+  when: item.state|default('present') != 'absent' and item.ssl_certificate is defined
+  with_items: "{{ conf_nginx_vhosts }}"
+  notify: handle_reload_nginx
+  tags: [ nginx, nginx-conf, certs ]
+
+- name: Remove managed vhost config files
   file:
     path: "{{ conf_nginx_vhost_path }}/{{ item.filename|default(item.server_name.split(' ')[0] ~ '.conf') }}"
     state: absent
@@ -101,16 +129,15 @@
   notify: handle_reload_nginx
   tags: [ nginx, nginx-conf ]
 
-- name: Remove legacy vhosts.conf file.
+- name: Remove legacy vhosts.conf file
   file:
     path: "{{ conf_nginx_vhost_path }}/vhosts.conf"
     state: absent
   notify: handle_reload_nginx
   tags: [ nginx, nginx-conf ]
-##########################################
 
-# Nginx setup.
-- name: Copy nginx configuration in place.
+# nginx setup
+- name: Copy nginx configuration in place
   template:
     src: "{{ conf_nginx_conf_template }}"
     dest: "{{ conf_nginx_conf_file_path }}"
@@ -121,6 +148,6 @@
     - handle_reload_nginx
   tags: [ nginx, nginx-conf ]
 
-- name: Ensure nginx is started and enabled to start at boot.
+- name: Ensure nginx is started and enabled to start at boot
   service: name=nginx state=started enabled=yes
   tags: [ nginx, nginx-conf ]
