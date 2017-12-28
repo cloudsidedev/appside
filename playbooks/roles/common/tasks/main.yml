@@ -12,6 +12,9 @@
   user: name=root shell={{ conf_root_shell }}
   tags: [ common, users, shell ]
 
+- import_tasks: locales.yml
+  tags: [ locales ]
+
 - import_tasks: fail2ban.yml
   when: conf_fail2ban_enable is defined and conf_fail2ban_enable == true
   tags: [ common, fail2ban ]

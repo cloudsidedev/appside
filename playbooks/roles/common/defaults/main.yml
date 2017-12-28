@@ -3,6 +3,19 @@
 # file: playbooks/roles/common/defaults/main.yml
 
 #
+# locales
+#
+conf_locales_present:
+  - en_US.UTF-8
+conf_locales_language_packs_present:
+  - language-pack-en
+  - language-pack-en-base
+conf_locales_absent: []
+conf_locales_language_packs_absent: []
+conf_locales_default:
+  lang: en_US.UTF-8
+
+#
 # snmpd
 #
 conf_snmpd_enable: false

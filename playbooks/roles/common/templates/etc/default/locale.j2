@@ -1,0 +1,50 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+LANG="{{ conf_locales_default.lang }}"
+{% if conf_locales_default.language is defined %}
+LANGUAGE="{{ conf_locales_default.language }}"
+{% endif %}
+{% if conf_locales_default.lc_address is defined %}
+LC_ADDRESS="{{ conf_locales_default.lc_address }}"
+{% endif %}
+{% if conf_locales_default.lc_all is defined %}
+LC_ALL="{{ conf_locales_default.lc_all }}"
+{% endif %}
+{% if conf_locales_default.lc_collate is defined %}
+LC_COLLATE="{{ conf_locales_default.lc_collate }}"
+{% endif %}
+{% if conf_locales_default.lc_ctype is defined %}
+LC_CTYPE="{{ conf_locales_default.lc_ctype }}"
+{% endif %}
+{% if conf_locales_default.lc_identification is defined %}
+LC_IDENTIFICATION="{{ conf_locales_default.lc_identification }}"
+{% endif %}
+{% if conf_locales_default.lc_measurement is defined %}
+LC_MEASUREMENT="{{ conf_locales_default.lc_measurement }}"
+{% endif %}
+{% if conf_locales_default.lc_messages is defined %}
+LC_MESSAGES="{{ conf_locales_default.lc_messages }}"
+{% endif %}
+{% if conf_locales_default.lc_monetary is defined %}
+LC_MONETARY="{{ conf_locales_default.lc_monetary }}"
+{% endif %}
+{% if conf_locales_default.lc_name is defined %}
+LC_NAME="{{ conf_locales_default.lc_name }}"
+{% endif %}
+{% if conf_locales_default.lc_numeric is defined %}
+LC_NUMERIC="{{ conf_locales_default.lc_numeric }}"
+{% endif %}
+{% if conf_locales_default.lc_paper is defined %}
+LC_PAPER="{{ conf_locales_default.lc_paper }}"
+{% endif %}
+{% if conf_locales_default.lc_response is defined %}
+LC_RESPONSE="{{ conf_locales_default.lc_response }}"
+{% endif %}
+{% if conf_locales_default.lc_telephone is defined %}
+LC_TELEPHONE="{{ conf_locales_default.lc_telephone }}"
+{% endif %}
+{% if conf_locales_default.lc_time is defined %}
+LC_TIME="{{ conf_locales_default.lc_time }}"
+{% endif %}

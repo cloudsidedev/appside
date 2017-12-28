@@ -5,6 +5,9 @@
 - name: handle_restart_rsyslog
   service: name=rsyslog state=restarted
 
+- name: handle_update_locales
+  command: dpkg-reconfigure --frontend noninteractive locales
+
 - name: handle_restart_supervisor
   service: name=supervisord state=restarted
   when: conf_supervisor_started

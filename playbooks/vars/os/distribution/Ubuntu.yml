@@ -3,6 +3,14 @@
 # file: playbooks/vars/os/distribution/Ubuntu.yml
 
 #
+# locales
+#
+conf_locales_dependencies:
+  - tzdata
+  - locales
+conf_locales_gen_file: "{{ '/var/lib/locales/supported.d/local' if ansible_distribution == 'Ubuntu' else '/etc/locale.gen' }}"
+
+#
 # Base
 #
 conf_root_shell: "/bin/bash"
