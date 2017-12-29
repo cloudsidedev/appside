@@ -3,6 +3,12 @@
 # file: playbooks/roles/common/defaults/main.yml
 
 #
+# Custom playbook
+#
+conf_custom_playbook_enable: false
+conf_custom_playbook_import_tasks: []
+
+#
 # locales
 #
 conf_locales_present:
