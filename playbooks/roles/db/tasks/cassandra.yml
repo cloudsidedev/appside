@@ -2,6 +2,15 @@
 
 # file: playbooks/roles/db/tasks/cassandra.yml
 
+- name: python-pip (Debian family)
+  apt: pkg={{ item }} state=present
+  with_items:
+    - python-pip
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: ansible_os_family == "Debian"
+  tags: [ cassandra ]
+
 - name: install cassandra gpg key (Debian Family)
   apt_key: keyserver={{ conf_cassandra_gpg_keyserver }} id='{{ conf_cassandra_gpg_key_id }}' state=present
   when: ansible_os_family == "Debian"
