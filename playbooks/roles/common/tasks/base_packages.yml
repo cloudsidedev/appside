@@ -44,6 +44,12 @@
   when: ansible_distribution == "FreeBSD"
   tags: [ common, pkg, base_packages ]
 
+- name: custom base packages (Debian family)
+  apt: pkg={{ item }} update_cache=yes state=latest
+  with_items: '{{ conf_base_packages_custom }}'
+  when: conf_base_packages_custom is defined and ansible_os_family == "Debian"
+  tags: [ common, pkg, base_packages ]
+
 - name: symlink ccze
   file: src=/usr/local/bin/colorize dest=/usr/local/bin/ccze state=link
   when: ansible_distribution == "FreeBSD"
