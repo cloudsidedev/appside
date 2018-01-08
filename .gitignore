@@ -10,3 +10,6 @@ nohup.out
 Vagrant-Boxes
 Vagrantfile.local.yml
 /vendor/*
+build
+dist
+*.egg-info
