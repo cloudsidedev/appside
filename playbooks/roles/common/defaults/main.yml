@@ -22,6 +22,11 @@ conf_locales_default:
   lang: en_US.UTF-8
 
 #
+# Base
+#
+conf_base_packages_custom: []
+
+#
 # snmpd
 #
 conf_snmpd_enable: false
