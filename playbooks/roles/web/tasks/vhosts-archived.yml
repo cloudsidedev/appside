@@ -1,9 +1,0 @@
----
-
-# file: playbooks/roles/web/tasks/vhosts-archived.yml
-
-- name: mv vhost from /var/www/vhosts/ to -archived/ if archived (Common)
-  shell: if [ -d /var/www/vhosts/{{ item.key }} ]; then mv /var/www/vhosts/{{ item.key }} /var/www/vhosts-archived/; fi
-  when: item.value.state == "archived"
-  with_dict: '{{ conf_vhosts_common }}'
-  tags: vhosts
