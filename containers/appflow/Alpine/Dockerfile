@@ -20,10 +20,8 @@ RUN apk update && apk upgrade --no-cache && \
     pip3 install --no-cache-dir certifi && \
     pip3 install --no-cache-dir ansible && \
     git clone https://github.com/ttssdev/appflow /opt/appflow && \
-    rm -rf /opt/appflow/docs && \
-    rm -rf /opt/appflow/containers && \
-    rm -rf /opt/appflow/.git && \
-    ln -s /opt/appflow/appflow /usr/local/bin/appflow && \
+    pip3 install --no-cache-dir -r /opt/appflow/requirements.txt && \
+    ln -s /opt/appflow/appflow.py /usr/local/bin/appflow && \
     apk del gcc python3-dev linux-headers musl-dev py3-cffi openssl-dev && \
     rm -rf /var/cache/apk/*
 
