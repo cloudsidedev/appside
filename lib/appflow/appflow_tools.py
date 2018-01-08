@@ -45,32 +45,6 @@ def initialize(tenant):
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
 
-    # Setup the autocompletion now.
-    # Generate is using -- --completion function of Fire
-    # Save it to ~/.appflow_completion
-    # Source if for bash and zsh.
-    bash_source_files = [os.getenv('HOME') + "/.bashrc",
-                         os.getenv('HOME') + "/.bashrc.local"]
-    zsh_source_files = [os.getenv('HOME') + "/.zshrc",
-                        os.getenv('HOME') + "/.zshrc.local"]
-    os.system(utils.get_appflow_folder() +
-              "/appflow -- --completion > " +
-              os.getenv('HOME') + "/.appflow_completion")
-    # Add bash completion
-    for bash_file in bash_source_files:
-        if os.path.exists(bash_file):
-            if not utils.check_string_in_file(bash_file, "appflow_completion"):
-                os.system('echo "source ' + os.getenv('HOME') +
-                          '/.appflow_completion" >> ' + bash_file)
-    # Add zsh completion
-    for zsh_file in zsh_source_files:
-        if os.path.exists(zsh_file):
-            if not utils.check_string_in_file(zsh_file, "appflow_completion"):
-                os.system("""echo "autoload bashcompinit
-                bashcompinit
-                source """ + os.getenv('HOME') +
-                          '/.appflow_completion" >> ' + zsh_file)
-
 
 def set_vhosts_hosts(tenant):
     """

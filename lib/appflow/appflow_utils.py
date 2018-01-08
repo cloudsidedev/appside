@@ -276,10 +276,7 @@ def get_appflow_folder():
     :return:  the function returns the root of appflow. Needed to then search
                 for playbooks.
     """
-    # return os.getenv("HOME") + "/appflow"
-    path = os.path.abspath(__file__)
-    path = path[:path.find("/lib")]
-    return path
+    return os.getenv("HOME") + "/.appflow"
 
 
 def get_tenant_dir(tenant):
