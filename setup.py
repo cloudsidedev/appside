@@ -14,7 +14,7 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
@@ -69,7 +69,7 @@ setup(
 
     # This should be a valid email address corresponding to the author listed
     # above.
-    author_email='pypa-dev@googlegroups.com',  # Optional
+    author_email='dev@appflow.com',  # Optional
 
     # Classifiers help users find your project by categorizing it.
     #
@@ -91,8 +91,6 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -114,8 +112,8 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(
-        exclude=['contrib', 'docs', 'tests', 'containers']),  # Required
+    packages=find_packages('appflow.py',
+                           exclude=['contrib', 'docs', 'tests', 'containers']),  # Required
 
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
@@ -134,8 +132,8 @@ setup(
     # Similar to `install_requires` above, these must be valid existing
     # projects.
     extras_require={  # Optional
-        #'dev': ['check-manifest'],
-        #'test': ['coverage'],
+        # 'dev': ['check-manifest'],
+        # 'test': ['coverage'],
     },
 
     # If there are data files included in your packages that need to be
@@ -152,7 +150,7 @@ setup(
     # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
     #
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    data_files=[('playbooks', ['playbooks'])],  # Optional
+    # data_files=[('playbooks', ['playbooks'])],  # Optional
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
