@@ -1,0 +1,18 @@
+---
+
+# file: playbooks/roles/db/tasks/sphinx.yml
+
+- name: install sphinxsearch (Debian Family)
+  apt: name="{{ item }}" state=latest
+  with_items:
+    - sphinxsearch
+  when: ansible_os_family == "Debian"
+  tags: [ sphinx ]
+
+- name: provision sphinx configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - sphinxsearch/sphinx.conf
+      - default/sphinxsearch
+  notify: handle_restart_sphinxsearch
+  tags: [ sphinx, sphinx-conf ]

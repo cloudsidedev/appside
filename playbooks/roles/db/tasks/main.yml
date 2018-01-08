@@ -205,3 +205,10 @@
 - import_tasks: cassandra.yml
   when: conf_cassandra_enable is defined and conf_cassandra_enable == true
   tags: [ cassandra ]
+
+#
+# Sphinx
+#
+- import_tasks: sphinx.yml
+  when: conf_sphinx_enable is defined and conf_sphinx_enable == true
+  tags: [ sphinx ]
