@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    lib.appflow
 
 Module contents
 ---------------
