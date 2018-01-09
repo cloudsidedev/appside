@@ -20,6 +20,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
+
 setup(
     # This is the name of your project. The first time you publish this
     # package, this name will be registered for you. It will determine how
@@ -110,10 +111,10 @@ setup(
     # the `py_modules` argument instead as follows, which will expect a file
     # called `my_module.py` to exist:
     #
-    #   py_modules=["my_module"],
+    py_modules=["appflow"],
     #
-    packages=find_packages('appflow.py',
-                           exclude=['contrib', 'docs', 'tests', 'containers']),  # Required
+    packages=find_packages(
+        exclude=['docs', 'tests', 'containers']),  # Required
 
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
@@ -159,9 +160,10 @@ setup(
     #
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
-    entry_points={  # Optional
-        'console_scripts': [
-            'appflow=appflow:main',
-        ],
-    },
+    # entry_points={  # Optional
+    #    'console_scripts': [
+    #        'appflow=appflow:main',
+    #    ],
+    # },
+    scripts=['appflow'],
 )

@@ -15,10 +15,10 @@ import subprocess
 
 import fire
 
-import lib.appflow.appflow_ansible as apansible
-import lib.appflow.appflow_tools as tools
-import lib.appflow.appflow_utils as utils
-import lib.appflow.appflow_yaml as apyaml
+import lib.appflow_ansible as apansible
+import lib.appflow_tools as tools
+import lib.appflow_utils as utils
+import lib.appflow_yaml as apyaml
 
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying

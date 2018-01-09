@@ -5,7 +5,7 @@ From provision to encryption/decryption and tag listing.
 """
 import os
 
-import lib.appflow.appflow_utils as utils
+import lib.appflow_utils as utils
 
 
 def provision(tenant: str, env: str, limit: str, tags: str,
