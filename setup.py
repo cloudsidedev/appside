@@ -72,6 +72,7 @@ setup(
     # above.
     author_email='dev@appflow.com',  # Optional
 
+    license='AGPLv3',
     # Classifiers help users find your project by categorizing it.
     #
     # For a list of valid classifiers, see
