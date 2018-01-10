@@ -11,7 +11,6 @@ Type appflow command -- --help to have help for the specified command.
 
 import json
 import os
-import subprocess
 
 import fire
 
@@ -33,7 +32,7 @@ else:
     DEFAULT_ENV = ""
     print("Default configs not set")
     print("Run:")
-    print("appflow default \"tenant-id\" \"tenant-name\" \"default-environment\"")
+    print("appflow init")
     print("to setup the default configs")
     print("")
 
@@ -52,43 +51,14 @@ class AppFlow(object):
         Simple function to update Appflow.
         This is handy for the appflow-git package.
         """
-        appflow_folder = utils.get_appflow_folder()
-        _pipe = subprocess.PIPE
-        out = subprocess.Popen(
-            ['git', '-C', appflow_folder, 'pull'],
-            stdout=_pipe,
-            stderr=_pipe)
-        for line in iter(out.stdout.readline, b''):
-            print(line.decode('utf-8'))
+        tools.git_update_playbooks()
 
-    def default(self, tenant_id, tenant, env):
-        """
-        We need some default configurations
-        This will allow to call "appflow action *args" without always specifying
-        Tenant and environment.
-
-        :type  tenant_id: string
-        :param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
-
-        :type  tenant: string
-        :param tenant: The name of the tenant. (ex: mrrobot)
-
-        :type  env: string
-        :param env: The name of the tenant.
-        """
-        tools.setup_default_config(tenant_id, tenant, env)
-
-    def init(self, tenant=DEFAULT_TENANT):
+    def init(self):
         """
         This will initialize all the folders for Assh.
         This will also setup autocompletion for the CLI tool.
-
-        :type  tenant: string
-        :param tenant: The name of the tenant.
         """
-        tools.initialize(tenant)
-        print("Default Assh folders initialized, use appflow ssh to deploy configs.")
-        print("Appflow autocompletion initialized. Re-source your rc file to take effect")
+        tools.initialize()
 
     def ssh(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV):
         """

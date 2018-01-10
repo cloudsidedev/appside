@@ -15,21 +15,37 @@ import lib.appflow_utils as utils
 import lib.appflow_yaml as apyaml
 
 
-def initialize(tenant):
+def initialize():
     """
-    Create default dirs and yaml files for Assh to function properly.
-
-    :type  tenant: string
-    :param tenant: The name of the tenant.
+    Create default dirs, clone playbooks and yaml files for Assh to function properly.
 
     :rtype:   None
     :return:  This function doesn't have a return statement.
     """
-    dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm']
+
+    tenant = input("What's the tenant name? ")
+    choice = int(input("""
+    Choose your default environment
+    1) Development
+    2) Staging
+    3) Production
+    """))
+    if choice < 1 or choice > 3:
+        print('Invalid option')
+        return
+
+    environmens = ['development', 'staging', 'production']
+    environment = environmens[choice - 1]
+
+    dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm', '/.appflow',
+            '/.appflow/tenant', '/.appflow/vault']
 
     # Mkdir -p of needed folders.
     for directory in dirs:
         os.makedirs(os.getenv('HOME') + directory, exist_ok=True)
+
+    # Setup default configs
+    setup_default_config(tenant, environment)
 
     # Initialize a default assh.yml config
     conf = {'defaults': {'ControlMaster': 'auto',
@@ -39,8 +55,39 @@ def initialize(tenant):
             'includes': ['~/.ssh/assh.d/*/*.yml',
                          '~/.ssh/assh_personal.yml']}
     file_name = os.getenv('HOME') + "/.ssh/assh.yml"
-    utils.safe_remove(file_name)
     # Write it to file.
+    with open(file_name, 'w') as outfile:
+        yaml.dump(conf, outfile, default_flow_style=False,
+                  indent=4)
+
+    # Clone appflow-playbooks.
+    subprocess.Popen(['git', '-C', os.getenv('HOME') + '/.appflow',
+                      'clone',
+                      'https://github.com/ttssdev/appflow-playbooks',
+                      'playbooks'],
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("Done")
+    return
+
+
+def setup_default_config(tenant, environment):
+    """
+    Deploy a default config file in ~/.appflow/config.yml
+
+    :type  tenant: string
+    :param tenant: The name of the tenant. (ex: mrrobot)
+
+    :type  env: string
+    :param env: The name of the tenant.
+
+    :rtype:   None
+    :return:  the function prints to screen the ansible output of the execution.
+    """
+    file_name = os.getenv('HOME') + "/.appflow/config.yml"
+    utils.safe_remove(file_name)
+    conf = {'appflow': {'tenant': {'id': 'appflow-' + tenant,
+                                   'name': tenant,
+                                   'default_env': environment}}}
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)
@@ -105,33 +152,6 @@ def set_vhosts_hosts(tenant):
         git_reset(tenant, "development")
 
 
-def setup_default_config(tenant_id, tenant, environment):
-    """
-    Deploy a default config file in ~/.appflow/config.yml
-
-    :type  tenant_id: string
-    :param tenant_id: The full name of the tenant. (ex: appflow-mrrobot)
-
-    :type  tenant: string
-    :param tenant: The name of the tenant. (ex: mrrobot)
-
-    :type  env: string
-    :param env: The name of the tenant.
-
-    :rtype:   None
-    :return:  the function prints to screen the ansible output of the execution.
-    """
-    file_name = os.getenv('HOME') + "/.appflow/config.yml"
-    if not os.path.isfile(file_name):
-        conf = {'appflow': {'tenant': {'id': tenant_id,
-                                       'name': tenant,
-                                       'default_env': environment}}}
-        utils.safe_remove(file_name)
-        with open(file_name, 'w') as outfile:
-            yaml.dump(conf, outfile, default_flow_style=False,
-                      indent=4)
-
-
 def setup_ssh(tenant, env):
     """
     Deploy Assh configs for tenant/environment.
@@ -145,7 +165,6 @@ def setup_ssh(tenant, env):
     :rtype:   None
     :return:  the function doesn't have a return statement.
     """
-    initialize(tenant)
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
     dest_folder = os.getenv('HOME') + '/.ssh/assh.d/' + tenant
@@ -303,3 +322,12 @@ def git_check_out(tenant, env):
             ['git', '-C', _dir, 'pull'], stdout=_pipe, stderr=_pipe)
         for line in iter(out.stdout.readline, b''):
             print(line.decode('utf-8'))
+
+
+def git_update_playbooks():
+    _dir = utils.get_appflow_folder() + "/playbooks"
+    _pipe = subprocess.PIPE
+    out = subprocess.Popen(
+        ['git', '-C', _dir, 'pull'], stdout=_pipe, stderr=_pipe)
+    for line in iter(out.stdout.readline, b''):
+        print(line.decode('utf-8'))
