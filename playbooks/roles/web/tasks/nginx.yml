@@ -64,6 +64,12 @@
     default_release: "{{ conf_nginx_default_release }}"
   tags: [ nginx ]
 
+- name: Ensure nginx-extras is installed
+  apt:
+    name: nginx-extras
+    state: installed
+  tags: [ nginx ]
+
 - name: Remove default nginx vhost config file (if configured)
   file:
     path: "{{ conf_nginx_default_vhost_path }}"
