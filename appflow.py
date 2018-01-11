@@ -6,8 +6,6 @@ Type appflow to have a list of available commands.
 Type appflow command -- --help to have help for the specified command.
 
 """
-# Requirements
-# fire, yaml, json, flask, PyMySQL
 
 import json
 import os

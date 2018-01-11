@@ -12,8 +12,8 @@ def provision(tenant: str, env: str, limit: str, tags: str,
               skip_tags: str, firstrun: bool):
     """
     This will perform the ansible playbook.
-    We pass tenant and environment.
-    all other tags are parsed from option=xyz to --option xys
+    We pass tenant and environment and all other options as
+    --option xys
     in order to respect ansible's syntax.
 
     :type  tenant: string
