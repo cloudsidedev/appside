@@ -110,6 +110,13 @@ __conf_memcached_user: memcache
 conf_memcached_config_file: /etc/memcached.conf
 
 #
+# Redis
+#
+__conf_redis_package: redis-server
+conf_redis_daemon: redis-server
+conf_redis_conf_path: /etc/redis/redis.conf
+
+#
 # MySQL/Percona
 #
 conf_mysql_conf: "/etc/mysql/my.cnf"
@@ -140,13 +147,6 @@ conf_nginx_pidfile: /run/nginx.pid
 conf_nginx_vhost_path: /etc/nginx/sites-enabled
 conf_nginx_default_vhost_path: /etc/nginx/sites-enabled/default
 __conf_nginx_user: "www-data"
-
-#
-# redis
-#
-__conf_redis_package: redis-server
-conf_redis_daemon: redis-server
-conf_redis_conf_path: /etc/redis/redis.conf
 
 #
 # etcd
