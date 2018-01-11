@@ -8,6 +8,16 @@
 conf_glusterfs_version: 3.6
 
 #
+# Memcached
+#
+conf_memcached_port: 11211
+conf_memcached_listen_ip: 127.0.0.1
+conf_memcached_memory_limit: 64
+conf_memcached_connections: 1024
+conf_memcached_log_file: /var/log/memcached.log
+conf_memcached_log_verbosity: ""
+
+#
 # MogileFS
 #
 conf_mogilefs_enable: false

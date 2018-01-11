@@ -12,6 +12,12 @@
   ignore_errors: yes
 
 #
+# Memcached
+#
+- import_tasks: memcached.yml
+  when: conf_memcached_enable is defined and conf_memcached_enable == true
+
+#
 # MogileFS
 #
 - import_tasks: mogilefs.yml

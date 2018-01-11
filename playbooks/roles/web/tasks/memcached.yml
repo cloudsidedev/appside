@@ -1,0 +1,36 @@
+---
+
+# file: playbooks/roles/web/tasks/memcached.yml
+
+# - name: Include OS-specific variables.
+#   include_vars: "{{ ansible_os_family }}.yml"
+
+- name: define conf_memcached_user
+  set_fact:
+    conf_memcached_user: "{{ __conf_memcached_user }}"
+  when: conf_memcached_user is not defined
+  tags: [ memcached ]
+
+- name: update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+  when: ansible_os_family == 'Debian'
+  tags: [ memcached ]
+
+- name: install memcached.
+  package: name=memcached state=installed
+  register: memcached_install
+  tags: [ memcached ]
+
+- name: copy memcached configuration
+  template:
+    src: etc/memcached.conf.j2
+    dest: "{{ conf_memcached_config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: handle_restart_memcached
+  tags: [ memcached, memcached-conf ]
+
+- name: ensure memcached is started and set to run on startup
+  service: name=memcached state=started enabled=yes
+  tags: [ memcached ]

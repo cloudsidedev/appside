@@ -104,6 +104,12 @@ conf_ssh_service: ssh
 conf_supervisor_bin_path: /usr/local/bin/supervisord
 
 #
+# Memcached
+#
+__conf_memcached_user: memcache
+conf_memcached_config_file: /etc/memcached.conf
+
+#
 # MySQL/Percona
 #
 conf_mysql_conf: "/etc/mysql/my.cnf"
