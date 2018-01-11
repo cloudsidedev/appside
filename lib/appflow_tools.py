@@ -15,27 +15,37 @@ import lib.appflow_utils as utils
 import lib.appflow_yaml as apyaml
 
 
-def initialize():
+def initialize(tenant, env):
     """
     Create default dirs, clone playbooks and yaml files for Assh to function properly.
+
+    :type  tenant: string
+    :param tenant: The name of the tenant. (ex: mrrobot)
+
+    :type  env: string
+    :param env: The name of the tenant.
+
 
     :rtype:   None
     :return:  This function doesn't have a return statement.
     """
 
-    tenant = input("What's the tenant name? ")
-    choice = int(input("""
-    Choose your default environment
-    1) Development
-    2) Staging
-    3) Production
-    """))
-    if choice < 1 or choice > 3:
-        print('Invalid option')
-        return
+    # We use this to distinguish if tenant+env is specified
+    # if not, we should ask them!
+    if tenant is None or env is None:
+        tenant = input("What's the tenant name? ")
+        choice = int(input("""
+        Choose your default environment
+        1) Development
+        2) Staging
+        3) Production
+        """))
+        if choice < 1 or choice > 3:
+            print('Invalid option')
+            return
 
-    environmens = ['development', 'staging', 'production']
-    environment = environmens[choice - 1]
+        environmens = ['development', 'staging', 'production']
+        env = environmens[choice - 1]
 
     dirs = ['/.ssh', '/.ssh/assh.d/' + tenant, '/tmp/.ssh/cm', '/.appflow',
             '/.appflow/tenant', '/.appflow/vault']
@@ -45,7 +55,7 @@ def initialize():
         os.makedirs(os.getenv('HOME') + directory, exist_ok=True)
 
     # Setup default configs
-    setup_default_config(tenant, environment)
+    setup_default_config(tenant, env)
 
     # Initialize a default assh.yml config
     conf = {'defaults': {'ControlMaster': 'auto',
@@ -70,7 +80,7 @@ def initialize():
     return
 
 
-def setup_default_config(tenant, environment):
+def setup_default_config(tenant, env):
     """
     Deploy a default config file in ~/.appflow/config.yml
 
@@ -87,7 +97,7 @@ def setup_default_config(tenant, environment):
     utils.safe_remove(file_name)
     conf = {'appflow': {'tenant': {'id': 'appflow-' + tenant,
                                    'name': tenant,
-                                   'default_env': environment}}}
+                                   'default_env': env}}}
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4)

@@ -53,12 +53,18 @@ class AppFlow(object):
         """
         tools.git_update_playbooks()
 
-    def init(self):
+    def init(self, tenant=None, env=None):
         """
         This will initialize all the folders for Assh.
         This will also setup autocompletion for the CLI tool.
+
+        :type  tenant: string
+        :param tenant: The name of the tenant.
+
+        :type  env: string
+        :param env: The name of the tenant.
         """
-        tools.initialize()
+        tools.initialize(tenant, env)
 
     def ssh(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV):
         """
