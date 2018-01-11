@@ -196,8 +196,8 @@ backend monitoring-backend
 ###########
 backend grafana-backend
     mode http
-    acl authokay_basic_users http_auth(basic_users)
-    http-request auth if !authokay_basic_users
+    # acl authokay_basic_users http_auth(basic_users)
+    # http-request auth if !authokay_basic_users
     balance {{ conf_haproxy_grafana_backend_balance }}
     # option httpchk
     {{ conf_haproxy_grafana_backend }}
