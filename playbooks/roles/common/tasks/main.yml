@@ -25,6 +25,10 @@
 - import_tasks: sudo.yml
   tags: [ common, users, sudo ]
 
+- import_tasks: sysctl.yml
+  when: conf_sysctl_enable is defined and conf_sysctl_enable == true
+  tags: [ common, sysctl, sysctl-conf ]
+
 - import_tasks: cloud.yml
   when: conf_cloud_env is defined and conf_cloud_enable == true
   tags: [ common ]

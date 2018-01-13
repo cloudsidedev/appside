@@ -1,0 +1,12 @@
+---
+
+# file: playbooks/roles/common/tasks/sysctl.yml
+
+- name: /etc/sysctl.conf 
+  sysctl:
+    name:  "{{ item.k }}"
+    value: "{{ item.v }}"
+    state: present
+    reload: yes
+  with_items: "{{ conf_sysctl_dict }}"
+  tags: [ sysctl, sysctl-conf ]

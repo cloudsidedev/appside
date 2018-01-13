@@ -22,6 +22,23 @@ conf_locales_default:
   lang: en_US.UTF-8
 
 #
+# Sysctl
+#
+conf_sysctl_enable: false
+conf_sysctl_dict:
+  - { k: net.ipv4.ip_nonlocal_bind       , v: 1 }
+  # - { k: net.ipv4.tcp_tw_recycle       , v: 1 }
+  # - { k: net.ipv4.tcp_tw_reuse         , v: 1 }
+  # - { k: net.ipv4.tcp_fin_timeout      , v: 30 }
+  # - { k: net.ipv4.tcp_keepalive_time   , v: 10 }
+  # - { k: net.ipv4.tcp_keepalive_probes , v: 2 }
+  # - { k: net.ipv4.tcp_keepalive_intvl  , v: 3 }
+  # - { k: net.ipv4.ip_local_port_range  , v: "10240 65535" }
+  # - { k: net.core.somaxconn            , v: 65535 }
+  # - { k: net.ipv4.tcp_max_syn_backlog  , v: 65535 }
+  # - { k: net.core.netdev_max_backlog   , v: 16384 }
+
+#
 # Base
 #
 conf_base_packages_custom: []
