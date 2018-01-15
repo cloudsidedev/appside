@@ -1,0 +1,53 @@
+---
+
+# file: playbooks/roles/common/tasks/vsftpd.yml
+
+- name: ensure `listen` and `listen_ipv6` are mutually exclusive
+  assert:
+    that: "conf_vsftpd_listen != conf_vsftpd_listen_ipv6"
+  tags: [ vsftpd ]
+
+- name: install Vsftpd
+  package:
+    name: '{{ conf_vsftpd_packages }}'
+    state: present
+  tags: [ vsftpd ]
+
+- name: ensure service is started
+  service:
+    name: '{{ conf_vsftpd_service }}'
+    state: started
+    enabled: true
+  tags: [ vsftpd ]
+
+- name: ensure anon_root exists
+  file:
+    path: '{{ conf_vsftpd_anon_root }}'
+    state: directory
+    owner: '{{ conf_vsftpd_owner }}'
+    group: '{{ conf_vsftpd_group }}'
+    mode: '{{ conf_vsftpd_mode }}'
+    # setype: '{{ conf_vsftpd_setype }}'
+  when: conf_vsftpd_anon_root is defined
+  tags: [ vsftpd ]
+
+- name: ensure local_root exists
+  file:
+    path: '{{ conf_vsftpd_local_root }}'
+    state: directory
+    owner: '{{ conf_vsftpd_owner }}'
+    group: '{{ conf_vsftpd_group }}'
+    mode: '{{ conf_vsftpd_mode }}'
+    # setype: '{{ conf_vsftpd_setype }}'
+  when: conf_vsftpd_local_root is defined
+  tags: [ vsftpd ]
+
+- name: provision configuration file
+  template:
+    src: etc/vsftpd.conf.j2
+    dest: "{{ conf_vsftpd_config_file }}"
+    mode: '0600'
+    #validate: 'vsftpd -olisten=NO %s'
+    #  validation always exits with status 1, even if everything seems ok
+  notify: handle_restart_vsftpd
+  tags: [ vsftpd ]

@@ -33,6 +33,9 @@
 - name: handle_restart_tinc
   service: name=tinc state=restarted
 
+- name: handle_restart_vsftpd
+  service: name=vsftpd state=restarted
+
 - name: handle_restart_apache2
   service: name=apache2 state=restarted
 

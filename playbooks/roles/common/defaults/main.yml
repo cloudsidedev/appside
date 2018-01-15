@@ -136,3 +136,24 @@ conf_redis_disabled_commands: []
 #  - SREM
 #  - RENAME
 #  - DEBUG
+
+#
+# vsftpd
+#
+conf_vsftpd_enable: false
+conf_vsftpd_anonymous_enable: true
+conf_vsftpd_connect_from_port_20: true
+conf_vsftpd_group: root
+conf_vsftpd_listen: true
+conf_vsftpd_listen_ipv6: false
+conf_vsftpd_local_enable: false
+conf_vsftpd_local_umask: '022'
+conf_vsftpd_mode: '0755'
+conf_vsftpd_owner: root
+conf_vsftpd_syslog_enable: true
+conf_vsftpd_write_enable: true
+conf_vsftpd_options:
+  - key: xferlog_enable
+    value: 'YES'
+  - key: xferlog_file
+    value: /var/log/vsftp_xfer.log

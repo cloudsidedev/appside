@@ -139,6 +139,14 @@ conf_nginx_default_vhost_path: /etc/nginx/sites-enabled/default
 __conf_nginx_user: "www-data"
 
 #
+# vsftpd
+#
+conf_vsftpd_packages:
+  - vsftpd
+conf_vsftpd_service: vsftpd
+conf_vsftpd_config_file: /etc/vsftpd.conf
+
+#
 # etcd
 #
 conf_etcd_config_only: False

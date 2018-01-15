@@ -1,0 +1,44 @@
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+#
+# General settings
+#
+
+connect_from_port_20={{ 'YES' if conf_vsftpd_connect_from_port_20 else 'NO' }}
+listen={{ 'YES' if conf_vsftpd_listen else 'NO' }}
+listen_ipv6={{ 'YES' if conf_vsftpd_listen_ipv6 else 'NO' }}
+pam_service_name={{ conf_vsftpd_service }}
+syslog_enable={{ 'YES' if conf_vsftpd_syslog_enable else 'NO' }}
+
+#
+# Access control for anonymous users
+#
+anonymous_enable={{ 'YES' if conf_vsftpd_anonymous_enable else 'NO' }}
+{% if conf_vsftpd_anon_root is defined %}
+anon_root={{ conf_vsftpd_anon_root }}
+{% endif %}
+
+#
+# Access control for registered users
+#
+local_enable={{ 'YES' if conf_vsftpd_local_enable else 'NO' }}
+{% if conf_vsftpd_local_root is defined %}
+local_root={{ conf_vsftpd_local_root }}
+{% endif %}
+local_umask={{ conf_vsftpd_local_umask }}
+
+write_enable={{ 'YES' if conf_vsftpd_write_enable else 'NO' }}
+{% if not (ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6') %}
+seccomp_sandbox=NO
+{% endif %}
+
+{% if conf_vsftpd_options is defined %}
+#
+# Other settings
+#
+{% for setting in conf_vsftpd_options %}
+{{ setting.key }}={{ setting.value }}
+{% endfor %}
+{% endif %}
