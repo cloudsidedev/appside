@@ -20,7 +20,7 @@
   tags: [ common, fail2ban ]
 
 - import_tasks: ssh.yml
-  tags: [ common, ssh, sshd  ]
+  tags: [ common, ssh, sshd ]
 
 - import_tasks: sudo.yml
   tags: [ common, users, sudo ]
