@@ -1,0 +1,132 @@
+---
+
+# file: playbooks/roles/common/tasks/sftp.yml
+
+# Creates group for SFTP users.
+- name: create sftp user group
+  group:
+    name: "{{ conf_sftp_group_name }}"
+    state: present
+  tags: [ sftp ]
+
+- name: create sftp home partition
+  file: path={{ conf_sftp_home_partition }} state=directory owner=root group={{ conf_root_group }} mode=0755
+  tags: [ sftp ]
+
+# Create each SFTP user with home directory on the correct partition, and add to SFTP group.
+- name: create sftp users
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ conf_sftp_group_name }}"
+    append: "{{ item.append | default(False) }}"
+    home: "{{ conf_sftp_home_partition }}/{{ item.name }}"
+    # home: "{{ conf_sftp_home_partition }}/{{ item.home }}"
+    # `None` means default value -> default is to have a shell
+    shell: "{{ None if (item.shell | default(True)) else conf_sftp_nologin_shell }}"
+    state: present
+  with_items: "{{ conf_sftp_users }}"
+  tags: [ sftp ]
+
+# A working chrooted SFTP setup requires root:sftgroup ownership of a user's home directory.
+- name: correct ownership and permission of home directories
+  file:
+    path: "{{ conf_sftp_home_partition }}/{{ item.name }}"
+    # path: "{{ conf_sftp_home_partition }}/{{ item.home }}"
+    owner: root
+    group: "{{ conf_sftp_group_name }}"
+    # mode: "0750"
+    mode: "0770"
+  with_items: "{{ conf_sftp_users }}"
+  tags: [ sftp ]
+
+# Install all relevant public keys.
+- name: install public keys
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ lookup('file', item.1) }}"
+  with_subelements:
+    - "{{ conf_sftp_users }}"
+    - authorized
+    - flags:
+      skip_missing: True
+  tags: [ sftp ]
+
+# Update user passwords, if they were specified.
+- name: update user passwords
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+  with_items: "{{ conf_sftp_users }}"
+  when: item.password is defined
+  tags: [ sftp ]
+
+# Create directories for all SFTP users. Optional, but recommended.
+- name: create directories
+  file:
+    path: "{{ conf_sftp_home_partition }}/{{ item[0].name }}/{{ item[1].name | default(item[1]) }}"
+    # path: "{{ conf_sftp_home_partition }}/{{ item[0].home }}/{{ item[1].name | default(item[1]) }}"
+    owner: "{{ item[0].name }}"
+    group: "{{ item[0].name }}"
+    mode: "{{ item[1].mode | default(0750) }}"
+    state: directory
+  with_nested:
+    - "{{ conf_sftp_users }}"
+    - "{{ conf_sftp_directories }}"
+  tags: [ sftp ]
+
+# Create directories for individual SFTP users. Optional.
+- name: create directories per user
+  file:
+    path: "{{ conf_sftp_home_partition }}/{{ item[0].name }}/{{ item[1].name | default(item[1]) }}"
+    # path: "{{ conf_sftp_home_partition }}/{{ item[0].home }}/{{ item[1].name | default(item[1]) }}"
+    owner: "{{ item[0].name }}"
+    group: "{{ item[0].name }}"
+    mode: "{{ item[1].mode | default(0750) }}"
+    state: directory
+  with_subelements:
+    - "{{ conf_sftp_users }}"
+    - "conf_sftp_directories"
+    - flags:
+      skip_missing: True
+  tags: [ sftp ]
+
+- name: create dev directory for logging
+  file:
+    path: "{{ conf_sftp_home_partition }}/{{ item.name }}/dev"
+    # path: "{{ conf_sftp_home_partition }}/{{ item.home }}/dev"
+    owner: root
+    group: root
+    state: directory
+  with_items:
+    - "{{ conf_sftp_users }}"
+  when: conf_sftp_enable_logging
+  tags: [ sftp ]
+
+- name: enable Logging
+  blockinfile:
+    dest: "/etc/rsyslog.d/sshd.conf"
+    create: yes
+    block: |
+      # Create an additional socket for some of the sshd chrooted users.
+      {% for user in conf_sftp_users %}
+      $AddUnixListenSocket {{ conf_sftp_home_partition }}/{{ user.name }}/dev/log
+      {% endfor %}
+
+      # Log internal-sftp in a separate file
+      :programname, isequal, "internal-sftp" -/var/log/sftp/verbose.log
+      :programname, isequal, "internal-sftp" ~
+
+      # additionally write an auth log
+      auth,authpriv.*  /var/log/sftp/auth.log
+  when: conf_sftp_enable_logging
+  notify: handle_restart_rsyslog
+  tags: [ sftp ]
+
+- name: provision configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
+      - ssh/sshd_config
+  when:
+    - ansible_os_family == "Debian"
+  notify: handle_restart_ssh
+  tags: [ sftp, sftp-conf ]

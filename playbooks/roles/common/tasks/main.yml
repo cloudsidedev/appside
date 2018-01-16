@@ -149,6 +149,10 @@
   when: conf_vsftpd_enable is defined and conf_vsftpd_enable == true
   tags: [ common, vsftpd, vsftpd-conf ]
 
+- import_tasks: sftp.yml
+  when: conf_sftp_enable is defined and conf_sftp_enable == true
+  tags: [ common, sftp, sftp-conf ]
+
 # - import_tasks: vpn.yml
 #   when: conf_vpn_netname is defined
 #   tags: [ common ]

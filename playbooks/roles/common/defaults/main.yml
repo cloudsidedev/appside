@@ -156,4 +156,15 @@ conf_vsftpd_options:
   - key: xferlog_enable
     value: 'YES'
   - key: xferlog_file
-    value: /var/log/vsftp_xfer.log
+    value: /var/log/vconf_sftp_xfer.log
+
+#
+# sftp
+#
+conf_sftp_home_partition: /home
+conf_sftp_group_name: sftpusers
+conf_sftp_directories: []
+conf_sftp_allow_passwords: False
+conf_sftp_enable_selinux_support: False
+conf_sftp_enable_logging: False
+conf_sftp_nologin_shell: /sbin/nologin
