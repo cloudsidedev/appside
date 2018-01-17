@@ -53,6 +53,7 @@
   with_dict: '{{ conf_users }}'
   when:
     - item.value.state == "enabled"
+    - item.value.public_key is defined
     - item.value.is_jailed is not defined or item.value.is_jailed != true
   tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
@@ -69,4 +70,7 @@
   copy: content="{{ conf_users.deploy.private_key }}" dest=/home/deploy/.ssh/id_rsa owner=deploy group=deploy mode=600 backup=no
   when:
     - conf_env == "development"
+    - conf_users.deploy.private_key is defined
+    - conf_users.deploy defined
+  ignore_errors: yes
   tags: [ shell-users, users, ssh, shell, ssh-keys ]
