@@ -2,7 +2,7 @@
 
 # file: playbooks/roles/common/tasks/vsftpd.yml
 
-- name: ensure `listen` and `listen_ipv6` are mutually exclusive
+- name: ensure listen and listen_ipv6 are mutually exclusive
   assert:
     that: "conf_vsftpd_listen != conf_vsftpd_listen_ipv6"
   tags: [ vsftpd ]

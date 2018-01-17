@@ -34,8 +34,8 @@
     # path: "{{ conf_sftp_home_partition }}/{{ item.home }}"
     owner: root
     group: "{{ conf_sftp_group_name }}"
-    # mode: "0750"
-    mode: "0770"
+    mode: "0750"
+    # mode: "0770"
   with_items: "{{ conf_sftp_users }}"
   tags: [ sftp ]
 
@@ -85,7 +85,7 @@
     state: directory
   with_subelements:
     - "{{ conf_sftp_users }}"
-    - "conf_sftp_directories"
+    - "sftp_directories"
     - flags:
       skip_missing: True
   tags: [ sftp ]
