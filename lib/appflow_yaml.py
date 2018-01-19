@@ -122,7 +122,7 @@ def rm_value(_file, key):
     return json.dumps(conf, ensure_ascii=False, indent=4)
 
 
-def add_value(_file, key, value):
+def add_value(orig_file, orig_key, value):
     """
     Returns key-value for searched key in file.
     Key will be created with the value specified.
@@ -141,8 +141,9 @@ def add_value(_file, key, value):
     :rtype:   json
     :return:  the function returns a json containing the updated file content.
     """
-    _file = _file.replace('.', '/', 3)
-    key = key.split('.')
+    _file = orig_file.replace('.', '/', 3)
+
+    key = orig_key.split('.')
     if _file != 'config':
         file_name = os.getenv("HOME") + "/.appflow/tenant/" + _file
     else:
@@ -156,9 +157,18 @@ def add_value(_file, key, value):
     dictionary = {}
     utils.add_keys(dictionary, key, value)
     my_dicts = [conf, dictionary]
+
+    for _k, _v in dictionary.items():
+        if not isinstance(dictionary[_k], dict):
+            print(orig_file, orig_key, value)
+            return set_value(orig_file, key, value)
+
     for item in my_dicts:
         for _k, _v in item.items():
-            conf[_k].update(_v)
+            print("***", _k, type(conf[_k]), type(_v))
+            if isinstance(conf[_k], dict):
+                conf[_k].update(_v)
+
     with open(file_name, 'w') as outfile:
         yaml.dump(conf, outfile, default_flow_style=False,
                   indent=4, default_style='')
