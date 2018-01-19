@@ -197,6 +197,8 @@ conf_thumbor_remote_debug: false
 conf_serf_enable: false
 conf_serf_user: serf
 conf_serf_group: serf
+conf_serf_perlbal_user: perlbal
+conf_serf_perlbal_group: perlbal
 conf_serf_download_url: https://releases.hashicorp.com/serf/0.8.1/serf_0.8.1_linux_amd64.zip
 conf_serf_download_dir: /usr/local/src
 conf_serf_version: 0.8.1

@@ -2,10 +2,11 @@
 
 # file: playbooks/roles/web/tasks/serf.yml
 
-- name: serf group
+- name: serf/perlbal group
   action: group name={{ item }} state=present
   with_items:
     - "{{ conf_serf_group }}"
+    - "{{ conf_serf_perlbal_group }}"
   tags: [ serf ]
 
 - name: serf system user
@@ -14,9 +15,17 @@
     - "{{ conf_serf_user }}"
   tags: [ serf ]
 
+- name: perlbal system user
+  user: name={{ item }} group={{ conf_serf_perlbal_group }} comment="Perlbal System User" system=yes state=present
+  with_items:
+    - "{{ conf_serf_perlbal_user }}"
+  tags: [ serf ]
+
 - name: install perl dependencies (Debian family)
   apt: pkg={{ item }} state=latest
   with_items:
+    - cpanminus
+    - libperl-dev
     - perl-doc
     - libssl-dev
     - libdevel-stacktrace-perl
@@ -43,6 +52,38 @@
   when: ansible_os_family == "Debian"
   tags: [ serf ]
 
+- name: Install perlbal
+  cpanm:
+    name: IO::AIO Perlbal::XS::HTTPHeaders
+  tags: [ serf ]
+
+- name: Create /var/empty
+  file:
+    path: /var/empty
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+    state: directory
+  tags: [ serf ]
+
+- name: Create /etc/perlbal
+  file:
+    path: /etc/perlbal
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+    state: directory
+  tags: [ serf ]
+
+- name: Create /usr/share/perl5/Perlbal/Plugin/
+  file:
+    path: /usr/share/perl5/Perlbal/Plugin/
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+    state: directory
+  tags: [ serf ]
+
 - name: create /etc/serf
   file: path={{ item }} state=directory owner=root group={{ conf_root_group }} mode=0755
   with_items:
@@ -54,6 +95,7 @@
   with_items:
       - serf/serf.conf
       - serf/serfmon.ini
+      - perlbal/stream.conf
   # notify: handle_restart_serf
   tags: [ serf, serf-conf ]
 
@@ -81,11 +123,12 @@
   when: is_installed|failed or has_version.stdout != conf_serf_version
   tags: [ serf ]
 
-- name: provision serf script
-  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
-  with_items:
-      - serf/serf.conf
-      - serf/serfmon.ini
-  when:
-    - conf_serf_script_enable is defined and conf_serf_script_enable == true
-  tags: [ serf ]
+# - name: provision configs
+#   template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+#   with_items:
+#       - serf/serf.conf
+#       - serf/serfmon.ini
+#       - perlbal/stream.conf
+#   when:
+#     - conf_serf_script_enable is defined and conf_serf_script_enable == true
+#   tags: [ serf ]
