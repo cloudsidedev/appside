@@ -2,6 +2,11 @@
 
 # file: playbooks/roles/common/tasks/shared.yml
 
+- name: ensure shared files paths are present
+  file: path={{ item.dest.split("/")[0:-1]|join("/") }} state=directory owner=root group={{ conf_root_group }} mode=0755
+  with_items: "{{ conf_shared_files }}"
+  tags: [ shared, shared-conf ]
+
 - name: ensure shared files are present
   template:
     src: "{{ item.src }}"
