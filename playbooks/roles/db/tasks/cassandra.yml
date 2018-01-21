@@ -11,6 +11,10 @@
   when: ansible_os_family == "Debian"
   tags: [ cassandra ]
 
+- name: Get public IP from ipify.org
+  ipify_facts:
+  tags: [ cassandra, cassandra-conf ]
+
 - name: install cassandra gpg key (Debian Family)
   apt_key: keyserver={{ conf_cassandra_gpg_keyserver }} id='{{ conf_cassandra_gpg_key_id }}' state=present
   when: ansible_os_family == "Debian"
