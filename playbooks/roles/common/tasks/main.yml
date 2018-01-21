@@ -178,6 +178,6 @@
 
 - name: include custom playbook tasks
   include_tasks: "{{ item.src }}"
-  when: conf_custom_playbook_enable is defined and conf_custom_playbook_enable == true item.state|default('enabled') != 'disabled'
+  when: conf_custom_playbook_enable is defined and conf_custom_playbook_enable == true and item.state|default('disabeld') == 'enabled'
   with_items: "{{ conf_custom_playbook_import_tasks }}"
   tags: [ common, custom ]
