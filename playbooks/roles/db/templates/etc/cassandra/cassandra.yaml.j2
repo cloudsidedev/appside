@@ -426,7 +426,7 @@ seed_provider:
       parameters:
           # seeds is actually a comma-delimited list of addresses.
           # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: "127.0.0.1"
+          - seeds: "{{ conf_cassandra_seed_provider_seeds }}"
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
@@ -600,11 +600,15 @@ ssl_storage_port: 7001
 #
 # Setting listen_address to 0.0.0.0 is always wrong.
 #
+{% if conf_cassandra_listen_address is defined %}
 listen_address: {{ conf_cassandra_listen_address }}
+{% endif %}
 
 # Set listen_address OR listen_interface, not both. Interfaces must correspond
 # to a single address, IP aliasing is not supported.
-# listen_interface: eth0
+{% if conf_cassandra_listen_interface is defined %}
+listen_interface: {{ conf_cassandra_listen_interface }}
+{% endif %}
 
 # If you choose to specify the interface by name and the interface has an ipv4 and an ipv6 address
 # you can specify which should be chosen using listen_interface_prefer_ipv6. If false the first ipv4
@@ -663,7 +667,7 @@ native_transport_port: 9042
 # native_transport_max_concurrent_connections_per_ip: -1
 
 # Whether to start the thrift rpc server.
-start_rpc: false
+start_rpc: {{ conf_cassandra_start_rpc }}
 
 # The address or interface to bind the Thrift RPC service and native transport
 # server to.
