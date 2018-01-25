@@ -63,6 +63,7 @@
   when:
     - item.value.state == "enabled"
     - item.value.is_deployer == True
+    - item.value.public_key is defined
     - item.value.is_jailed is not defined or item.value.is_jailed != true
   tags: [ shell-users, users, ssh, shell, ssh-keys ]
 
