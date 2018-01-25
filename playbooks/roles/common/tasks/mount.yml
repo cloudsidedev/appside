@@ -1,0 +1,18 @@
+---
+
+# file: playbooks/roles/common/tasks/mount.yml
+
+- name: mount and edit fstab
+  mount:
+    path: "{{ item.path }}"
+    dump: "{{ item.dump }}"
+    fstab: "{{ item.fstab }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.opts }}"
+    passno: "{{ item.passno }}"
+    src: "{{ item.src }}"
+    state: "{{ item.state }}"
+  with_items:
+    - "{{ conf_mount }}"
+  when: conf_mount_enable is defined and conf_mount_enable == true and item.state|default('present') != 'absent'
+  tags: [ mount, mount-conf ]

@@ -9,6 +9,20 @@ conf_custom_playbook_enable: false
 conf_custom_playbook_import_tasks: []
 
 #
+# mount
+#
+conf_mount_enable: false
+conf_mount:
+  - path: ''
+    dump: 0
+    fstab: '/etc/fstasb'
+    fstype: ''
+    opts: ''
+    passno: 0
+    src: ''
+    state:
+
+#
 # locales
 #
 conf_locales_present:

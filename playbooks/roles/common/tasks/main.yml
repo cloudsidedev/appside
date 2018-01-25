@@ -12,6 +12,10 @@
   user: name=root shell={{ conf_root_shell }}
   tags: [ common, users, shell ]
 
+- import_tasks: mount.yml
+  when: conf_mount_enable is defined and conf_mount_enable == true
+  tags: [ common, mount, mount-conf ]
+
 - import_tasks: locales.yml
   tags: [ locales ]
 
