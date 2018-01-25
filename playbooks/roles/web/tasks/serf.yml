@@ -2,23 +2,31 @@
 
 # file: playbooks/roles/web/tasks/serf.yml
 
-- name: serf/perlbal group
+- name: serf group
   action: group name={{ item }} state=present
   with_items:
     - "{{ conf_serf_group }}"
+  tags: [ serf ]
+
+- name: perlbal group
+  action: group name={{ item }} state=present
+  with_items:
     - "{{ conf_serf_perlbal_group }}"
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: serf system user
   user: name={{ item }} group={{ conf_serf_group }} comment="Serf System User" system=yes state=present
   with_items:
     - "{{ conf_serf_user }}"
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: perlbal system user
   user: name={{ item }} group={{ conf_serf_perlbal_group }} comment="Perlbal System User" system=yes state=present
   with_items:
     - "{{ conf_serf_perlbal_user }}"
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: install perl dependencies (Debian family)
@@ -49,12 +57,13 @@
     - libclass-methodmaker-perl
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: ansible_os_family == "Debian"
+  when: conf_comet_enable is defined and conf_comet_enable == true and ansible_os_family == "Debian"
   tags: [ serf ]
 
 - name: Install perlbal
   cpanm:
     name: IO::AIO Perlbal::XS::HTTPHeaders
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: Create /var/empty
@@ -64,6 +73,7 @@
     group: root
     mode: "u=rwx,g=rx,o=rx"
     state: directory
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: Create /etc/perlbal
@@ -73,6 +83,7 @@
     group: root
     mode: "u=rwx,g=rx,o=rx"
     state: directory
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: Create /usr/share/perl5/Perlbal/Plugin/
@@ -82,6 +93,7 @@
     group: root
     mode: "u=rwx,g=rx,o=rx"
     state: directory
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf ]
 
 - name: create /etc/serf
@@ -95,8 +107,15 @@
   with_items:
       - serf/serf.conf
       - serf/serfmon.ini
+  # notify: handle_restart_serf
+  tags: [ serf, serf-conf ]
+
+- name: provision comit configs
+  template: src=etc/{{ item }}.j2 dest={{ conf_local_etc_path }}/{{ item }} owner=root group={{ conf_root_group }} mode=0644
+  with_items:
       - perlbal/stream.conf
   # notify: handle_restart_serf
+  when: conf_comet_enable is defined and conf_comet_enable == true
   tags: [ serf, serf-conf ]
 
 - name: Download serf
