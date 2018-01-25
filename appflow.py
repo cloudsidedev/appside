@@ -232,7 +232,8 @@ class AppFlow(object):
         :param local: if it's doing a local auto-provision (default False)
         """
         print(utils.get_provision_color_string('provision', tenant, env))
-        apansible.provision(tenant, env, limit, tags, skip_tags, firstrun)
+        apansible.provision(tenant, env, limit, tags,
+                            skip_tags, firstrun, local)
 
     def get(self, file, key=None):
         """
