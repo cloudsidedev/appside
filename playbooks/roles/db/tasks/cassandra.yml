@@ -56,6 +56,7 @@
     - oracle-java8-installer
     - ca-certificates
     - oracle-java8-set-default
+  ignore_errors: true
   when: ansible_os_family == "Debian"
   tags: [ cassandra ]
 
