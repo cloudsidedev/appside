@@ -215,7 +215,7 @@
 #     executable: /usr/bin/pip2
 #     state: latest
 
-- name: started cassandra
+- name: stopping cassandra
   systemd: name=cassandra state=stopped
   ignore_errors: true
 
@@ -238,7 +238,7 @@
   # notify: handle_restart_cassandra
   tags: [ cassandra, cassandra-conf ]
 
-- name: started cassandra
+- name: starting cassandra
   systemd: name=cassandra state=started
   ignore_errors: true
 
