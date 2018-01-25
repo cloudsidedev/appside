@@ -9,7 +9,7 @@ import lib.appflow_utils as utils
 
 
 def provision(tenant: str, env: str, limit: str, tags: str,
-              skip_tags: str, firstrun: bool):
+              skip_tags: str, firstrun: bool, local bool):
     """
     This will perform the ansible playbook.
     We pass tenant and environment and all other options as
@@ -60,6 +60,8 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         tags_argument.append("-k -u ubuntu")
+    if local:
+        tags_argument.append("-c local")
     os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
               inventory + ' ' + playbook +
               ' --vault-password-file ' + password_file)

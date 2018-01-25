@@ -3,6 +3,7 @@
 #
 .vscode
 __*
+*.pyc
 _build/
 *.retry
 nohup.out

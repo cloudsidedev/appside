@@ -196,7 +196,7 @@ class AppFlow(object):
 
     def provision(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
                   limit: str = None, tags: str = None, skip_tags: str = None,
-                  firstrun: bool = False):
+                  firstrun: bool = False, local: bool = False):
         """
         Provision your machines.
         Syntax is:
@@ -227,6 +227,9 @@ class AppFlow(object):
 
         :type  firstrun: bool
         :param firstrun: if it's first run (default False)
+ 
+        :type  local: bool
+        :param local: if it's doing a local auto-provision (default False)
         """
         print(utils.get_provision_color_string('provision', tenant, env))
         apansible.provision(tenant, env, limit, tags, skip_tags, firstrun)
