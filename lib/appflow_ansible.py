@@ -9,7 +9,7 @@ import lib.appflow_utils as utils
 
 
 def provision(tenant: str, env: str, limit: str, tags: str,
-              skip_tags: str, firstrun: bool, local bool):
+              skip_tags: str, firstrun: bool, local: bool):
     """
     This will perform the ansible playbook.
     We pass tenant and environment and all other options as
