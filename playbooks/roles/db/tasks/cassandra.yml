@@ -54,7 +54,6 @@
   apt: name="{{ item }}" state=absent
   with_items:
     - oracle-java8-installer
-    - ca-certificates
     - oracle-java8-set-default
   ignore_errors: true
   when: ansible_os_family == "Debian"
