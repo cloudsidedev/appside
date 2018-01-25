@@ -1,5 +1,130 @@
 ---
 
+
+# ---
+# - name: Include vars cassandra.yml
+#   include_vars:
+#     file: "{{ playbook_dir }}/group_vars/cassandra.yml"
+
+# - name: Get public IP from ipify.org
+#   ipify_facts:
+
+# - name: Add pgp key 2 for cassandra repo
+#   apt_key:
+#     keyserver: pool.sks-keyservers.net
+#     id: A278B781FE4B2BDA
+
+# - name: Add apache cassandra repo
+#   apt_repository:
+#     repo: deb http://www.apache.org/dist/cassandra/debian 311x main
+#     state: present
+
+# # only needed for current aws image
+# - name: Remove Oracle Java8 Repo (ppa:webupd8team/java)
+#   apt_repository:
+#     repo: 'ppa:webupd8team/java'
+#     state: absent
+
+# # only needed for current aws image
+# - name: Remove Oracle Java 8
+#   apt:
+#     name: "{{item}}"
+#     state: absent
+#   with_items:
+#     - oracle-java8-installer
+#     - oracle-java8-set-default
+
+# - name: Update apt cache
+#   apt:
+#     update_cache: yes
+
+# - name: Install OpenJDK Java
+#   apt:
+#     name: default-jre
+#     update_cache: no
+
+# - name: Install cassandra
+#   apt:
+#     name: cassandra
+#     update_cache: no
+
+# - name: Stop cassandra
+#   systemd:
+#     name: cassandra
+#     state: stopped
+
+# - name: Force upgrade of pip2
+#   pip:
+#     name: pip
+#     executable: /usr/bin/pip2
+#     state: latest
+
+# - name: Install cassandra python driver via pip2
+#   pip:
+#     name: cassandra-driver
+#     executable: /usr/bin/pip2
+#     state: latest
+
+# # only needed for aws
+# - name: Purge data dir - needed to rename the cluster
+#   file:
+#     path: /var/lib/cassandra/data/system
+#     state: absent
+
+# - name: Copy config files
+#   copy:
+#     src: "{{ item }}"
+#     dest: /etc/cassandra/
+#     owner: root
+#     group: root
+#     mode: "u=rw,g=r,o=r"
+#   with_fileglob:
+#     - "{{ role_path }}/files/etc-cassandra/*"
+
+# - name: Proc template cassandra.yml
+#   template:
+#     src: cassandra.yaml.j2
+#     dest: /etc/cassandra/cassandra.yaml
+#     owner: root
+#     group: root
+#     mode: "u=rw,g=r,o=r"
+
+# - name: Start cassandra
+#   systemd:
+#     name: cassandra
+#     state: started
+
+# - name: Copy schema export to /tmp
+#   copy:
+#     src: cassandra_schema.cql
+#     dest: /tmp/cassandra_schema.cql
+
+# - name: Copy cassandra-import-schema.sh to /tmp
+#   copy:
+#     src: cassandra-import-schema.sh
+#     dest: /tmp/cassandra-import-schema.sh
+#     mode: "u=rwx,g=rx,o=rx"
+
+# - name: Ensure CQLSH_NO_BUNDLED=TRUE in /etc/environment for cqlsh
+#   lineinfile:
+#     path: /etc/environment
+#     line: 'CQLSH_NO_BUNDLED=TRUE'
+
+# - name: Wait for cassandra cql service to become available on port 9042
+#   wait_for:
+#     port: 9042
+#     delay: 5
+
+# - name: Import schema
+#   shell: /tmp/cassandra-import-schema.sh
+#   register: command_result
+#   failed_when: "'refused' in command_result.stderr"
+
+
+
+##################
+
+
 # file: playbooks/roles/db/tasks/cassandra.yml
 
 - name: stop cassandra
@@ -90,6 +215,10 @@
 #     executable: /usr/bin/pip2
 #     state: latest
 
+- name: started cassandra
+  systemd: name=cassandra state=stopped
+  ignore_errors: true
+
 - name: Purge data dir - needed to rename the cluster
   file:
     path: /var/lib/cassandra/data/system
@@ -106,7 +235,7 @@
       # - cassandra/jvm.options
       # - cassandra/logback-tools.xml
       # - cassandra/logback.xml
-  notify: handle_restart_cassandra
+  # notify: handle_restart_cassandra
   tags: [ cassandra, cassandra-conf ]
 
 - name: started cassandra
