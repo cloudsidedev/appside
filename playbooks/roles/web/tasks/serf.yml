@@ -19,7 +19,7 @@
   user: name={{ item }} group={{ conf_serf_group }} comment="Serf System User" system=yes state=present
   with_items:
     - "{{ conf_serf_user }}"
-  when: conf_comet_enable is defined and conf_comet_enable == true
+  when: conf_serf_enable is defined and conf_serf_enable == true
   tags: [ serf ]
 
 - name: perlbal system user
