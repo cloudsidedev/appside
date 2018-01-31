@@ -436,4 +436,5 @@
 
 - name: check permissions on /run/mysqld
   file: path=/run/mysqld owner=mysql group=root state=directory
+  ignore_errors: yes
   tags: [ jailkit, jail-users ]
