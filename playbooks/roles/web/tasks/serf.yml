@@ -57,7 +57,7 @@
     - libclass-methodmaker-perl
   environment:
     DEBIAN_FRONTEND: noninteractive
-  when: conf_comet_enable is defined and conf_comet_enable == true and ansible_os_family == "Debian"
+  when: conf_serf_enable is defined and conf_serf_enable == true and ansible_os_family == "Debian"
   tags: [ serf ]
 
 - name: Install perlbal
