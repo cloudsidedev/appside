@@ -8,6 +8,7 @@ Development
 This chapter will get you started with |project_name| development.
 
 |project_name| is written in Python.
+Here you will find all the references to the Code
 
 .. toctree::
    :glob:

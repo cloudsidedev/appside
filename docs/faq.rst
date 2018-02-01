@@ -1,5 +1,79 @@
 Usage & Issues ##############
 
+Help
+~~~~
+
+You can always have basic help from |package_name| itself:
+
+``appflow``
+
+Will print a generic help:
+
+::
+
+    $ appflow
+    Type:        AppFlow
+    String form: <__main__.AppFlow object at 0x7f75a19fa080>
+    Docstring:   Appflow CLI tool.
+
+    Type appflow to have a list of available commands.
+    Type appflow command -- --help to have help for the specified command.
+
+    Usage:      appflow 
+                appflow add
+                appflow checkin
+                appflow checkout
+                appflow decrypt
+                appflow encrypt
+                appflow get
+                appflow init
+                appflow provision
+                appflow reset
+                appflow rm
+                appflow set
+                appflow ssh
+                appflow status
+                appflow tags
+                appflow update
+                appflow vhosts
+
+You will have greather help, typing
+``appflow COMMAND -- --help``
+This will print a more detailed help for every function you need (add,checking,checkout...)
+
+Example:
+
+::
+
+    $ appflow provision -- --help                                                    [12:48:37]
+    Type:        method
+    String form: <bound method AppFlow.provision of <__main__.AppFlow object at 0x7fc0f056eb70>>
+    File:        /usr/local/bin/appflow
+    Line:        197
+    Docstring:   Provision your machines.
+    Syntax is:
+    appflow provision "machine1,machine2" tag1,tag2 skiptag1,skiptag2
+    tags: will run only the tags specified
+    skip_tags: will run all the tags except for the specified ones
+    limit: limit to only some specified hosts.
+
+    Optionally it is possible to specify custom tenant and environment
+    appflow provision tenant-name env-name...
+    this is optional and by default will read the
+    default config in ~/.appflow/config.yml
+
+    :type  tenant: string
+                   :param tenant: The name of the tenant.
+
+                   :type  env: string
+                   :param env: The name of the tenant.
+
+                   :type  limit: string
+
+Read carefully the various helps, and in case of doubts head to the Developer section
+Where you will be able to read each function's Docstring and source code.
+
+
 Troubleshooting
 ~~~~~~~~~~~~~~~
 
