@@ -1,7 +1,7 @@
 AppFlow
 =======
 
-|Join the chat at https://gitter.im/ttssdev/appflow|
+Get an invite and join the conversations! |Slack Status|
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
@@ -121,5 +121,5 @@ Contributing
 Contributions are welcome from everyone. `Join the
 chat <https://gitter.im/ttssdev/appflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge>`__.
 
-.. |Join the chat at https://gitter.im/ttssdev/appflow| image:: https://badges.gitter.im/ttssdev/appflow.svg
-   :target: https://gitter.im/ttssdev/appflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+.. |Slack Status| image:: https://appflow-community.slack.com/badge.svg
+   :target: https://appflow-community.slack.com
