@@ -7,7 +7,7 @@ Installation
 
 The preferred method to install |project_name| is using:
 
-.. code-block:: bash
+.. code-block:: guess
     pip3 install appflow
 
 this will install the appflow executable you will use.
@@ -15,7 +15,7 @@ this will install the appflow executable you will use.
 This installation is incomplete without initializing the playbooks and your tenant.
 To initialize use:
 
-.. code-block:: bash 
+.. code-block:: guess
    appflow init
 
 Then follow the simple instructions to choose your tenant name and default environment.
@@ -25,7 +25,7 @@ This folder is placed in **$HOME** in **$HOME/.appflow**
 
 You will find here:
 
-.. code-block:: bash
+.. code-block:: guess
     ls ~/.appflow  
     .appflow  
     ├── config.yml 
@@ -37,6 +37,7 @@ You will find here:
     4 directories, 1 file
 
 What you need to know:
+
 **config.yml** 
 holds your default config (default tenant, environment) so you do not
 have to specify them always.
