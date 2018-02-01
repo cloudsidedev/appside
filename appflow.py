@@ -227,7 +227,7 @@ class AppFlow(object):
 
         :type  firstrun: bool
         :param firstrun: if it's first run (default False)
- 
+
         :type  local: bool
         :param local: if it's doing a local auto-provision (default False)
         """

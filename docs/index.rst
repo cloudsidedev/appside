@@ -4,7 +4,7 @@
 AppFlow Documentation
 =====================
 
-# .. include:: ../README.md
+.. include:: ../README.md
 
 .. when you add an element here, do not forget to add it to book.rst
 
