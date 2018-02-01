@@ -68,3 +68,13 @@ These files have to be named with the environment they correspond to:
 *~/.appflow/vault/tenant1/development*...
 
 in your tenant you then specify the inventory files for each environment (*~/.appflow/tenant/tenant1/development, ~/.appflow/tenant/tenant1/testing*...)
+
+Setting Up Atlantis (14.04)
+==========================
+
+TODO
+
+Setting Up Atlantis (16.04)
+==========================
+
+TODO2
