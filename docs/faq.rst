@@ -9,18 +9,6 @@ Usage & Issues
 ##############
 
 
-## Vagrant
-
-```
-vagrant plugin install vagrant-vbguest
-vagrant vbguest --status
-```
-
-Before you can `appflow vm reload atlantis`. This will download the needed trusty64 box.
-```
-appflow vagrant
-```
-
 ### Troubleshooting
 
 #### [vagrant] Missing Vagrantfile.local.yml
