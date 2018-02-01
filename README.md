@@ -68,10 +68,6 @@ To start using it you first need to *initialize* it:
 `appflow init`
 follow the onscreen instructions to set it up!
 
-## Documentation
-
-Take a look at the [walkthrough](https://github.com/ttssdev/appflow/wiki/Walkthrough) for initial setup.
-
 ### Developers
 
 #### Contribute a new feature
