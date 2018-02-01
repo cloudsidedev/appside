@@ -1,4 +1,5 @@
-Usage & Issues ##############
+FAQs
+====
 
 Help
 ~~~~
