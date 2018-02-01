@@ -1,5 +1,5 @@
 # AppFlow
-Get an invite and join the conversations! [![Slack Appflow Community](https://cdn.worldvectorlogo.com/logos/slack.svg)=100x20](https://appflow-community.slack.com)  
+Get an invite and join the conversations! [![Slack Appflow Community](https://cdn.worldvectorlogo.com/logos/slack.svg | width=100)](https://appflow-community.slack.com)  
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
