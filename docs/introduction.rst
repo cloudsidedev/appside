@@ -5,4 +5,4 @@ Introduction
    rendering. without this stub, the elements in the toctree of
    index.rst show up a level below the README file included
 
-# .. include:: ../README.md
+.. include:: ../README.md
