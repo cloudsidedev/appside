@@ -114,4 +114,31 @@ We need to remove it and default to the PPA installation:
 Setting Up Atlantis (16.04)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO2
+We first need to install Python or ansible will not work
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    - sudo apt-get install -y python
+
+
+We now need to setup the percona repo and package to install
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    -   wget https://repo.percona.com/apt/percona-release_0.1-4.$(lsb_release -sc)_all.deb
+    -   sudo dpkg -i percona-release_0.1-4.$(lsb_release -sc)_all.deb
+    -   sudo apt update
+    -   sudo apt-get install -y percona-xtradb-cluster-server-5.7
+    -   sudo chown mysql:mysql /run/mysqld
+
+
+
+note: get ssh pwd for ubuntu user:
+""""""""""""""""""""""""""""""""""
+
+::
+
+    -   vagrant ssh atlantis -c "echo $(cat ~/.ssh/id_rsa.pub) | sudo tee /home/ubuntu/.ssh/authorized_keys"
+    -   vagrant ssh atlantis -c "sudo passwd ubuntu"
