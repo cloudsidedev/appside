@@ -78,37 +78,37 @@ To enter it just do
 ``vagrant ssh atlantis``
 
 We need percona repo to complete the provisioning
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
-    -   `wget https://repo.percona.com/apt/percona-release_0.1-4.$(lsb_release -sc)_all.deb`
-    -   `sudo dpkg -i percona-release_0.1-4.$(lsb_release -sc)_all.deb`
-    -   `sudo apt update`
-    -   `sudo apt-get install -y percona-xtradb-cluster-server-5.7`
-    -   `sudo chown mysql:mysql /run/mysqld`
+    -   wget https://repo.percona.com/apt/percona-release_0.1-4.$(lsb_release -sc)_all.deb
+    -   sudo dpkg -i percona-release_0.1-4.$(lsb_release -sc)_all.deb
+    -   sudo apt update
+    -   sudo apt-get install -y percona-xtradb-cluster-server-5.7
+    -   sudo chown mysql:mysql /run/mysqld
 
 Upgrade Packages
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 ::
 
-    -  ``sudo apt update && sudo apt upgrade``
-    -  ``sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip install -U``
-    -  ``sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip3 install -U``
+    -  sudo apt update && sudo apt upgrade
+    -  sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip install -U
+    -  sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip3 install -U
 
 Fix Ansible problems on 14.04
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The python3 version Shipped with Ubuntu 14.04 is not enough to use ansible from pip3.
 We need to remove it and default to the PPA installation:
 
 ::
 
-    -  ``sudo pip3 uninstall ansible``
-    -  ``sudo apt install python2 python2-pip python3 python3-pip git``
-    -  ``sudo apt-add-repository ppa:ansible/ansible``
-    -  ``sudo apt install ansible``
+    -  sudo pip3 uninstall ansible
+    -  sudo apt install python2 python2-pip python3 python3-pip git
+    -  sudo apt-add-repository ppa:ansible/ansible
+    -  sudo apt install ansible
 
 
 Setting Up Atlantis (16.04)
