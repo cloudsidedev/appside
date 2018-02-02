@@ -7,7 +7,7 @@ Installation
 
 The preferred method to install |project_name| is using:
 
-.. code-block:: guess
+::
 
     pip3 install appflow
 
@@ -16,7 +16,7 @@ this will install the appflow executable you will use.
 This installation is incomplete without initializing the playbooks and your tenant.
 To initialize use:
 
-.. code-block:: guess
+::
 
    appflow init
 
@@ -27,7 +27,7 @@ This folder is placed in **$HOME** in **$HOME/.appflow**
 
 You will find here:
 
-.. code-block:: guess
+:: 
 
     ls ~/.appflow  
     .appflow  
@@ -51,7 +51,7 @@ them during your command:
 **playbooks** 
 this is where all playbooks are placed, you can contribute to them visiting
 the repository: `Appflow-Playbooks
-<https://github.com/ttssdev/appflow-playbook>`_.
+<https://github.com/ttssdev/appflow-playbooks>`_.
 To keep them updated, you can just type *appflow update*
 
 **tenant** 
