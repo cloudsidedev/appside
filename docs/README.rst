@@ -114,7 +114,7 @@ Contribute a new feature
 Get all vars
 ^^^^^^^^^^^^
 
-``ansible all -m setup --tree /tmp/facts -i examples/appflow-mrrobot/local/inventory -a "filter=ansible_distribution*"``
+``ansible all -m setup --tree /tmp/facts -i examples/YOUR_TENANT/local/inventory -a "filter=ansible_distribution*"``
 
 Contributing
 ------------
