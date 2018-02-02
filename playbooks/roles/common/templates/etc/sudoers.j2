@@ -39,4 +39,6 @@ root	ALL=(ALL:ALL) ALL
 # See sudoers(5) for more information on "#include" directives:
 #includedir /etc/sudoers.d
 
-# deploy   ALL=NOPASSWD:/usr/sbin/service memcached restart
+{% if conf_sudo_custom is defined %}
+{{ conf_sudo_custom }}
+{% endif %}
