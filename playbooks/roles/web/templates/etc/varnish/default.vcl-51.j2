@@ -10,6 +10,7 @@ import std;
 ###########
 # Backend #
 ###########
+{% if conf_varnish_backend_default is defined %}
 backend default {
   {{ conf_varnish_backend_default }}
 
@@ -21,6 +22,7 @@ backend default {
     .threshold = 3;
   }
 }
+{% endif %}
 
 {% if conf_varnish_backends is defined %}{{ conf_varnish_backends }}{% endif %}
 
