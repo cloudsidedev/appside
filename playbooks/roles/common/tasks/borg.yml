@@ -199,7 +199,7 @@
 - name: be sure percona-xtrabackup packages is installed (Debian family)
   apt: pkg={{ item }} state=installed
   with_items:
-    - percona-xtrabackup
+    - percona-xtrabackup-24
   when: conf_backup_client == true and conf_backup_mysqldump == true and ansible_os_family == "Debian"
   tags: [ borg, borgmatic ]
 
