@@ -169,7 +169,8 @@
 
 # sudo su - borg -c "ssh backup@node.foo.org"
 - name: init remote borg repo
-  shell: "export BORG_PASSPHRASE='{{ conf_backup_passphrase }}' ; borg init {{ conf_backup_user }}@{{ conf_backup_host }}:{{ conf_backup_repo }}"
+  # shell: "export BORG_PASSPHRASE='{{ conf_backup_passphrase }}' ; borg init {{ conf_backup_user }}@{{ conf_backup_host }}:{{ conf_backup_repo }}"
+  shell: "export BORG_PASSPHRASE='{{ conf_backup_passphrase }}' ; borg init --encryption=repokey-blake2 {{ conf_backup_user }}@{{ conf_backup_host }}:{{ conf_backup_repo }}"
   when: borg_repo_check_res.rc != 0
   tags: [ borg ]
 
