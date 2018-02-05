@@ -69,6 +69,21 @@ These files have to be named with the environment they correspond to:
 
 in your tenant you then specify the inventory files for each environment (*~/.appflow/tenant/tenant1/development, ~/.appflow/tenant/tenant1/testing*...)
 
+Fix Ansible problems on 14.04
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The python3 version Shipped with Ubuntu 14.04 is not enough to use ansible from pip3 that Appflow
+brings as dependency.
+We need to remove it and default to the PPA installation:
+
+::
+
+    -  sudo pip3 uninstall ansible
+    -  sudo apt install python2 python2-pip python3 python3-pip git
+    -  sudo apt-add-repository ppa:ansible/ansible
+    -  sudo apt install ansible
+
+
 Setting Up Atlantis (14.04)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -96,20 +111,6 @@ Upgrade Packages
     -  sudo apt update && sudo apt upgrade
     -  sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip install -U
     -  sudo pip list --outdated --format=columns | grep -v sdist | awk '{print $1}' | tail -n +3 | xargs -n1 sudo pip3 install -U
-
-Fix Ansible problems on 14.04
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The python3 version Shipped with Ubuntu 14.04 is not enough to use ansible from pip3.
-We need to remove it and default to the PPA installation:
-
-::
-
-    -  sudo pip3 uninstall ansible
-    -  sudo apt install python2 python2-pip python3 python3-pip git
-    -  sudo apt-add-repository ppa:ansible/ansible
-    -  sudo apt install ansible
-
 
 Setting Up Atlantis (16.04)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
