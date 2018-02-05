@@ -74,6 +74,24 @@ Example:
 Read carefully the various helps, and in case of doubts head to the Developer section
 Where you will be able to read each function's Docstring and source code.
 
+Let's Encrypt!
+~~~~~~~~~~~~~~
+
+::
+    Issue: Setup Let's Encrypt on a server provisioned with Appflow.
+
+::
+
+    Solve:
+
+    Let's Encrypt Certificate verification:
+        ssh REMOTE-SERVER.NAME "sudo cert-verify.sh"
+
+    Create a new Certificate:
+        ssh REMOTE-SERVER.NAME "sudo cert-create.sh www.YOUR-URL.DOMAIN"
+    Then manually renew all the certificates:
+        ssh REMOTE-SERVER,NAME "sudo cert-renew.sh"
+
 
 Troubleshooting
 ~~~~~~~~~~~~~~~
@@ -90,6 +108,8 @@ Troubleshooting
            Path: /Users/foo/Documents/webdev/appflow/Vagrantfile
            Line number: 0
            Message: Errno::ENOENT: No such file or directory @ rb_sysopen - Vagrantfile.local.yml`
+
+::
 
     Solve: add Vagrantfile.local.yml to the appflow folder with this content:
 
@@ -115,6 +135,8 @@ Troubleshooting
 
            id: deploy: no such user
 
+::
+
     Solve: appflow provision limit=atlantis firstrun=true (password is vagrant).
 
 [vagrant] The box you attempted to add doesn't match the provider you specified
@@ -123,6 +145,8 @@ Troubleshooting
 ::
 
     Issue: The box you attempted to add doesn't match the provider you specified.
+
+::
 
     Solve: vagrant up --provider=virtualbox atlantis
 
@@ -145,7 +169,9 @@ Troubleshooting
 
     Issue: vagrant Warning: Authentication failure. Retrying...
 
-Solve: http://stackoverflow.com/a/30792296
+::
+
+    Solve: http://stackoverflow.com/a/30792296
 
 [vagrant] an error occurred while downloading the remote file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -154,6 +180,8 @@ Solve: http://stackoverflow.com/a/30792296
 
     Issue: An error occurred while downloading the remote file.
            The error message, if any, is reproduced below. Please fix this error and try again.
+
+::
 
     Solve: sudo mv /opt/vagrant/embedded/bin/curl /tmp
 
@@ -166,6 +194,8 @@ See also: https://github.com/mitchellh/vagrant/issues/7997
 
     Issue: An error occurred while mounting /.
     Keys: Press S to skip mounting or M for manual recovery
+
+::
 
     Solve:
     Press S and try to see if atlantis boots up.
