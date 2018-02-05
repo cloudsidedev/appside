@@ -85,7 +85,7 @@ Let's Encrypt!
 
     Solve:
 
-    Let's Encrypt Certificate verification:
+    Certificate verification:
         ssh REMOTE-SERVER.NAME "sudo cert-verify.sh"
 
     Create a new Certificate:
