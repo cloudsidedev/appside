@@ -90,6 +90,7 @@ Let's Encrypt!
 
     Create a new Certificate:
         ssh REMOTE-SERVER.NAME "sudo cert-create.sh www.YOUR-URL.DOMAIN"
+
     Then manually renew all the certificates:
         ssh REMOTE-SERVER,NAME "sudo cert-renew.sh"
 
