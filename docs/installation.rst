@@ -69,8 +69,7 @@ These files have to be named with the environment they correspond to:
 
 in your tenant you then specify the inventory files for each environment (*~/.appflow/tenant/tenant1/development, ~/.appflow/tenant/tenant1/testing*...)
 
-Fix Ansible problems on 14.04
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Fix Ansible problems on 14.04**
 
 The python3 version Shipped with Ubuntu 14.04 is not enough to use ansible from pip3 that Appflow
 brings as dependency.
