@@ -72,6 +72,11 @@
   when: conf_env != "development" and conf_galera_cluster == true and conf_galera_notify_enable == true
   tags: [ mysql, mysql-conf, percona, galeranotify ]
 
+- name: deploy /usr/local/bin/wsrep_notify_slack.py
+  template: src=usr/local/bin/wsrep_notify_slack.py.j2 dest=/usr/local/bin/wsrep_notify_slack owner=root group={{ conf_root_group }} mode=0755
+  when: conf_env != "development" and conf_galera_cluster == true and conf_galera_notify_slack_enable == true
+  tags: [ mysql, mysql-conf, percona, galeranotify ]
+
 #
 # AppArmor
 #

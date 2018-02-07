@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+#
+# --- THIS FILE IS AUTOMATICALLY PROVISIONED THROUGH ANSIBLE ---
+#
+
+# configure this in my.cnf on a Galera-based MySQL-alike server:
+#   wsrep_notify_cmd=/usr/local/sbin/wsrep_notify_slack
+
+# by Tom Gidden <gid@starberry.tv>
+
+url = '{{ conf_galera_notify_slack_url }}'
+
+import argparse
+import urllib, urllib2
+import socket
+import json
+import re
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--status')
+#    parser.add_argument('-u', '--uuid')
+#    parser.add_argument('-p', '--primary')
+#    parser.add_argument('-i', '--index')
+#    parser.add_argument('-m', '--members')
+    args = parser.parse_args()
+
+    name = socket.gethostname()
+    shortname = re.sub(r'\..*$', '', name)
+
+    text = "*"+shortname+"* status changed to *"+args.status+"*"
+
+    q = {}
+    q['username'] = "Database node "+shortname
+
+    colors = {
+        'Joined' : 'warning',
+        'Synced' : 'good',
+        'Undefined' : 'danger',
+        'Joiner' : 'warning',
+        'Donor' : 'warning'
+    }
+
+    a = {}
+    a["fallback"] = "Cluster change notification: "+text
+    a["text"] = text
+    a["mrkdwn_in"] = ["text", "fallback"]
+
+    if args.status in colors:
+        a['color'] = colors[args.status]
+    else:
+        a['color'] = 'danger'
+
+    q['attachments'] = [ a ]
+    enc = "payload="+json.dumps(q)
+
+    urllib2.urlopen(url, enc)

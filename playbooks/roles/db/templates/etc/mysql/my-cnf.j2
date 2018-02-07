@@ -169,6 +169,8 @@ join_buffer_size        = {{ conf_mysql_join_buffer_size }}
 # Percona
 #
 # wsrep_notify_cmd = /usr/local/bin/galeranotify
+{% if conf_galera_notify_slack_enable == true %}wsrep_notify_cmd = /usr/local/bin/wsrep_notify_slack
+{% endif %}
 wsrep_provider = {{ conf_lib_path }}/libgalera_smm.so
 wsrep_node_address = {{ conf_wsrep_node_address }}
 wsrep_node_name = {{ conf_wsrep_node_name }}

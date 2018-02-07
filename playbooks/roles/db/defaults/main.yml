@@ -15,6 +15,7 @@ conf_mysql_key_buffer: 16M
 # galeranotify
 #
 conf_galera_notify_enable: false
+conf_galera_notify_slack_enable: false
 
 #
 # Cassandra
