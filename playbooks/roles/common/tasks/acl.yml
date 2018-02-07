@@ -1,0 +1,25 @@
+---
+
+# file: playbooks/roles/common/tasks/acl.yml
+
+- name: be sure acl package is installed (Debian family)
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - acl
+  when: ansible_os_family == "Debian"
+  tags: [ acl ]
+
+- name: set ACLs
+  acl:
+    default: "{{ item.default }}"
+    entity: "{{ item.entity }}"
+    etype: "{{ item.etype }}"
+    follow: "{{ item.follow }}"
+    path: "{{ item.path }}"
+    permissions: "{{ item.permissions }}"
+    recursive: "{{ item.recursive }}"
+    state: "{{ item.state }}"
+  with_items:
+    - "{{ conf_acl }}"
+  when: conf_acl_enable is defined and conf_acl_enable == true and item.state|default('present') != 'absent'
+  tags: [ acl, acl-conf ]
