@@ -75,7 +75,7 @@ These files have to be named with the environment they correspond to:
 in your tenant you then specify the inventory files for each environment (*~/.appflow/tenant/tenant1/development, ~/.appflow/tenant/tenant1/testing*...)
 
 Others
-^^^^^^
+~~~~~~
 
 **Fix Ansible problems on 14.04**
 
