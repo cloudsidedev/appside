@@ -25,7 +25,7 @@ Then follow the simple instructions to choose your tenant name and default envir
 At this point the installation is **complete**. Now we will illustrate the folder structure.
 
 Folder Structure
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 This will initialize your folders and default playbooks in the appflow config directory.
 This folder is placed in **$HOME** in **$HOME/.appflow**
