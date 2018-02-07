@@ -4,7 +4,7 @@ FAQs
 Help
 ~~~~
 
-You can always have basic help from |package_name| itself:
+You can always have basic help from ``appflow`` itself:
 
 ``appflow``
 
@@ -64,12 +64,14 @@ Example:
     default config in ~/.appflow/config.yml
 
     :type  tenant: string
-                   :param tenant: The name of the tenant.
+    :param tenant: The name of the tenant.
 
-                   :type  env: string
-                   :param env: The name of the tenant.
+    :type  env: string
+    :param env: The name of the tenant.
 
-                   :type  limit: string
+    :type  limit: string
+    Usage:       appflow provision [TENANT] [ENV] [LIMIT] [TAGS] [SKIP_TAGS] [FIRSTRUN] [LOCAL]
+                 appflow provision [--tenant TENANT] [--env ENV] [--limit LIMIT] [--tags TAGS] [--skip-tags SKIP_TAGS] [--firstrun FIRSTRUN] [--local LOCAL]
 
 Read carefully the various helps, and in case of doubts head to the Developer section
 Where you will be able to read each function's Docstring and source code.

@@ -9,18 +9,6 @@ AppFlow is an open source developer and DevOps application that maps the entire 
 Orchestration of the AppFlow code requires only SSH access to the respective systems. 
 AppFlow has been designed and optimized from DevOps for DevOps.  
 
-## Local development
-
-```
-appflow vagrant reload atlantis ; ssh atlantis
-```
-
-## Remote provisioning
-
-```
-appflow provision --env production --limit webservers --tenant YOUR_TENANT --tags base_packages,users
-```
-
 ## Features
 
 Provisioning:

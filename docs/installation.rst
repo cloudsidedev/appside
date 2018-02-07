@@ -22,6 +22,11 @@ To initialize use:
 
 Then follow the simple instructions to choose your tenant name and default environment.
 
+At this point the installation is **complete**. Now we will illustrate the folder structure.
+
+Folder Structure
+^^^^^^^^^^^^^^^^
+
 This will initialize your folders and default playbooks in the appflow config directory.
 This folder is placed in **$HOME** in **$HOME/.appflow**
 
@@ -68,6 +73,9 @@ These files have to be named with the environment they correspond to:
 *~/.appflow/vault/tenant1/development*...
 
 in your tenant you then specify the inventory files for each environment (*~/.appflow/tenant/tenant1/development, ~/.appflow/tenant/tenant1/testing*...)
+
+Others
+^^^^^^
 
 **Fix Ansible problems on 14.04**
 
