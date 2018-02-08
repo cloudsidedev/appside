@@ -148,5 +148,5 @@ note: get ssh pwd for ubuntu user:
 
 ::
 
-    -   vagrant ssh atlantis -c "echo $(cat ~/.ssh/id_rsa.pub) | sudo tee /home/ubuntu/.ssh/authorized_keys"
+    -   vagrant ssh atlantis -c "echo $(cat ~/.ssh/id_rsa.pub) | sudo tee -a /home/ubuntu/.ssh/authorized_keys"
     -   vagrant ssh atlantis -c "sudo passwd ubuntu"
