@@ -127,7 +127,7 @@ We first need to install Python or ansible will not work
 
 ::
 
-    - sudo apt-get install -y python
+    - vagrant ssh atlantis -c "sudo apt-get install -y python"
 
 
 We now need to setup the percona repo and package to install
