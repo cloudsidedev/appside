@@ -104,7 +104,7 @@
   tags: [ mysql, percona, clustercheck, mysql-users ]
 
 - name: create replication user
-  mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT,PROCESS" state=present
+  mysql_user: check_implicit_admin=yes name={{ conf_mysql_replication_user }} password={{ conf_mysql_replication_password }} host=% priv="*.*:RELOAD,LOCK TABLES,REPLICATION CLIENT,REPLICATION SLAVE,PROCESS" state=present
   ignore_errors: yes
   tags: [ mysql, users, mysql-users ]
 
