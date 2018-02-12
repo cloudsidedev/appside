@@ -11,4 +11,5 @@
     accept_hostkey: "{{ item.accept_hostkey }}"
   when: item.state|default('present') != 'absent'
   with_items: "{{ conf_git_repos }}"
+  ignore_errors: yes
   tags: [ git ]

@@ -74,6 +74,7 @@
     - docker-engine
   when:
     - ansible_os_family == "Debian"
+  ignore_errors: true
   tags: [ docker ]
 
 - name: Add users to the docker group

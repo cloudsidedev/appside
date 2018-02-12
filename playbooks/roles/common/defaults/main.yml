@@ -53,6 +53,12 @@ conf_sysctl_dict:
   # - { k: net.core.netdev_max_backlog   , v: 16384 }
 
 #
+# ACL
+#
+conf_acl_enable: false
+conf_acl: []
+
+#
 # Base
 #
 conf_base_packages_custom: []

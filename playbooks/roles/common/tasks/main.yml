@@ -71,6 +71,10 @@
   when: conf_rc_local_enable is defined and conf_rc_local_enable == true
   tags: [ common, rc-local, rc-local-conf ]
 
+- import_tasks: acl.yml
+  when: conf_acl_enable is defined and conf_acl_enable == true
+  tags: [ common, acl, acl-conf ]
+
 - import_tasks: supervisor.yml
   when: conf_supervisor_enable is defined and conf_supervisor_enable == true
   tags: [ common, supervisor, supervisor-conf ]

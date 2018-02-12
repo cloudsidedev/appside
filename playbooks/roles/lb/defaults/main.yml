@@ -2,6 +2,10 @@
 
 # file: playbooks/roles/lb/defaults/main.yml
 
+#
+# etcd
+#
+
 # Installation Variables
 conf_etcd_config_only: False
 conf_etcd_daemon: "systemctl"

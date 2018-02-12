@@ -120,6 +120,7 @@ log-queries-not-using-indexes
 # note: if you are setting up a replication slave, see README.Debian about
 #       other settings you may need to change.
 #
+server_id = {{ conf_mysql_server_id }}
 {{ conf_mysql_replication_settings }}
 
 {% endif %}

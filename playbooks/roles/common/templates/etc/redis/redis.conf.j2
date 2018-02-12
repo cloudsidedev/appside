@@ -55,3 +55,6 @@ requirepass {{ conf_redis_requirepass }}
 {% for conf_redis_disabled_command in conf_redis_disabled_commands %}
 rename-command {{ conf_redis_disabled_command }} ""
 {% endfor %}
+
+{% if conf_redis_custom is defined %}{{ conf_redis_custom }}
+{% endif %}

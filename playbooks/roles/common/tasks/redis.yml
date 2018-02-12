@@ -21,6 +21,23 @@
   when: ansible_os_family == 'Debian'
   tags: [ redis ]
 
+- name: ensure rubygems is installed
+  apt:
+    name: rubygems
+    state: present
+  when: ansible_os_family == 'Debian'
+  tags: [ redis ]
+
+- name: ensure redis gem is installed
+  gem:
+    name: redis
+    state: present
+  tags: [ redis ]
+
+- name: symlink redis-trib.rb
+  file: src=/usr/share/doc/redis-tools/examples/redis-trib.rb dest=/usr/local/bin/redis-trib.rb state=link
+  tags: [ redis ]
+
 - name: ensure redis is configured
   template:
     src: etc/redis/redis.conf.j2

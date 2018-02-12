@@ -214,3 +214,7 @@ backend letsencrypt-backend
     {{ conf_haproxy_letsencrypt_backend }}
 {% endif %}
 {% endif %}
+
+{% if conf_haproxy_misc_backend is defined %}
+{{ conf_haproxy_misc_backend }}
+{% endif %}

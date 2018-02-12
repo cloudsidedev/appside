@@ -2,6 +2,10 @@
 
 # file: playbooks/roles/common/tasks/supervisor.yml
 
+- name: Get public IP from ipify.org
+  ipify_facts:
+  tags: [ supervisor ]
+
 - name: ensure supervisor is installed (specific version)
   pip:
     name: supervisor
