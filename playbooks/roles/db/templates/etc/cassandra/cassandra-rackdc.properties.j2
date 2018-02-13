@@ -20,8 +20,8 @@
 
 # These properties are used with GossipingPropertyFileSnitch and will
 # indicate the rack and dc for this node
-dc=dc1
-rack=rack1
+dc={{ conf_cassandra_rackdc_dc }}
+rack={{ conf_cassandra_rackdc_rack }}
 
 # Add a suffix to a datacenter name. Used by the Ec2Snitch and Ec2MultiRegionSnitch
 # to append a string to the EC2 region name.
