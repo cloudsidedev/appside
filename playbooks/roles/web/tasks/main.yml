@@ -43,6 +43,7 @@
 # varnish
 #
 - import_tasks: varnish.yml
+  when: conf_varnish_enable is defined and conf_varnish_enable == true
 
 #
 # apache2

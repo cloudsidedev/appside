@@ -117,6 +117,7 @@ conf_php_version_debian_family: 5.6
 #
 # VARNISH
 #
+conf_varnish_enable: true
 conf_varnish_version: 3
 
 #

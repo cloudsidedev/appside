@@ -3,6 +3,11 @@
 # file: playbooks/roles/lb/defaults/main.yml
 
 #
+# lbtier
+#
+conf_lbtier_enable: false
+
+#
 # etcd
 #
 
