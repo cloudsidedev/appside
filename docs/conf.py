@@ -45,7 +45,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'AppFlow - Deduplicating Archiver'
 # copyright = '2010-2014 Jonas AppFlowström, 2015-2017 The AppFlow Collective (see AUTHORS file)'
-copyright = u'2017, Ivo Marino, Luca Di Maio'
+copyright = u'2018, Ivo Marino, Luca Di Maio'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -54,7 +54,7 @@ copyright = u'2017, Ivo Marino, Luca Di Maio'
 # The short X.Y version.
 # split_char = '+' if '+' in sw_version else '-'
 # version = sw_version.split(split_char)[0]
-version = u'1.0'
+version = u'1.0.1.2'
 # The full version, including alpha/beta/rc tags.
 release = version
 
