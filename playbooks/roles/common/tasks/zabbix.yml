@@ -1,0 +1,194 @@
+---
+
+# file: playbooks/roles/common/tasks/zabbix.yml
+
+- name: Get public IP from ipify.org
+  ipify_facts:
+  tags: [ zabbix, zabbix-agent ]
+
+- name: "Set short version name"
+  set_fact:
+    zabbix_short_version: "{{ conf_zabbix_version | regex_replace('\\.', '') }}"
+  tags: [ zabbix, zabbix-agent ]
+
+- name: "Debian | Install gpg key"
+  apt_key:
+    id: "{{ conf_zabbix_sign_keys[zabbix_short_version][ansible_distribution_release]['sign_key'] }}"
+    url: http://repo.zabbix.com/zabbix-official-repo.key
+  when:
+    - conf_zabbix_repo == "zabbix"
+  tags: [ zabbix, zabbix-agent ]
+
+- name: "Debian | Installing deb repository Debian"
+  apt_repository:
+    repo: "deb http://repo.zabbix.com/zabbix/{{ conf_zabbix_version }}/debian/ {{ ansible_distribution_release }} main"
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+    - conf_zabbix_repo == "zabbix"
+  tags: [ zabbix, zabbix-agent ]
+
+- name: "Debian | Installing deb repository Ubuntu"
+  apt_repository:
+    repo: "deb http://repo.zabbix.com/zabbix/{{ conf_zabbix_version }}/ubuntu/ {{ ansible_distribution_release }} main"
+    state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+    - conf_zabbix_repo == "zabbix"
+  tags: [ zabbix, zabbix-agent ]
+
+# Note: set cache_valid_time=0 to ensure that an apt-get update after the added repo-key
+# else you often get 'WARNING: The following packages cannot be authenticated!
+# See also: http://askubuntu.com/questions/75565/why-am-i-getting-authentication-errors-for-packages-from-an-ubuntu-repository
+- name: "Debian | Installing zabbix-agent"
+  apt:
+    pkg: "{{ item }}"
+    state: "{{ conf_zabbix_agent_package_state }}"
+    update_cache: yes
+    cache_valid_time: 0
+  with_items: "{{ conf_zabbix_agent_packages }}"
+  when: ansible_distribution in ['Ubuntu', 'Debian']
+  tags: [ zabbix, zabbix-agent ]
+
+# - name: "Install policycoreutils-python"
+#   apt:
+#     pkg: policycoreutils-python-utils
+#     state: installed
+#     update_cache: yes
+#     cache_valid_time: 0
+#   when: zabbix_selinux
+
+- name: "Debian | Enable the service"
+  service:
+    name: "{{ conf_zabbix_agent_service }}"
+    enabled: yes
+    use: service
+  tags: [ zabbix, zabbix-agent ]
+
+# #straight to getenforce binary , workaround for missing python_selinux library
+# - name: "Get getenforce binary"
+#   stat:
+#     path: /usr/sbin/getenforce
+#   register: getenforce_bin
+#   become: yes
+
+# - name: "Collect getenforce output"
+#   command: getenforce
+#   register: sestatus
+#   when: 'getenforce_bin.stat.exists'
+#   changed_when: false
+#   become: yes
+
+# - name: "Set zabbix_selinux to true if getenforce returns Enforcing or Permissive"
+#   set_fact:
+#     zabbix_selinux: "{{ true }}"
+#   when: 'getenforce_bin.stat.exists and ("Enforcing" in sestatus.stdout or "Permissive" in sestatus.stdout)'
+
+# - name: "Allow zabbix_agent to start (SELinux)"
+#   selinux_permissive:
+#     name: zabbix_agent_t
+#     permissive: true
+#   become: yes
+#   when:
+#     - zabbix_selinux
+
+- name: "Configure zabbix-agent"
+  template:
+    src: etc/zabbix/zabbix_agentd.conf.j2
+    dest: /etc/zabbix/{{ conf_zabbix_agent_conf }}
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - handle_restart_zabbix_agent
+  tags: [ zabbix, zabbix-agent ]
+
+# - name: "Create directory for PSK file if not exist."
+#   file:
+#     path: "{{ conf_zabbix_agent_tlspskfile | dirname }}"
+#     mode: 0755
+#     state: directory
+#   when:
+#     - zabbix_agent_tlspskfile is defined
+#     - zabbix_agent_tlspskfile != ''
+
+# - name: "Place TLS PSK File"
+#   copy:
+#     dest: "{{ conf_zabbix_agent_tlspskfile }}"
+#     content: "{{ conf_zabbix_agent_tlspsk_secret }}"
+#     owner: zabbix
+#     group: zabbix
+#     mode: 0400
+#   when:
+#     - zabbix_agent_tlspskfile is defined
+#     - zabbix_agent_tlspsk_secret is defined
+#     - zabbix_agent_tlspskfile != ''
+#     - zabbix_agent_tlspsk_secret != ''
+
+- name: "Create include dir zabbix-agent"
+  file:
+    path: "{{ conf_zabbix_agent_include }}"
+    owner: root
+    group: root
+    state: directory
+  tags: [ zabbix, zabbix-agent ]
+
+- name: "Make sure the zabbix-agent service is running"
+  service:
+    name: "{{ conf_zabbix_agent_service }}"
+    state: started
+    enabled: yes
+  tags: [ zabbix, zabbix-agent ]
+
+# - name: "Create hostgroups"
+#   local_action:
+#     module: zabbix_group
+#     server_url: "{{ conf_zabbix_url }}"
+#     login_user: "{{ conf_zabbix_api_user }}"
+#     login_password: "{{ conf_zabbix_api_pass }}"
+#     host_group: "{{ conf_zabbix_host_groups }}"
+#     state: "{{ conf_zabbix_create_hostgroup }}"
+#   when:
+#     - zabbix_api_create_hostgroup
+#   become: no
+#   tags:
+#     - api
+
+# - name: "Create a new host or update an existing host's info"
+#   local_action:
+#     module: zabbix_host
+#     server_url: "{{ conf_zabbix_url }}"
+#     login_user: "{{ conf_zabbix_api_user }}"
+#     login_password: "{{ conf_zabbix_api_pass }}"
+#     host_name: "{{ conf_zabbix_agent_hostname }}"
+#     host_groups: "{{ conf_zabbix_host_groups }}"
+#     link_templates: "{{ conf_zabbix_link_templates }}"
+#     status: "{{ conf_zabbix_host_status }}"
+#     state: "{{ conf_zabbix_create_host }}"
+#     proxy: "{{ conf_zabbix_proxy }}"
+#     inventory_mode: "{{ conf_zabbix_inventory_mode }}"
+#     interfaces: "{{ conf_zabbix_agent_interfaces }}"
+#     visible_name: "{{ conf_zabbix_visible_hostname|default(zabbix_agent_hostname) }}"
+#   when:
+#     - zabbix_api_create_hosts
+#   become: no
+#   changed_when: false
+#   tags:
+#     - api
+
+# - name: "Updating host configuration with macros"
+#   local_action:
+#     module: zabbix_hostmacro
+#     server_url: "{{ conf_zabbix_url }}"
+#     login_user: "{{ conf_zabbix_api_user }}"
+#     login_password: "{{ conf_zabbix_api_pass }}"
+#     host_name: "{{ conf_zabbix_agent_hostname }}"
+#     macro_name: "{{ item.macro_key }}"
+#     macro_value: "{{ item.macro_value }}"
+#   with_items: "{{ conf_zabbix_macros | default([]) }}"
+#   when:
+#     - zabbix_macros is defined
+#     - item.macro_key is defined
+#   become: no
+#   tags:
+#     - api

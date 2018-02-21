@@ -163,3 +163,38 @@ conf_etcd_config_only: False
 conf_etcd_install_dependencies:
   - rsync
   - openssh-server
+
+#
+# Zabbix
+#
+conf_zabbix_agent: zabbix-agent
+conf_zabbix_agent_service: zabbix-agent
+conf_zabbix_agent_conf: zabbix_agentd.conf
+conf_zabbix_sign_keys:
+  "34":
+    trusty:
+      sign_key: 79EA5ED4
+    xenial:
+      sign_key: E709712C
+  "32":
+    trusty:
+      sign_key: 79EA5ED4
+    xenial:
+      sign_key: E709712C
+  "30":
+    trusty:
+      sign_key: 79EA5ED4
+    xenial:
+      sign_key: E709712C
+  "24":
+    precise:
+      sign_key: 79EA5ED4
+    trusty:
+      sign_key: 79EA5ED4
+  "22":
+    precise:
+      sign_key: 79EA5ED4
+    trusty:
+      sign_key: 79EA5ED4
+    lucid:
+      sign_key: 79EA5ED4

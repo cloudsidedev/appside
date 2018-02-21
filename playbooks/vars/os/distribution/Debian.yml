@@ -153,3 +153,10 @@ conf_etcd_config_only: False
 conf_etcd_install_dependencies:
   - rsync
   - openssh-server
+
+#
+# Zabbix
+#
+conf_zabbix_agent: zabbix-agent
+conf_zabbix_agent_service: zabbix-agent
+conf_zabbix_agent_conf: zabbix_agentd.conf

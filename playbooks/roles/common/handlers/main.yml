@@ -45,6 +45,9 @@
 - name: handle_reload_icinga2
   service: name=icinga2 state=reloaded
 
+- name: handle_restart_zabbix_agent
+  service: name="{{ conf_zabbix_agent_service }}" state=restarted
+
 - name: handle_restart_munin
   service: name=munin state=restarted
 

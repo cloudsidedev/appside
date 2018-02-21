@@ -201,3 +201,99 @@ conf_sftp_allow_passwords: False
 conf_sftp_enable_selinux_support: False
 conf_sftp_enable_logging: False
 conf_sftp_nologin_shell: /sbin/nologin
+
+#
+# Zabbix
+#
+conf_zabbix_version: 3.4
+conf_zabbix_repo: zabbix
+conf_zabbix_agent_packages:
+  - zabbix-agent
+  - zabbix-sender
+  - zabbix-get
+
+conf_zabbix_agent_package_state: present
+conf_zabbix_agent_server:
+conf_zabbix_agent_serveractive:
+conf_zabbix_selinux: False
+
+conf_zabbix_repo_yum:
+  - name: zabbix
+    description: Zabbix Official Repository - $basearch
+    baseurl: http://repo.zabbix.com/zabbix/{{ conf_zabbix_version }}/rhel/{{ ansible_distribution_major_version }}/$basearch/
+    gpgcheck: 0
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
+    state: present
+  - name: zabbix-supported
+    description: Zabbix Official Repository non-supported - $basearch
+    baseurl: http://repo.zabbix.com/non-supported/rhel/{{ ansible_distribution_major_version }}/$basearch/
+    gpgcheck: 0
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
+    state: present
+
+# Zabbix API stuff
+conf_zabbix_url: "http://zabbix.dj-wasabi.local"
+conf_zabbix_api_user: Admin
+conf_zabbix_api_pass: zabbix
+conf_zabbix_api_create_hostgroup: False
+conf_zabbix_api_create_hosts: False
+conf_zabbix_create_hostgroup: present  # or absent
+conf_zabbix_create_host: present       # or absent
+conf_zabbix_host_status: enabled       # or disabled
+conf_zabbix_proxy: null
+conf_zabbix_inventory_mode: disabled
+conf_zabbix_useuip: 1
+conf_zabbix_host_groups:
+  - Linux servers
+conf_zabbix_link_templates:
+  - Template OS Linux
+
+conf_zabbix_agent_interfaces:
+  - type: 1
+    main: 1
+    useip: "{{ conf_zabbix_useuip }}"
+    ip: "{{ conf_zabbix_agent_ip }}"
+    dns: "{{ ansible_fqdn }}"
+    port: "{{ conf_zabbix_agent_listenport }}"
+
+conf_zabbix_agent_firewall_enable: False
+# Zabbix configuration variables
+conf_zabbix_agent_pidfile: /var/run/zabbix/zabbix_agentd.pid
+conf_zabbix_agent_logfile: /var/log/zabbix/zabbix_agentd.log
+conf_zabbix_agent_logfilesize: 100
+conf_zabbix_agent_debuglevel: 3
+conf_zabbix_agent_sourceip:
+conf_zabbix_agent_enableremotecommands: 0
+conf_zabbix_agent_logremotecommands: 0
+conf_zabbix_agent_listenport: 10050
+conf_zabbix_agent_listeninterface:
+conf_zabbix_agent_listenip:
+conf_zabbix_agent_startagents: 3
+conf_zabbix_agent_hostname: "{{ inventory_hostname }}"
+conf_zabbix_agent_hostnameitem:
+conf_zabbix_agent_hostmetadata:
+conf_zabbix_agent_hostmetadataitem:
+conf_zabbix_agent_refreshactivechecks: 120
+conf_zabbix_agent_buffersend: 5
+conf_zabbix_agent_buffersize: 100
+conf_zabbix_agent_maxlinespersecond: 100
+conf_zabbix_agent_allowroot: 0
+conf_zabbix_agent_conf_zabbix_alias:
+conf_zabbix_agent_timeout: 3
+conf_zabbix_agent_include: /etc/zabbix/zabbix_agentd.d
+conf_zabbix_agent_unsafeuserparameters: 0
+conf_zabbix_agent_userparameter:
+conf_zabbix_agent_loadmodulepath: ${libdir}/modules
+conf_zabbix_agent_loadmodule:
+
+# TLS settings
+# conf_zabbix_agent_tlsconnect:
+# conf_zabbix_agent_tlsaccept:
+# conf_zabbix_agent_tlscafile:
+# conf_zabbix_agent_tlscrlfile:
+# conf_zabbix_agent_tlsservercertissuer:
+# conf_zabbix_agent_tlsservercertsubject:
+# conf_zabbix_agent_tlscertfile:
+# conf_zabbix_agent_tlskeyfile:
+# conf_zabbix_agent_tlspskidentity:
+# conf_zabbix_agent_tlspskfile: ''

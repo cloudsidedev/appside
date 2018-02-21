@@ -181,6 +181,10 @@
   when: conf_icinga_master is defined or conf_icinga_satellite is defined or conf_icinga_client is defined
   tags: [ common ]
 
+- import_tasks: zabbix.yml
+  when: conf_zabbix_enable is defined and conf_zabbix_enable == true
+  tags: [ common, zabbix, zabbix-conf, zabbix-agent, zabbix-agent-conf ]
+
 - import_tasks: munin.yml
   when: conf_munin_master is defined or conf_munin_client is defined
   tags: [ common ]
