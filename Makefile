@@ -109,6 +109,7 @@ help:
 	@echo "  decrypt    to decrypt vault data"
 
 update:
+	git checkout Legacy
 	git pull
 
 init:
