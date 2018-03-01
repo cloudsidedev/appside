@@ -35,17 +35,17 @@ Infrastructure:
 * Easy server provisioning with [Ansible](http://www.ansible.com/) (Ubuntu 16.04, PHP 5.6/7)
 
 ## Technologies
-The technology behind AppFlow uses countless best-in-class programs and maps them in a toolbox. The software accesses an extensive repository of various freeware packages. Out-of-the-box, many enterprise features already exist, such as: 
+The technology behind AppFlow uses countless best-in-class programs and maps them in a toolbox. The software accesses an extensive repository of various freeware packages. Out-of-the-box, many enterprise features already exist, such as:
 
- 
- - Load balancing 
- - Apache / PHP 
- - Web Accelerator / Caching / PageSpeed 
- - Distributed file system 
- - Master-Master Database 
- - Backup & Monitoring Integration 
- - Jailkit - chroot 
- - ... 
+
+ - Load balancing
+ - Apache / PHP
+ - Web Accelerator / Caching / PageSpeed
+ - Distributed file system
+ - Master-Master Database
+ - Backup & Monitoring Integration
+ - Jailkit - chroot
+ - ...
 
 ### Installation
 
