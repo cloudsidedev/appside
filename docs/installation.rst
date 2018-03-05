@@ -5,7 +5,36 @@
 Installation
 ============
 
-The preferred method to install |project_name| is using:
+Prerequisites
+~~~~~~~~~~~~~
+
+
+The preferred method to install |project_name| is ``pip``; to install it you must do:
+
+On MacOS (depends on `Brew <https://brew.sh>`__):
+
+::
+
+    brew install python3
+
+Or if you already have python2 installed do:
+
+::
+
+    brew upgrade python
+
+
+On Linux Systems:
+
+::
+
+    - Ubuntu/Debian:
+    sudo apt install python3-pip
+
+    - RedHat/Fedora:
+    sudo dnf install python3-pip
+
+After this you will be able to install appflow using:
 
 ::
 
