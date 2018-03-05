@@ -14,6 +14,7 @@ AppFlow Documentation
    introduction
    installation
    usage
+   usefultips
    faq
    support
    resources
