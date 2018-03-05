@@ -17,6 +17,8 @@ import lib.appflow_tools as tools
 import lib.appflow_utils as utils
 import lib.appflow_yaml as apyaml
 
+__version__ = "1.0.1.3"
+
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
 # Tenant and environment.
@@ -297,6 +299,8 @@ class AppFlow(object):
         """
         print(apyaml.add_value(file, key, value))
 
+    def version(self):
+      print(__version__)
 
 if __name__ == '__main__':
     fire.Fire(AppFlow)
