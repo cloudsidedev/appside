@@ -178,6 +178,8 @@ def setup_ssh(tenant, env):
     _dir = utils.get_tenant_dir(tenant)
     target_folder = _dir + env
     dest_folder = os.getenv('HOME') + '/.ssh/assh.d/' + tenant
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder, exist_ok=True)
     dest_file = dest_folder + '/' + env + '.yml'
 
     is_decrypted = False
