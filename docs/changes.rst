@@ -13,7 +13,7 @@ MySQL or Apache2, are not running. This works beccause Varnish will serve all th
 Backend operations like login to CMS or similar will obviously not work as expected but at least the public facing part of the
 website will not be offline, so no 404s or similar for end-users.
 
-Grace period is set by default to 6h but can be extended to one week or whetever your preference is, the main advantage
+Grace period is set by default to 6h but can be extended to one week or whatever your preference is, the main advantage
 of Grace is that your site remains up when bad things happen and you'll get a time buffer for fixing whatever issue happened
 to the backend.
 
@@ -55,36 +55,36 @@ a complete config setting for Varnish 5.1 and Grace would look like:
     conf_varnish_listen_admin_port: 60821
     conf_varnish_backend_default: |
     .host = "127.0.0.1";
-        .port = "8080";
-        .max_connections = 800;
+    .port = "8080";
+    .max_connections = 800;
     conf_varnish_acl_purge: |
     "127.0.0.1";
-        "localhost";
-        "192.168.80.2";
+    "localhost";
+    "192.168.80.2";
     conf_varnish_vcl_recv: |
-        {% if conf_lbtier_enable == false %}
-        remove req.http.X-Forwarded-For;
-        set req.http.X-Forwarded-For = client.ip;
-        {% endif %}
+    {% if conf_lbtier_enable == false %}
+    remove req.http.X-Forwarded-For;
+    set req.http.X-Forwarded-For = client.ip;
+    {% endif %}
 
-        if (req.url ~ "/wp(-login|-admin|-cron|login|-comments-post.php)" ) {
+    if (req.url ~ "/wp(-login|-admin|-cron|login|-comments-post.php)" ) {
         return (pass);
-        }
+    }
 
-        if (req.http.Cache-Control ~ "no-cache") {
+    if (req.http.Cache-Control ~ "no-cache") {
         return (pass);
-        }
+    }
 
-        # Remove client-side cookies.
-        set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(_[_a-z]+|has_js|utmctr|utmcmd.|utmccn.|WT_FPC|_hjIncludedInSample)=[^;]*", "");
+    # Remove client-side cookies.
+    set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(_[_a-z]+|has_js|utmctr|utmcmd.|utmccn.|WT_FPC|_hjIncludedInSample)=[^;]*", "");
 
-        # Remove a ";" prefix, if present.
-        set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
+    # Remove a ";" prefix, if present.
+    set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
 
-        # Are there cookies left with only spaces or that are empty?
-        if (req.http.cookie ~ "^\s*$") {
-            unset req.http.cookie;
-        }
+    # Are there cookies left with only spaces or that are empty?
+    if (req.http.cookie ~ "^\s*$") {
+        unset req.http.cookie;
+    }
 
     conf_varnish_vcl_backend_response: |
     # Allow stale content, in case the backend goes down.
@@ -95,36 +95,35 @@ a complete config setting for Varnish 5.1 and Grace would look like:
     conf_varnish_vcl_fetch: |
     # set beresp.grace = 2m;
 
-        # If the URL is for one of static images or documents, we always want them to be cached.
-        if (beresp.status == 200 && req.url ~ "\.(ico|jpe?g|jpe|gif|png|webp|svg|css|js)$") {
-        # Cookies already removed.
-        # Cache the page for 10 days.
+    # If the URL is for one of static images or documents, we always want them to be cached.
+    if (beresp.status == 200 && req.url ~ "\.(ico|jpe?g|jpe|gif|png|webp|svg|css|js)$") {
+    # Cookies already removed.
+    # Cache the page for 10 days.
         set beresp.ttl = 10d;
-        # Remove existing Cache-Control headers.
+    # Remove existing Cache-Control headers.
         remove beresp.http.Cache-Control;
-        # Set new Cache-Control headers for browser to store cache for 7 days.
+    # Set new Cache-Control headers for browser to store cache for 7 days.
         set beresp.http.Cache-Control = "public, max-age=604800";
-        }
+    }
 
-        # Cache 404 responses for 15 seconds.
-        if (beresp.status == 404) {
+    # Cache 404 responses for 15 seconds.
+    if (beresp.status == 404) {
         set beresp.ttl = 15s;
         set beresp.grace = 15s;
-        }
+    }
 
     conf_varnish_vcl_deliver: |
     # For security and asthetic reasons, remove some HTTP headers before final delivery.
-        unset resp.http.Server;
-        unset resp.http.X-Powered-By;
-        unset resp.http.Via;
-        unset resp.http.X-Varnish;
+    unset resp.http.Server;
+    unset resp.http.X-Powered-By;
+    unset resp.http.Via;
+    unset resp.http.X-Varnish;
+    Once Varnish has been updated and Grace mode has been enabled you could test if it's working correctly:
 
-Once Varnish has been updated and Grace mode has been enabled you could test if it's working correctly:
+    
+Open one of the web projects you're hosting on Atlantis in the browser, everything should be there.
 
 ::
-
-    # Open one of the web projects you're hosting on Atlantis
-    # in the browser, everything should be there.
 
     % curl http://atlantis:8080/health.php
     MySQL running
@@ -139,7 +138,6 @@ Once Varnish has been updated and Grace mode has been enabled you could test if 
     Backend name                   Admin      Probe
     boot.default                   probe      Sick
 
-    # Open the previous web project again in the browser,
-    # the website should be online as usual via Grace mode.
+Open the previous web project again in the browser, the website should be online as usual via Grace mode.
 
 The same concept applies also to production where we have three or more nodes.
