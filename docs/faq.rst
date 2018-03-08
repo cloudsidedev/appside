@@ -12,7 +12,7 @@ Will print a generic help:
 
 ::
 
-    $ appflow
+    % appflow
     Type:        AppFlow
     String form: <__main__.AppFlow object at 0x7f75a19fa080>
     Docstring:   Appflow CLI tool.
@@ -46,7 +46,7 @@ Example:
 
 ::
 
-    $ appflow provision -- --help                                                    [12:48:37]
+    % appflow provision -- --help                                                    [12:48:37]
     Type:        method
     String form: <bound method AppFlow.provision of <__main__.AppFlow object at 0x7fc0f056eb70>>
     File:        /usr/local/bin/appflow

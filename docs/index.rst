@@ -16,6 +16,7 @@ AppFlow Documentation
    usage
    usefultips
    faq
+   changes
    support
    resources
    development
