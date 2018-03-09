@@ -206,7 +206,6 @@ From inside atlantis we have to perform the following commands:
     -   sudo dpkg -i percona-release_0.1-4.$(lsb_release -sc)_all.deb
     -   sudo apt update
     -   sudo apt-get install -y percona-xtradb-cluster-server-5.7
-    -   sudo chown mysql:mysql /run/mysqld
 
 Upgrade Packages
 ^^^^^^^^^^^^^^^^
