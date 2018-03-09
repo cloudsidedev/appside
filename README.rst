@@ -8,7 +8,7 @@ AppFlow
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 

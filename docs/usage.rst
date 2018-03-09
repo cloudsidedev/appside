@@ -64,7 +64,7 @@ Setting up a new user
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l.js" id="asciicast-VRlp5YqiT4gvKXrYFYZW9Oz3l" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l.js" id="asciicast-VRlp5YqiT4gvKXrYFYZW9Oz3l" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Installation`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
@@ -139,7 +139,7 @@ Setting up a new Project
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH.js" id="asciicast-lWERm9quxFM91hBnGDBr1UIgH" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH.js" id="asciicast-lWERm9quxFM91hBnGDBr1UIgH" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_
 
@@ -235,7 +235,7 @@ Setting Up Atlantis (16.04)
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA.js" id="asciicast-pcApeQ82UF7kXrygK5jnv9GBA" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA.js" id="asciicast-pcApeQ82UF7kXrygK5jnv9GBA" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis provision`_, `Project provision`_
 
@@ -282,7 +282,7 @@ Provision Atlantis
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Project provision`_
 

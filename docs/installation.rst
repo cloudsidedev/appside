@@ -7,7 +7,7 @@ Installation
 
 .. raw:: html
 
-    <script src="https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.js" id="asciicast-0lglEIPiYhsceMExzOKHBUcdZ" async data-speed="1" data-theme="solarized-dark"></script>
+    <script src="https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.js" id="asciicast-0lglEIPiYhsceMExzOKHBUcdZ" async data-speed="1" data-theme="tango"></script>
 
 More Screencasts: `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
