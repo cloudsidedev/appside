@@ -133,9 +133,6 @@ def set_vhosts_hosts(tenant):
     file = open("/etc/hosts", 'r')
     current_hosts = [line.strip() for line in file]
 
-    # Just add a separation line.
-    os.system('echo "\n" | sudo tee -a /etc/hosts')
-
     new_hosts = []
     for _ip in ip_list:
         # Check if this line is already present
