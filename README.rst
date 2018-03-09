@@ -6,10 +6,10 @@ AppFlow
 
 **For the playbooks, visit the** `appflow-playbooks repository <https://github.com/ttssdev/appflow-playbooks>`__
 
-.. image:: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+.. raw:: html
+
+    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
 | Get an invite and join the conversations!

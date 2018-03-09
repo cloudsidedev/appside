@@ -18,6 +18,5 @@ AppFlow Documentation
    faq
    changes
    support
-   resources
    development
    authors

@@ -62,10 +62,10 @@ Setting up a new user
 ~~~~~~~~~~~~~~~~~~~~~
 
 
-.. image:: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
+.. raw:: html
+
+    <script src="https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l.js" id="asciicast-VRlp5YqiT4gvKXrYFYZW9Oz3l" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Installation`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
 This sction will refere to the **example tenant** that you will find in this repository:
@@ -137,10 +137,10 @@ and modify the confs as described.
 Setting up a new Project
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH?autoplay=1&speed=1
+.. raw:: html
+
+    <script src="https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH.js" id="asciicast-lWERm9quxFM91hBnGDBr1UIgH" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_
 
 A project is defined in a tenant as a virtual host.
@@ -232,10 +232,11 @@ Upgrade Packages
 Setting Up Atlantis (16.04)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
+
+.. raw:: html
+
+    <script src="https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA.js" id="asciicast-pcApeQ82UF7kXrygK5jnv9GBA" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis provision`_, `Project provision`_
 
 We first need to install Python or ansible will not work
@@ -279,10 +280,10 @@ note: get ssh pwd for ubuntu user:
 Provision Atlantis
 ~~~~~~~~~~~~~~~~~~
 
-.. image:: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+.. raw:: html
+
+    <script src="https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.js" id="asciicast-BlCYYwDRMFAg31XrfwAY6Z8yc" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Project provision`_
 
 To provision atlantis we have first to use the ``--first-run`` flag, because the basic users are not yet configured.

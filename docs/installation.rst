@@ -5,10 +5,10 @@
 Installation
 ============
 
-.. image:: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.png
-        :alt: Appflow Basic Usage
-        :width: 50em
-        :target: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
+.. raw:: html
+
+    <script src="https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.js" id="asciicast-0lglEIPiYhsceMExzOKHBUcdZ" async data-speed="1" data-theme="solarized-dark"></script>
+
 More Screencasts: `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
 Prerequisites
@@ -79,7 +79,6 @@ We need to remove it and default to the PPA installation:
 
 .. start-badges
 
-.. _Installation: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
 .. _Basic setup: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
 .. _Atlantis setup: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
 .. _Atlantis provision: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
