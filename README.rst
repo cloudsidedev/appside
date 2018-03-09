@@ -1,6 +1,17 @@
 AppFlow
 =======
 
+
+**Read the documentation on** `appflow.rtfd.io <https://appflow.readthedocs.io>`__
+
+**For the playbooks, visit the** `appflow-playbooks repository <https://github.com/ttssdev/appflow-playbooks>`__
+
+.. image:: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.png
+        :alt: Appflow Basic Usage
+        :width: 800px
+        :target: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+
 | Get an invite and join the conversations!
 | |Slack Status|
 
@@ -111,3 +122,11 @@ Join us! |Slack Status|
 
 .. |Slack Status| image:: https://static1.squarespace.com/static/53f68e19e4b0f401658fbb93/58b99eee725e2580fa698860/58b9a61603596ea54d1c5035/1488819693257/slack-logo-01.png?format=100w
    :target: https://appflow-community.ttss.ch
+
+.. start-badges
+
+.. _Installation: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
+.. _Basic setup: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
+.. _Atlantis setup: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
+.. _Atlantis provision: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+.. _Project provision: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH?autoplay=1&speed=1

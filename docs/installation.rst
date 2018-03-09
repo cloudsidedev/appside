@@ -5,6 +5,12 @@
 Installation
 ============
 
+.. image:: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.png
+        :alt: Appflow Basic Usage
+        :width: 800px
+        :target: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
+More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+
 Prerequisites
 ~~~~~~~~~~~~~
 
@@ -69,3 +75,12 @@ We need to remove it and default to the PPA installation:
     -  sudo apt install python2 python2-pip python3 python3-pip git
     -  sudo apt-add-repository ppa:ansible/ansible
     -  sudo apt install ansible
+
+
+.. start-badges
+
+.. _Installation: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
+.. _Basic setup: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
+.. _Atlantis setup: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
+.. _Atlantis provision: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+.. _Project provision: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH?autoplay=1&speed=1
