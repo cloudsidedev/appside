@@ -64,9 +64,9 @@ Setting up a new user
 
 .. image:: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l.png
         :alt: Appflow Basic Usage
-        :width: 800px
+        :width: 50em
         :target: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
-More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+More Screencasts: `Installation`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
 This sction will refere to the **example tenant** that you will find in this repository:
 `Appflow-Example repository <https://github.com/ttssdev/appflow-example>`__
@@ -139,9 +139,9 @@ Setting up a new Project
 
 .. image:: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH.png
         :alt: Appflow Basic Usage
-        :width: 800px
+        :width: 50em
         :target: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH?autoplay=1&speed=1
-More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_
 
 A project is defined in a tenant as a virtual host.
 
@@ -234,9 +234,9 @@ Setting Up Atlantis (16.04)
 
 .. image:: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA.png
         :alt: Appflow Basic Usage
-        :width: 800px
+        :width: 50em
         :target: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
-More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+More Screencasts: `Installation`_, `Basic setup`_, `Atlantis provision`_, `Project provision`_
 
 We first need to install Python or ansible will not work
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -281,9 +281,9 @@ Provision Atlantis
 
 .. image:: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc.png
         :alt: Appflow Basic Usage
-        :width: 800px
+        :width: 50em
         :target: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
-More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Project provision`_
 
 To provision atlantis we have first to use the ``--first-run`` flag, because the basic users are not yet configured.
 

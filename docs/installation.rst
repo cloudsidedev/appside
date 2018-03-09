@@ -7,9 +7,9 @@ Installation
 
 .. image:: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ.png
         :alt: Appflow Basic Usage
-        :width: 800px
+        :width: 50em
         :target: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
-More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
+More Screencasts: `Basic setup`_, `Atlantis setup`_, `Atlantis provision`_, `Project provision`_
 
 Prerequisites
 ~~~~~~~~~~~~~
