@@ -1,6 +1,21 @@
 Changes
 =======
 
+Screencasts
+~~~~~~~~~~~
+
+To complement the documentation, we've added screencasts recorded on `asciinema.org <http://asciinema.org/>`__
+
+Screencasts include the walkthrought of the basic setups and features of Appflow.
+They include:
+    
+    - `Installation`_
+    - `Basic setup`_
+    - `Atlantis setup`_
+    - `Atlantis provision`_
+    - `Project provision`_
+
+
 Varnish Grace mode
 ~~~~~~~~~~~~~~~~~~
 
@@ -141,3 +156,12 @@ Open one of the web projects you're hosting on Atlantis in the browser, everythi
 Open the previous web project again in the browser, the website should be online as usual via Grace mode.
 
 The same concept applies also to production where we have three or more nodes.
+
+
+.. start-badges
+
+.. _Installation: https://asciinema.org/a/0lglEIPiYhsceMExzOKHBUcdZ?autoplay=1&speed=1
+.. _Basic setup: https://asciinema.org/a/VRlp5YqiT4gvKXrYFYZW9Oz3l?autoplay=1&speed=1
+.. _Atlantis setup: https://asciinema.org/a/pcApeQ82UF7kXrygK5jnv9GBA?autoplay=1&speed=1
+.. _Atlantis provision: https://asciinema.org/a/BlCYYwDRMFAg31XrfwAY6Z8yc?autoplay=1&speed=1
+.. _Project provision: https://asciinema.org/a/lWERm9quxFM91hBnGDBr1UIgH?autoplay=1&speed=1
