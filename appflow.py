@@ -17,7 +17,7 @@ import lib.appflow_tools as tools
 import lib.appflow_utils as utils
 import lib.appflow_yaml as apyaml
 
-__version__ = "1.0.1.4"
+__version__ = "1.0.1.5"
 
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
