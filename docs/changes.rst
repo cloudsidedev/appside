@@ -6,7 +6,7 @@ Appflow 1.0.1.5
 Minor update introducing:
     - Appflow-playbooks versioning
     - Appflow-playbooks selectable branch
-    - `appflow version` will now yeld also the playbooks version:
+    - `appflow version` will now yeild also the playbooks version:
         ``Appflow Version: 1.0.1.5``
         ``Playbooks Version 1.0.0``
 
