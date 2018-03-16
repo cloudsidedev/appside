@@ -46,12 +46,17 @@ class AppFlow(object):
     Type appflow command -- --help to have help for the specified command.
     """
 
-    def update(self):
+    def update(self, branch="master"):
         """
         Simple function to update Appflow.
         This is handy for the appflow-git package.
+        You can specify which branch you want to use
+
+        :type  branch: string
+        :param branch: The name of the branch (default Master)
+
         """
-        tools.git_update_playbooks()
+        tools.git_update_playbooks(branch)
 
     def init(self, tenant=None, env=None):
         """
@@ -305,9 +310,14 @@ class AppFlow(object):
 
     def version(self):
         """
-        This will print the appflow version
+        This will print the appflow version and the current appflow-playbooks
+        informations.
         """
-        print(__version__)
+        print("Appflow Version:", __version__)
+        playbooks_folder = utils.get_appflow_folder() + "/playbooks"
+        if os.path.exists(playbooks_folder):
+            print("Playbooks Version", open(
+                playbooks_folder + "/version").read())
 
 
 if __name__ == '__main__':

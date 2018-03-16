@@ -333,9 +333,20 @@ def git_check_out(tenant, env):
             print(line.decode('utf-8'))
 
 
-def git_update_playbooks():
+def git_update_playbooks(branch):
+    """
+    Git pull the latest version of the playbooks.
+    You can specify which branch you want to use
+
+    :type  branch: string
+    :param branch: The name of the branch
+    """
     _dir = utils.get_appflow_folder() + "/playbooks"
     _pipe = subprocess.PIPE
+    out = subprocess.Popen(
+        ['git', '-C', _dir, 'checkout', branch], stdout=_pipe, stderr=_pipe)
+    for line in iter(out.stdout.readline, b''):
+        print(line.decode('utf-8'))
     out = subprocess.Popen(
         ['git', '-C', _dir, 'pull'], stdout=_pipe, stderr=_pipe)
     for line in iter(out.stdout.readline, b''):

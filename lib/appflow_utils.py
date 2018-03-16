@@ -289,7 +289,7 @@ def get_tenant_dir(tenant):
     :rtype:   string
     :return:  the function returns the tenant folder.
     """
-    return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/"
+    return os.getenv("HOME") + "/.appflow/tenant/appflow-" + tenant + "/"
 
 
 def get_tenant_env_dir(tenant, env):
@@ -305,7 +305,7 @@ def get_tenant_env_dir(tenant, env):
     :rtype:   string
     :return:  the function returns the tenant/environment folder.
     """
-    return os.getenv("HOME") + "/.appflow/tenant/" + tenant + "/" + env
+    return os.getenv("HOME") + "/.appflow/tenant/appflow-" + tenant + "/" + env
 
 
 def get_vault_file(tenant, env):
