@@ -9,7 +9,7 @@ import lib.appflow_utils as utils
 
 
 def provision(tenant: str, env: str, limit: str, tags: str,
-              skip_tags: str, firstrun: bool, local: bool):
+              skip_tags: str, firstrun: bool, local: bool, debug: bool):
     """
     This will perform the ansible playbook.
     We pass tenant and environment and all other options as
@@ -33,6 +33,9 @@ def provision(tenant: str, env: str, limit: str, tags: str,
 
     :type  firstrun: bool
     :param firstrun: if it's first run (default False)
+
+    :type  debug: bool
+    :param debug: if it's a debug run (default False)
 
     :rtype:   None
     :return:  the function prints to screen the ansible output of the
@@ -60,6 +63,8 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         tags_argument.append("-k -u ubuntu")
+    if debug:
+        tags_argument.append("-vvv")
     if local:
         tags_argument.append("-c local")
     os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +

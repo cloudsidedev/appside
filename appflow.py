@@ -17,7 +17,7 @@ import lib.appflow_tools as tools
 import lib.appflow_utils as utils
 import lib.appflow_yaml as apyaml
 
-__version__ = "1.0.1.3"
+__version__ = "1.0.1.4"
 
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
@@ -198,7 +198,7 @@ class AppFlow(object):
 
     def provision(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
                   limit: str = None, tags: str = None, skip_tags: str = None,
-                  firstrun: bool = False, local: bool = False):
+                  firstrun: bool = False, local: bool = False, debug: bool = False):
         """
         Provision your machines.
         Syntax is:
@@ -232,10 +232,14 @@ class AppFlow(object):
 
         :type  local: bool
         :param local: if it's doing a local auto-provision (default False)
+
+        :type  debug: bool
+        :param debug: if it's a debug run (default False)
+
         """
         print(utils.get_provision_color_string('provision', tenant, env))
         apansible.provision(tenant, env, limit, tags,
-                            skip_tags, firstrun, local)
+                            skip_tags, firstrun, local, debug)
 
     def get(self, file, key=None):
         """
