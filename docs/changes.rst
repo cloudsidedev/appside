@@ -1,6 +1,17 @@
 Changes
 =======
 
+Appflow 1.0.1.4
+~~~~~~~~~~~~~~~
+
+Released a little update including
+    - introduced appflow version command
+    - introduced appflow provision debug
+    - fixed newline bug in appflow hosts
+
+to update just use Pip: `pip3 install -U appflow`
+
+
 Screencasts
 ~~~~~~~~~~~
 
