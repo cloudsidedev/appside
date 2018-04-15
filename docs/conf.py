@@ -54,7 +54,7 @@ copyright = u'2018, Ivo Marino, Luca Di Maio'
 # The short X.Y version.
 # split_char = '+' if '+' in sw_version else '-'
 # version = sw_version.split(split_char)[0]
-version = u'1.0.1.2'
+version = u'1.0.1.5'
 # The full version, including alpha/beta/rc tags.
 release = version
 
