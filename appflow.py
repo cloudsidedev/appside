@@ -22,7 +22,8 @@ __version__ = "1.0.1.5"
 # We need some default configurations
 # This will allow to call "appflow action *args" without always specifying
 # Tenant and environment.
-if os.path.exists(os.getenv('HOME') + "/.appflow/config.yml"):
+# if os.path.exists(os.getenv('HOME') + "/.appflow/config.yml"):
+if os.path.exists(os.getenv('HOME', default="~") + "/.appflow/config.yml"):
     DEFAULT_CONFIG = json.loads(apyaml.get_value("config"))
     DEFAULT_TENANT = DEFAULT_CONFIG.get("appflow")["tenant"]["name"]
     DEFAULT_ENV = DEFAULT_CONFIG.get("appflow")["tenant"]["default_env"]
@@ -56,9 +57,9 @@ class AppFlow(object):
         :param branch: The name of the branch (default Master)
 
         """
-        tools.git_update_playbooks(branch)
+        print(tools.git_update_playbooks(branch))
 
-    def init(self, tenant=None, env=None):
+    def init(self, tenant=None, env=None, repo=None):
         """
         This will initialize all the folders for Assh.
         This will also setup autocompletion for the CLI tool.
@@ -68,8 +69,11 @@ class AppFlow(object):
 
         :type  env: string
         :param env: The name of the tenant.
+
+        :type  repo: string
+        :param repo: The url of the tenant's repo.
         """
-        tools.initialize(tenant, env)
+        tools.initialize(tenant, env, repo)
 
     def ssh(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV):
         """
@@ -126,7 +130,7 @@ class AppFlow(object):
             print('Files Already Encrypted')
         else:
             print('Changed files:')
-            print('\n'.join(result))
+            print(result)
 
     def checkout(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV):
         """
@@ -140,7 +144,10 @@ class AppFlow(object):
         :type  env: string
         :param env: The name of the tenant.
         """
-        tools.git_check_out(tenant, env)
+        query = utils.yes_no(
+            'WARNING, this will overwrite any un-pushed work, continue?', 'no')
+        if query is True:
+            print(tools.git_check_out(tenant, env))
 
     def checkin(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
                 commit="Auto Commit"):
@@ -159,7 +166,7 @@ class AppFlow(object):
         :param commit: The commit message to use
                         when committing. (default Auto Commit)
         """
-        tools.git_check_in(tenant, env, commit)
+        print("result", tools.git_check_in(tenant, env, commit))
 
     def decrypt(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV):
         """
@@ -199,11 +206,12 @@ class AppFlow(object):
         :param env: The name of the tenant.
         """
         print(utils.get_provision_color_string('tags', tenant, env))
-        apansible.list_tags(tenant, env)
+        print(apansible.list_tags(tenant, env))
 
     def provision(self, tenant=DEFAULT_TENANT, env=DEFAULT_ENV,
-                  limit: str = None, tags: str = None, skip_tags: str = None,
-                  firstrun: bool = False, local: bool = False, debug: bool = False):
+                  limit: str = None, tags: str = None,
+                  skip_tags: str = None, firstrun: bool = False,
+                  local: bool = False, debug: bool = False, user: str = None):
         """
         Provision your machines.
         Syntax is:
@@ -243,12 +251,16 @@ class AppFlow(object):
 
         """
         print(utils.get_provision_color_string('provision', tenant, env))
+        print(tenant, env, limit, tags, skip_tags,
+              firstrun, local, debug, user)
+        return
         apansible.provision(tenant, env, limit, tags,
                             skip_tags, firstrun, local, debug)
 
     def get(self, file, key=None):
         """
-        This will print the key you are searcing (or the whole file if key is not specified)
+        This will print the key you are searcing
+        (or the whole file if key is not specified)
         Syntax:
         appflow get tenant.environment.folder.to.file.searched key.subkey.value
 
@@ -277,7 +289,7 @@ class AppFlow(object):
         """
         print(apyaml.set_value(file, key, value))
 
-    def rm(self, file, key):
+    def delete(self, file, key):
         """
         This will remove and then print the key you are specifying.
         Syntax:
@@ -289,7 +301,7 @@ class AppFlow(object):
         :type  key: string
         :param key: The key to search.
         """
-        print(apyaml.rm_value(file, key))
+        print(apyaml.delete_value(file, key))
 
     def add(self, file, key, value):
         """

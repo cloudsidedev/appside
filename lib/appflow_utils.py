@@ -3,12 +3,9 @@ Appflow Utilities.
 This contains all the generic functions
 needed to support the rest of the library.
 """
-import operator
+import hashlib
 import os
 import sys
-from functools import reduce
-
-import hashlib
 
 
 def get_md5_sum(file_name):
@@ -45,89 +42,6 @@ def write_md5_sum(file_name, md5_store_file):
         open(md5_store_file, 'a').write(line)
     else:
         open(md5_store_file, 'w+').write(line)
-
-
-def get_from_dict(data_dict, key):
-    """
-    Return key-value dictionary
-
-    :type  data_dict: dict
-    :param data_dict: The dictionary where to search the key.
-
-    :type  key: string
-    :param key: The key to search.
-
-    :rtype:   dict
-    :return:  the function returns a dict containing the
-                key-value pair searched.
-    """
-    return reduce(operator.getitem, key, data_dict)
-
-
-def set_in_dict(data_dict, key, value):
-    """
-    Set key-value in dictionary
-
-    :type  data_dict: dict
-    :param data_dict: The dictionary where to search the key.
-
-    :type  key: string
-    :param key: The key to search.
-
-    :type  value: string
-    :param value: The value to set.
-
-    :rtype:   None
-    :return:  the function doesn't have a return statement.
-    """
-    get_from_dict(data_dict, key[:-1])[key[-1]] = value
-
-
-def rm_in_dict(data_dict, key):
-    """
-    Remove keys from dictionary
-
-    :type  data_dict: dict
-    :param data_dict: The dictionary where to search the key.
-
-    :type  key: string
-    :param key: The key to search.
-
-    :rtype:   dict
-    :return:  the function returns the dictionary with the deleted the
-                key searched.
-    """
-    if len(key) > 1:
-        empty = rm_in_dict(data_dict[key[0]], key[1:])
-        if empty:
-            del data_dict[key[0]]
-    else:
-        del data_dict[key[0]]
-    return len(data_dict) == 0
-
-
-def add_keys(data_dict, key, value=None):
-    """
-    Add keys to dictionary (set also value if specified)
-
-    :type  data_dict: dict
-    :param data_dict: The dictionary where to search the key.
-
-    :type  key: string
-    :param key: The key to search.
-
-    :type  value: string
-    :param value: The value to set. (default None)
-
-    :rtype:   None
-    :return:  the function doesn't have a return statement.
-    """
-    if len(key) > 1:
-        data_dict[key[0]] = {}
-        data_dict[key[0]] = data_dict.get(key[0], {})
-        add_keys(data_dict[key[0]], key[1:], value)
-    else:
-        data_dict[key[0]] = value
 
 
 def check_string_in_file(file_name, searched_string):

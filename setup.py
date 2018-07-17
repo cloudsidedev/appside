@@ -10,7 +10,8 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
-from appflow import __version__
+
+__version__ = "1.0.1.5"
 
 here = path.abspath(path.dirname(__file__))
 
@@ -105,7 +106,7 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords='ansible tenant provision deploy setuptools development',  # Optional
+    keywords='ansible tenant provision deploy setuptools development',
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
@@ -125,7 +126,7 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['ansible', 'fire', 'PyYAML', 'six'],  # Opteonal
+    install_requires=['ansible', 'fire', 'PyYAML', 'six'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"

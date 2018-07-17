@@ -7,9 +7,15 @@ import os
 
 import lib.appflow_utils as utils
 
+# TODO: serve uno status un feedback o qualcosa
+# il run va fatto async, returno 202 accepted e un link allo status del task.
+# idea: queue class che tiene conto degli id dei task, queue function che dato
+# id returna status del task
+
 
 def provision(tenant: str, env: str, limit: str, tags: str,
-              skip_tags: str, firstrun: bool, local: bool, debug: bool):
+              skip_tags: str, firstrun: bool, local: bool,
+              debug: bool, user: str = None):
     """
     This will perform the ansible playbook.
     We pass tenant and environment and all other options as
@@ -37,9 +43,11 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     :type  debug: bool
     :param debug: if it's a debug run (default False)
 
-    :rtype:   None
-    :return:  the function prints to screen the ansible output of the
-                execution.
+    :type  user: string
+    :param user: if it's a firstrun you can choose the default user.
+
+    :rtype:   string
+    :return:  the function returns 0 if successful and a number >0 if failed.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = utils.get_appflow_folder()
@@ -62,14 +70,18 @@ def provision(tenant: str, env: str, limit: str, tags: str,
         tags_argument.append("--skip-tags " + skip_tags)
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
-        tags_argument.append("-k -u ubuntu")
+        if user is None:
+            tags_argument.append("-k -u ubuntu")
+        else:
+            tags_argument.append("-k -u ")
+            tags_argument.append(user)
     if debug:
         tags_argument.append("-vvv")
     if local:
         tags_argument.append("-c local")
-    os.system('ansible-playbook -b ' + ' '.join(tags_argument) + ' -i ' +
-              inventory + ' ' + playbook +
-              ' --vault-password-file ' + password_file)
+    return os.system('ansible-playbook -b ' + ' '.join(tags_argument) +
+                     ' -i ' + inventory + ' ' + playbook +
+                     ' --vault-password-file ' + password_file)
 
 
 def list_tags(tenant, env):
@@ -82,16 +94,17 @@ def list_tags(tenant, env):
     :type  env: string
     :param env: The name of the tenant.
 
-    :rtype:   None
-    :return:  the function prints to screen the available tags.
+    :rtype:   string
+    :return:  the function returns the available tags.
     """
     inventory = utils.get_tenant_dir(tenant) + env + "/inventory"
     appflow_folder = utils.get_appflow_folder()
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
-    os.system('ansible-playbook --list-tags -i ' + inventory +
-              ' ' + playbook + ' --vault-password-file ' + password_file)
+    return os.popen('ansible-playbook --list-tags -i ' + inventory +
+                    ' ' + playbook + ' --vault-password-file ' +
+                    password_file).read()
 
 
 def encrypt(tenant, env):
@@ -104,16 +117,19 @@ def encrypt(tenant, env):
     :type  env: string
     :param env: The name of the tenant.
 
-    :rtype:   None
-    :return:  the function prints to screen the ansible output of the
-                execution.
+    :rtype:   string
+    :return:  the function returns 0 if successful and a number >0 if failed.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
     flie_list = utils.get_file_list(target_folder)
+    # out initialized to zero. Add all out values of the subprocess.
+    # A value != 0 indicates a failure
+    out = 0
     for file in flie_list:
-        os.system('ansible-vault encrypt ' + file +
-                  ' --vault-password-file ' + password_file)
+        out = out + os.system('ansible-vault encrypt ' + file +
+                              ' --vault-password-file ' + password_file)
+    return out
 
 
 def decrypt(tenant, env):
@@ -126,9 +142,8 @@ def decrypt(tenant, env):
     :type  env: string
     :param env: The name of the tenant.
 
-    :rtype:   None
-    :return:  the function prints to screen the ansible output of the
-                execution.
+    :rtype:   string
+    :return:  the function returns 0 if successful and a number >0 if failed.
     """
     target_folder = utils.get_tenant_env_dir(tenant, env)
     password_file = utils.get_vault_file(tenant, env)
@@ -138,7 +153,11 @@ def decrypt(tenant, env):
 
     utils.safe_remove(md5_store_file)
     flie_list = utils.get_file_list(target_folder)
+    # out initialized to zero. Add all out values of the subprocess.
+    # A value != 0 indicates a failure
+    out = 0
     for file in flie_list:
-        os.system('ansible-vault decrypt ' + file +
-                  ' --vault-password-file ' + password_file)
+        out = out + os.system('ansible-vault decrypt ' + file +
+                              ' --vault-password-file ' + password_file)
         utils.write_md5_sum(file, md5_store_file)
+    return out
