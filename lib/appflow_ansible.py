@@ -4,18 +4,16 @@ This contains all the functions needed to perform Ansible actions.
 From provision to encryption/decryption and tag listing.
 """
 import os
+import subprocess
 
 import lib.appflow_utils as utils
 
-# TODO: serve uno status un feedback o qualcosa
-# il run va fatto async, returno 202 accepted e un link allo status del task.
-# idea: queue class che tiene conto degli id dei task, queue function che dato
-# id returna status del task
+# TODO: add dynamic ouput from terminal
 
 
 def provision(tenant: str, env: str, limit: str, tags: str,
               skip_tags: str, firstrun: bool, local: bool,
-              debug: bool, user: str = None):
+              debug: bool, user: str = None, remote: bool = False):
     """
     This will perform the ansible playbook.
     We pass tenant and environment and all other options as
@@ -60,28 +58,45 @@ def provision(tenant: str, env: str, limit: str, tags: str,
     tags = utils.format_string_argument(tags)
     skip_tags = utils.format_string_argument(skip_tags)
 
-    tags_argument = []
+    tags_argument = ['ansible-playbook', '-b']
     # Format arguments for ansible command now.
     if limit is not None:
-        tags_argument.append("--limit " + limit)
+        tags_argument.append("--limit")
+        tags_argument.append(limit)
     if tags is not None:
-        tags_argument.append("--tags " + tags)
+        tags_argument.append("--tags")
+        tags_argument.append(tags)
     if skip_tags is not None:
-        tags_argument.append("--skip-tags " + skip_tags)
+        tags_argument.append("--skip-tags")
+        tags_argument.append(skip_tags)
     # First run! Let's default to the generic user waiting for users provision
     if firstrun:
         if user is None:
-            tags_argument.append("-k -u ubuntu")
+            tags_argument.append("-k")
+            tags_argument.append("-u")
+            tags_argument.append("ubuntu")
         else:
-            tags_argument.append("-k -u ")
+            tags_argument.append("-k")
+            tags_argument.append("-u")
             tags_argument.append(user)
     if debug:
         tags_argument.append("-vvv")
     if local:
-        tags_argument.append("-c local")
-    return os.system('ansible-playbook -b ' + ' '.join(tags_argument) +
-                     ' -i ' + inventory + ' ' + playbook +
-                     ' --vault-password-file ' + password_file)
+        tags_argument.append("-c")
+        tags_argument.append("local")
+
+    tags_argument.append('-i')
+    tags_argument.append(inventory)
+    tags_argument.append(playbook)
+    tags_argument.append('--vault-password-file')
+    tags_argument.append(password_file)
+    # If we are remote provisioning, return only the command string
+    # The server will take care of executing it.
+    if remote:
+        return tags_argument
+    else:
+        process = subprocess.Popen(tags_argument)
+        process.wait()
 
 
 def list_tags(tenant, env):
@@ -102,9 +117,9 @@ def list_tags(tenant, env):
     playbook = appflow_folder + '/playbooks/generic.yml'
     password_file = utils.get_vault_file(tenant, env)
 
-    return os.popen('ansible-playbook --list-tags -i ' + inventory +
-                    ' ' + playbook + ' --vault-password-file ' +
-                    password_file).read()
+    return subprocess.Popen('ansible-playbook --list-tags -i ' + inventory +
+                            ' ' + playbook + ' --vault-password-file ' +
+                            password_file).communicate()
 
 
 def encrypt(tenant, env):

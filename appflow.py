@@ -251,11 +251,8 @@ class AppFlow(object):
 
         """
         print(utils.get_provision_color_string('provision', tenant, env))
-        print(tenant, env, limit, tags, skip_tags,
-              firstrun, local, debug, user)
-        return
         apansible.provision(tenant, env, limit, tags,
-                            skip_tags, firstrun, local, debug)
+                            skip_tags, firstrun, local, debug, user)
 
     def get(self, file, key=None):
         """

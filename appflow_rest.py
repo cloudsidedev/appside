@@ -1,13 +1,18 @@
-from flask import Flask
-from flask import make_response
-from flask import request
-from flask import url_for, jsonify
+import numbers
 import os
-import lib.appflow_tools as tools
-import lib.appflow_yaml as apyaml
-import lib.appflow_ansible as apansible
-from celery import Celery
 import time
+import asyncio
+
+from celery import Celery
+from flask import Flask, jsonify, make_response, request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from asyncio.subprocess import PIPE
+
+import lib.appflow_ansible as apansible
+import lib.appflow_tools as tools
+import lib.appflow_utils as utils
+import lib.appflow_yaml as apyaml
+
 
 # redis-server
 # celery worker -A appflow_rest.CELERY --loglevel=info
@@ -18,6 +23,7 @@ app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 CELERY = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 CELERY.conf.update(app.config)
+
 
 # TODO: devo mettere i giusti exit status
 # i giusti check di autenticazione
@@ -45,20 +51,9 @@ def get():
         key = request.args.get('key')
 
         response = apyaml.get_value(resource_name, key)
-        if 'Error' in response:
-            if 'Invalid' in response:
-                status_code = 400
-            elif 'Bad Syntax' in response:
-                status_code = 404
-            elif 'Not Found' in response:
-                status_code = 204
-            else:
-                status_code = 500
-        else:
-            status_code = 200
-        return make_response(response, status_code)
+        return make_response(response, utils.get_status_code(response))
     except Exception as exception:
-        return make_response(str(exception), 500)
+        return make_response(str(exception), utils.INTERNAL_ERROR)
 
 
 @app.route("/appflow", methods=['PATCH'])
@@ -68,21 +63,9 @@ def set():
         key = request.args.get('key')
         value = request.args.get('value')
         response = apyaml.set_value(resource_name, key, value)
-        if 'Error' in response:
-            if 'Invalid' in response:
-                status_code = 400
-            elif 'Bad Syntax' in response:
-                status_code = 404
-            elif 'Not Found' in response:
-                status_code = 204
-            else:
-                status_code = 500
-        else:
-            status_code = 200
-        return make_response(response, status_code)
-
+        return make_response(response, utils.get_status_code(response))
     except Exception as exception:
-        return make_response(str(exception), 500)
+        return make_response(str(exception), utils.INTERNAL_ERROR)
 
 
 @app.route("/appflow",  methods=['PUT'])
@@ -92,21 +75,9 @@ def add():
         key = request.args.get('key')
         value = request.args.get('value')
         response = apyaml.add_value(resource_name, key, value)
-        if 'Error' in response:
-            if 'Invalid' in response:
-                status_code = 400
-            elif 'Bad Syntax' in response:
-                status_code = 404
-            elif 'Not Found' in response:
-                status_code = 204
-            else:
-                status_code = 500
-        else:
-            status_code = 200
-        return make_response(response, status_code)
-
+        return make_response(response, utils.get_status_code(response))
     except Exception as exception:
-        return make_response(str(exception), 500)
+        return make_response(str(exception), utils.INTERNAL_ERROR)
 
 
 @app.route("/appflow",  methods=['DELETE'])
@@ -115,27 +86,15 @@ def delete():
         resource_name = request.args.get('resource')
         key = request.args.get('key')
         response = apyaml.delete_value(resource_name, key)
-        if 'Error' in response:
-            if 'Invalid' in response:
-                status_code = 400
-            elif 'Bad Syntax' in response:
-                status_code = 404
-            elif 'Not Found' in response:
-                status_code = 204
-            else:
-                status_code = 500
-        else:
-            status_code = 200
-        return make_response(response, status_code)
-
+        return make_response(response, utils.get_status_code(response))
     except Exception as exception:
-        return make_response(str(exception), 500)
+        return make_response(str(exception), utils.INTERNAL_ERROR)
 
 
-@app.route("/appflow",  methods=['POST'])
-def command():
+@app.route("/appflow/<exec_command>",  methods=['POST'])
+def command(exec_command):
     try:
-        exec_command = request.args.get('command', default=None)
+        # exec_command = request.args.get('command', default=None)
         tenant = request.args.get('tenant', default=None)
         env = request.args.get('env', default=None)
         repo = request.args.get('repo', default=None)
@@ -152,12 +111,14 @@ def command():
         }
         func = switcher.get(exec_command, lambda: "Invalid Command")
         output = func()
+        if isinstance(output, numbers.Number):
+            output = utils.TASK_SUCCESS if output is 0 else utils.TASK_FAIL
         response = {
             "status": output
         }
         return jsonify(response)
     except Exception as exception:
-        return make_response(str(exception), 500)
+        return make_response(str(exception), utils.INTERNAL_ERROR)
 
 
 @app.route("/appflow/provision", methods=['POST'])
@@ -176,7 +137,7 @@ def provision():
 
     return jsonify({'Response': 202,
                     'Location': url_for('taskstatus', task_id=task.id),
-                    'Status': 'Starting...'})
+                    'Status': utils.TASK_START})
 
 
 @CELERY.task(bind=True)
@@ -184,17 +145,27 @@ def provision_task(self, tenant: str, env: str, limit: str, tags: str,
                    skip_tags: str, firstrun: bool, local: bool,
                    debug: bool, user: str = None):
 
+    print(type(self))
     print((tenant, env, limit, tags, skip_tags,
            firstrun, local, debug, user))
 
     self.update_state(state='PROGRESS',
-                      meta={'status': 'running...'})
-    response = apansible.provision(tenant, env, limit, tags, skip_tags,
-                                   firstrun, local, debug, user)
-    if response > 0:
-        return {'status': 'Task Failed!'}
+                      meta={'status': utils.TASK_START, 'output': ""})
+
+    tags_argument = apansible.provision(tenant, env, limit, tags,
+                                        skip_tags, firstrun, local,
+                                        debug, user, remote=True)
+
+    loop = asyncio.get_event_loop()
+    # Pass self as argument to do continuous update_state
+    rc, *output = loop.run_until_complete(
+        utils.read_and_display(loop, *tags_argument, task=self))
+    loop.close()
+
+    if rc > 0:
+        return {'status': utils.TASK_FAIL, 'output': output}
     else:
-        return {'status': 'Task Completed!'}
+        return {'status': utils.TASK_SUCCESS, 'output': output}
 
 
 @app.route('/status/<task_id>')
@@ -203,11 +174,12 @@ def taskstatus(task_id):
     if task.state == 'PENDING':
         # job did not start yet
         response = {
-            'status': 'Pending...'
+            'status': utils.TASK_START
         }
     elif task.state != 'FAILURE':
         response = {
-            'status': task.info.get('status', '')
+            'status': task.info.get('status', ''),
+            'output': task.info.get('output', '')
         }
     else:
         # something went wrong in the background job
@@ -217,7 +189,25 @@ def taskstatus(task_id):
     return jsonify(response)
 
 
-# @app.route("/appflow/signin",  methods=['POST'])
+@app.route("/appflow/signup",  methods=['POST'])
+def prova():
+    import lib.appflow_sql as apsql
+    apsql.init_db()
+    user1 = apsql.query_user('luca')
+    tenant1 = apsql.query_tenant('TTSS')
+    # apsql.insert_key('123', 12, '123=', user1, tenant1)
+    # apsql.insert_tenant('TTSS', 'secret', 'TTSS-recover')
+    # apsql.insert_user('Luca', 'luca@mail.com', 'password', 'salt', 'luca-recover', 'mail_recover', 'TTSS')
+    apsql.get_users()
+    return 'ok'
+
+# @app.route("/appflow/login",  methods=['POST'])
+# def signin():
+
+# @app.route("/appflow/user",  methods=['POST'])
+# def signin():
+
+
 # @app.route("/appflow/signup/get/get_user_data",  methods=['POST'])
 # @app.route("/appflow/signin/get/recover_mail",  methods=['POST'])
 # @app.route("/appflow/signin/get/recover_username",  methods=['POST'])

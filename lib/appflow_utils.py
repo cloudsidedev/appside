@@ -6,6 +6,8 @@ needed to support the rest of the library.
 import hashlib
 import os
 import sys
+import asyncio
+from asyncio.subprocess import PIPE
 
 
 def get_md5_sum(file_name):
@@ -138,6 +140,38 @@ CYAN = '\033[01;36m'
 WHITE = '\033[01;37m'
 CLEAR = '\033[00m'
 
+TASK_SUCCESS = 'Task Completed Successfully!'
+TASK_FAIL = 'Task Failed!'
+TASK_RUNNING = 'Task is Running...'
+TASK_START = 'Task is Starting...'
+OK = 200
+ACCEPTED = 202
+NO_CONTENT = 204
+INVALID_REQUEST = 400
+UNAUTHORIZED = 401
+FORBIDDEN = 403
+NOT_FOUND = 404
+METHOD_NOT_ALLOWED = 405
+INTERNAL_ERROR = 500
+
+
+def get_status_code(response):
+    """
+    Return the correct response code
+    based on the content of the text error.
+    """
+    if 'Error' in response:
+        if 'Invalid' in response:
+            return INVALID_REQUEST
+        elif 'Bad Syntax' in response:
+            return METHOD_NOT_ALLOWED
+        elif 'Not Found' in response:
+            return NOT_FOUND
+        else:
+            return INTERNAL_ERROR
+    else:
+        return OK
+
 
 def get_provision_color_string(command, tenant, env):
     """
@@ -268,6 +302,48 @@ def format_string_argument(argument):
     elif isinstance(argument, (list, tuple)):
         return ','.join(argument)
     return argument
+
+
+@asyncio.coroutine
+def read_stream_and_display(stream, task):
+    """
+    Read from stream line by line until EOF, display, and capture the lines.
+    """
+    output = []
+    while True:
+        line = yield from stream.readline()
+        if not line:
+            break
+        output.append(line)
+        # display(line)  # assume it doesn't block
+        task.update_state(state='PROGRESS',
+                          meta={'status': TASK_RUNNING,
+                                'output': b'\n'.join(output)})
+    return b''.join(output)
+
+
+@asyncio.coroutine
+def read_and_display(loop, *cmd, task):
+    """Capture cmd's stdout, stderr while displaying them as they arrive
+    (line by line).
+
+    """
+    # start process
+    print(*cmd, type(cmd))
+    process = yield from asyncio.create_subprocess_exec(
+        *cmd, stdout=PIPE, stderr=PIPE, loop=loop)
+
+    # read child's stdout/stderr concurrently (capture and display)
+    try:
+        stdout = yield from asyncio.gather(
+            read_stream_and_display(process.stdout, task))
+    except Exception:
+        process.kill()
+        raise
+    finally:
+        # wait for the process to exit
+        rc = yield from process.wait()
+    return rc, stdout
 
 
 def yes_no(question, default="yes"):
