@@ -15,3 +15,6 @@ Vagrantfile.local.yml
 build
 dist
 *.egg-info
+.mypy
+*.rdb
+*.db
