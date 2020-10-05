@@ -17,7 +17,7 @@ More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis 
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
-AppFlow is your transparent platform that incorporates the various
+AppFlow is your transparent platform that incorporates the various 
 digital infrastructures into a continuous workflow. At the same time, it
 creates a consistent environment for the entire development process,
 saving time and money. AppFlow is an open source developer and DevOps
