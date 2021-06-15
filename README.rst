@@ -1,10 +1,10 @@
-AppFlow
-=======
+AppSide
+======
 
 
-**Read the documentation on** `appflow.rtfd.io <https://appflow.readthedocs.io>`__
+**Read the documentation on** `appflow.rtfd.io <https://appside.readthedocs.io>`__
 
-**For the playbooks, visit the** `appflow-playbooks repository <https://github.com/ttssdev/appflow-playbooks>`__
+**For the playbooks, visit the** `appflow-playbooks repository <https://github.com/ttssdev/appside-playbooks>`__
 
 .. raw:: html
 
@@ -17,23 +17,23 @@ More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis 
 
 AppFlow is a multitenant environment automation tool based on Ansible.
 
-AppFlow is your transparent platform that incorporates the various 
+AppSide is your transparent platform that incorporates the various 
 digital infrastructures into a continuous workflow. At the same time, it
 creates a consistent environment for the entire development process,
-saving time and money. AppFlow is an open source developer and DevOps
+saving time and money. AppSide is an open source developer and DevOps
 application that maps the entire development process (continuous
 deployment & provisioning) from development to test & staging to
 production. This ensures that the systems being managed on the different
-infrastructures are deployed in the same way. At the same time, AppFlow
+infrastructures are deployed in the same way. At the same time, AppSide
 creates a consistent environment (on-premise, in the cloud or on bare
 metal) throughout the development process. The administrators and
 developers (DevOps) can therefore independently control the entire
 toolchain. The automation process is created using Ansible playbooks and
 contains the admin and developer code, which is stored in a git
-repository (encrypted). The code (AppFlow) runs on any UNIX-like
+repository (encrypted). The code (AppSide) runs on any UNIX-like
 operating system where Python can run, including Linux, BSD, and OSX.
-Orchestration of the AppFlow code requires only SSH access to the
-respective systems. AppFlow has been designed and optimized from DevOps
+Orchestration of the AppSide code requires only SSH access to the
+respective systems. AppSide has been designed and optimized from DevOps
 for DevOps.
 
 Features
@@ -73,7 +73,7 @@ Infrastructure:
 Technologies
 ------------
 
-The technology behind AppFlow uses countless best-in-class programs and
+The technology behind AppSide uses countless best-in-class programs and
 maps them in a toolbox. The software accesses an extensive repository of
 various freeware packages. Out-of-the-box, many enterprise features
 already exist, such as:
@@ -90,9 +90,9 @@ already exist, such as:
 Installation
 ~~~~~~~~~~~~
 
-Appflow is hosted on PiP using python3. ``pip3 install appflow`` will
-install appflow. To start using it you first need to *initialize* it:
-``appflow init`` follow the onscreen instructions to set it up!
+AppSide is hosted on PiP using python3. ``pip3 install appside`` will
+install appside. To start using it you first need to *initialize* it:
+``appside init`` follow the onscreen instructions to set it up!
 
 Developers
 ~~~~~~~~~~
