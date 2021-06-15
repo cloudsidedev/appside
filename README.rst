@@ -2,9 +2,9 @@ AppSide
 ======
 
 
-**Read the documentation on** `appflow.rtfd.io <https://appside.readthedocs.io>`__
+**Read the documentation on** `appside.rtfd.io <https://appside.readthedocs.io>`__
 
-**For the playbooks, visit the** `appflow-playbooks repository <https://github.com/ttssdev/appside-playbooks>`__
+**For the playbooks, visit the** `appside-playbooks repository <https://github.com/ttssdev/appside-playbooks>`__
 
 .. raw:: html
 
@@ -15,7 +15,7 @@ More Screencasts: `Installation`_, `Basic setup`_, `Atlantis setup`_, `Atlantis 
 | Get an invite and join the conversations!
 | |Slack Status|
 
-AppFlow is a multitenant environment automation tool based on Ansible.
+AppSide is a multitenant environment automation tool based on Ansible.
 
 AppSide is your transparent platform that incorporates the various 
 digital infrastructures into a continuous workflow. At the same time, it
@@ -121,7 +121,7 @@ Contributions are welcome from everyone.
 Join us! |Slack Status|
 
 .. |Slack Status| image:: https://static1.squarespace.com/static/53f68e19e4b0f401658fbb93/58b99eee725e2580fa698860/58b9a61603596ea54d1c5035/1488819693257/slack-logo-01.png?format=100w
-   :target: https://appflow-community.ttss.ch
+   :target: https://appside-community.ttss.ch
 
 .. start-badges
 
